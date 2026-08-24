@@ -15,6 +15,12 @@
   /* ---------- preklady rozhrania ---------- */
   var T = {
     sk: {
+      eyebrow: "Katalóg produktov",
+      taglineHtml: "Solárna energia<br>pre <em>vozidlá</em> a karavany",
+      catsTitle: "Kategórie",
+      catsHint: "Kliknutím filtrujete katalóg",
+      utilA: "Katalóg pre nezáväzný dopyt",
+      ftrLangH: "Jazyk",
       tagline: "Solárne panely pre vozidlá, karavany a outdoor",
       heroLead: "Prezrite si celý sortiment. Vyberte produkt, vyplňte kontaktné údaje a my sa vám ozveme s cenovou ponukou a termínom dodania.",
       products: "produktov v katalógu", categories: "kategórií", brands: "značiek vozidiel",
@@ -47,6 +53,12 @@
       langNote: "Katalóg produktov"
     },
     cs: {
+      eyebrow: "Katalog produktů",
+      taglineHtml: "Solární energie<br>pro <em>vozidla</em> a karavany",
+      catsTitle: "Kategorie",
+      catsHint: "Kliknutím filtrujete katalog",
+      utilA: "Katalog pro nezávaznou poptávku",
+      ftrLangH: "Jazyk",
       tagline: "Solární panely pro vozidla, karavany a outdoor",
       heroLead: "Prohlédněte si celý sortiment. Vyberte produkt, vyplňte kontaktní údaje a my se vám ozveme s cenovou nabídkou a termínem dodání.",
       products: "produktů v katalogu", categories: "kategorií", brands: "značek vozidel",
@@ -219,6 +231,19 @@
     [].forEach.call(document.querySelectorAll(".chip"), function (c) {
       c.setAttribute("aria-pressed", String(c.dataset.cat === S.cat));
     });
+    [].forEach.call(document.querySelectorAll(".tile"), function (t) {
+      t.setAttribute("aria-pressed", String(t.dataset.cat === S.cat));
+    });
+  }
+
+  /* dlaždice kategórií nad filtrom */
+  function renderTiles() {
+    el("tiles").innerHTML = META.cats.map(function (c) {
+      return '<button type="button" class="tile" data-cat="' + esc(c.k) +
+        '" aria-pressed="' + (S.cat === c.k) + '">' +
+        '<span class="tile-t">' + esc(c[LANG]) + "</span>" +
+        '<span class="tile-n">' + c.n + "</span></button>";
+    }).join("");
   }
 
   /* ---------- detail produktu ---------- */
@@ -382,13 +407,25 @@
   /* ---------- štart ---------- */
   function init() {
     /* texty */
-    el("tagline").textContent = T.tagline;
+    el("heroEyebrow").textContent = T.eyebrow;
+    el("tagline").innerHTML = T.taglineHtml;
+    el("catsTitle").textContent = T.catsTitle;
+    el("catsHint").textContent = T.catsHint;
+    el("utilA").textContent = T.utilA;
+    el("utilPhone").textContent = CFG.phone;
+    el("utilPhone").href = "tel:" + String(CFG.phone || "").replace(/\s+/g, "");
+    el("utilMail").textContent = CFG.orderEmail;
+    el("utilMail").href = "mailto:" + CFG.orderEmail;
+    el("ftrLangH").textContent = T.ftrLangH;
+    el("ftrNote").textContent = T.priceNote;
     el("heroLead").textContent = T.heroLead;
     el("statA").innerHTML = "<b>" + META.count + "</b><span>" + esc(T.products) + "</span>";
     el("statB").innerHTML = "<b>" + META.cats.length + "</b><span>" + esc(T.categories) + "</span>";
     el("statC").innerHTML = "<b>" + META.brands.length + "</b><span>" + esc(T.brands) + "</span>";
     el("q").placeholder = T.search;
     el("resetBtn").textContent = T.reset;
+
+    renderTiles();
 
     /* kategórie */
     el("chips").innerHTML = '<button class="chip" data-cat="" aria-pressed="true">' +
@@ -449,6 +486,12 @@
       var c = e.target.closest(".chip"); if (!c) return;
       S.cat = c.dataset.cat; syncChips(); render(true);
       window.scrollTo({ top: el("catalog").offsetTop - 130, behavior: "smooth" });
+    });
+    el("tiles").addEventListener("click", function (e) {
+      var t = e.target.closest(".tile"); if (!t) return;
+      S.cat = (S.cat === t.dataset.cat) ? "" : t.dataset.cat;   /* druhý klik zruší */
+      syncChips(); render(true);
+      window.scrollTo({ top: el("catalog").offsetTop - 90, behavior: "smooth" });
     });
     el("brand").addEventListener("change", function (e) { S.brand = e.target.value; render(true); });
     el("sort").addEventListener("change", function (e) { S.sort = e.target.value; render(true); });

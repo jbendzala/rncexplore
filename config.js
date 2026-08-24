@@ -7,7 +7,7 @@ window.SITE_CONFIG = {
      Nahraďte zástupné hodnoty svojimi údajmi.
      Replace these placeholders with your own details.                     */
   company: "Safiri s.r.o.",
-  orderEmail: "radim.polednak@gmail.com", // sem chodia objednávky / sem chodí objednávky
+  orderEmail: "objednavky@rncexplore.com", // sem chodia objednávky / sem chodí objednávky
   phone: "+421 905 698 410",
   web: "www.rncexplore.com",
 
