@@ -131,6 +131,11 @@
     for (var i = 0; i < META.cats.length; i++) if (META.cats[i].k === k) return META.cats[i][LANG];
     return k;
   }
+  /* Shopify CDN vie doručiť zmenšenú verziu — vložené dátové URI necháme tak */
+  function imgUrl(src, w) {
+    if (!src || src.indexOf("data:") === 0) return src;
+    return src + (src.indexOf("?") === -1 ? "?" : "&") + "width=" + w;
+  }
   function nameOf(p) { return p.n[LANG] || p.n.sk; }
   function descOf(p) { return p.d[LANG] || p.d.sk; }
   function varName(v) { return v[LANG] || v.sk; }
@@ -176,7 +181,8 @@
 
     return '<article class="card" data-id="' + esc(p.id) + '">' +
       '<div class="card-img" data-act="detail">' +
-        (img ? '<img loading="lazy" src="' + esc(img) + '" alt="' + esc(nameOf(p)) + '">'
+        (img ? '<img loading="lazy" decoding="async" src="' + esc(imgUrl(img, 600)) +
+               '" alt="' + esc(nameOf(p)) + '">'
              : '<div class="ph">' + esc(T.noImg) + "</div>") +
         (off > 5 ? '<span class="badge">−' + off + "%</span>" : "") +
       "</div>" +
@@ -263,12 +269,12 @@
     el("detailBody").innerHTML =
       '<div class="p-detail"><div class="p-media">' +
         '<div class="p-main">' + (imgs.length
-          ? '<img id="pMain" src="' + esc(imgs[0]) + '" alt="' + esc(nameOf(p)) + '">'
+          ? '<img id="pMain" src="' + esc(imgUrl(imgs[0], 1200)) + '" alt="' + esc(nameOf(p)) + '">'
           : '<div class="ph" style="display:grid;place-items:center;height:100%;color:var(--fg-3)">' + esc(T.noImg) + "</div>") +
         "</div>" +
         (imgs.length > 1 ? '<div class="p-thumbs">' + imgs.map(function (s, i) {
-          return '<button data-src="' + esc(s) + '" aria-current="' + (i === 0) + '"><img src="' +
-                 esc(s) + '" alt=""></button>'; }).join("") + "</div>" : "") +
+          return '<button data-src="' + esc(imgUrl(s, 1200)) + '" aria-current="' + (i === 0) +
+                 '"><img src="' + esc(imgUrl(s, 160)) + '" alt=""></button>'; }).join("") + "</div>" : "") +
       "</div>" +
       '<div class="p-info">' +
         '<div class="card-cat">' + esc(catName(p.cat)) + "</div>" +
@@ -300,7 +306,7 @@
     current = p;
     var vs = p.var && p.var.length ? p.var : [{ sk: "", cs: "", p: p.usd, sku: p.sku }];
     el("ofProd").innerHTML =
-      (p.img && p.img[0] ? '<img src="' + esc(p.img[0]) + '" alt="">' : "") +
+      (p.img && p.img[0] ? '<img src="' + esc(imgUrl(p.img[0], 160)) + '" alt="">' : "") +
       "<div><strong>" + esc(nameOf(p)) + "</strong><span>" +
       esc(p.sku || catName(p.cat)) + "</span></div>";
 
