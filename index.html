@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="sk" data-theme="">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Katalóg solárnych panelov pre vozidlá a karavany</title>
+<meta name="description" content="Katalóg solárnych panelov na kapotu, flexibilných a skladacích panelov, solárnych regulátorov a príslušenstva. Vyberte produkt a odošlite nezáväznú objednávku.">
+<link rel="alternate" hreflang="sk" href="./index.html">
+<link rel="alternate" hreflang="cs" href="./cz.html">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23e8850c'/%3E%3Cpath d='M16 6v3M16 23v3M6 16h3M23 16h3M9 9l2 2M21 21l2 2M23 9l-2 2M11 21l-2 2' stroke='%23fff' stroke-width='2' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='16' r='4.5' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="./assets/styles.css">
+</head>
+<body>
+
+<header class="hdr">
+  <div class="wrap hdr-in">
+    <a class="brand" href="./index.html">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round">
+          <circle cx="12" cy="12" r="4" fill="#fff" stroke="none"/>
+          <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/>
+        </svg>
+      </span>
+      <span class="js-company">YOUR_COMPANY</span>
+    </a>
+    <span class="hdr-sp"></span>
+    <button class="icon-btn" id="themeBtn" data-t="theme" aria-label="Svetlý / tmavý režim">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/>
+      </svg>
+    </button>
+    <nav class="langs" aria-label="Jazyk">
+      <a href="./index.html" aria-current="true" hreflang="sk">SK</a>
+      <a href="./cz.html" hreflang="cs">CZ</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <h1 id="tagline">Solárne panely pre vozidlá, karavany a outdoor</h1>
+    <p id="heroLead"></p>
+    <div class="hero-stats">
+      <div id="statA"></div><div id="statB"></div><div id="statC"></div>
+    </div>
+  </div>
+</section>
+
+<section class="filters" id="catalog">
+  <div class="wrap">
+    <div class="f-row">
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>
+        </svg>
+        <input id="q" type="search" autocomplete="off" aria-label="Hľadať">
+      </div>
+      <select id="brand" aria-label="Značka vozidla"></select>
+      <select id="sort" aria-label="Zoradiť"></select>
+    </div>
+    <div class="chips" id="chips" role="group" aria-label="Kategórie"></div>
+    <div class="f-meta">
+      <span id="count"></span>
+      <button class="link-btn" id="resetBtn"></button>
+    </div>
+  </div>
+</section>
+
+<main class="wrap">
+  <div class="grid" id="grid"></div>
+  <div class="more" id="more"></div>
+</main>
+
+<!-- ---------- detail produktu ---------- -->
+<div class="ov" id="detailOv" hidden role="dialog" aria-modal="true">
+  <div class="modal">
+    <button class="m-close" data-close="detailOv" aria-label="Zavrieť">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+        <path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <div id="detailBody"></div>
+  </div>
+</div>
+
+<!-- ---------- objednávka ---------- -->
+<div class="ov" id="orderOv" hidden role="dialog" aria-modal="true">
+  <div class="modal sm">
+    <button class="m-close" data-close="orderOv" aria-label="Zavrieť">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+        <path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <form class="form" id="orderForm" novalidate>
+      <h2 id="orderTitle"></h2>
+      <p class="note" id="orderLead"></p>
+      <div class="f-prod" id="ofProd"></div>
+
+      <div class="fields">
+        <label class="full" id="ofVariantWrap"><span id="lbVariant"></span>
+          <select id="ofVariant"></select></label>
+        <label><span id="lbQty"></span>
+          <input id="ofQty" type="number" min="1" max="99" value="1"></label>
+        <label><span></span><input id="ofName" type="text" placeholder=" " autocomplete="name"></label>
+        <label><span></span><input id="ofEmail" type="email" placeholder=" " autocomplete="email"></label>
+        <label><span></span><input id="ofPhone" type="tel" placeholder=" " autocomplete="tel"></label>
+        <label><span></span><input id="ofCompany" type="text" placeholder=" " autocomplete="organization"></label>
+        <label class="full"><span></span><input id="ofStreet" type="text" placeholder=" " autocomplete="street-address"></label>
+        <label><span></span><input id="ofCity" type="text" placeholder=" " autocomplete="address-level2"></label>
+        <label><span></span><input id="ofZip" type="text" placeholder=" " autocomplete="postal-code"></label>
+        <label class="full"><span></span><input id="ofCountry" type="text" placeholder=" " autocomplete="country-name"></label>
+        <label class="full"><span id="lbNote"></span><textarea id="ofNote"></textarea></label>
+      </div>
+
+      <div class="msg" id="ofMsgBox"></div>
+      <div class="f-actions">
+        <button class="btn" type="submit" id="btnSend"></button>
+        <button class="btn ghost" type="button" id="btnCopy"></button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<footer class="ftr">
+  <div class="wrap ftr-in">
+    <div>
+      <h4 id="ftrContact"></h4>
+      <p><strong class="js-company"></strong></p>
+      <ul>
+        <li><a id="ftrMail" href="#"></a></li>
+        <li id="ftrPhone"></li>
+        <li id="ftrWeb"></li>
+      </ul>
+    </div>
+    <div>
+      <h4 id="ftrInfoH"></h4>
+      <p id="ftrInfo"></p>
+    </div>
+    <div>
+      <h4>Jazyk / Jazyk</h4>
+      <ul>
+        <li><a href="./index.html">Slovenčina</a></li>
+        <li><a href="./cz.html">Čeština</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrap ftr-btm">
+    <span id="ftrRights"></span>
+  </div>
+</footer>
+
+<script src="./config.js"></script>
+<script>window.LANG="sk";</script>
+<script src="./data/products.js"></script>
+<script src="./assets/app.js"></script>
+</body>
+</html>
