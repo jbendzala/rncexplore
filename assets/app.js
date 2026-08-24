@@ -411,78 +411,97 @@
   }
 
   /* ---------- štart ---------- */
+  /* --- výber odporúčaných produktov na domovskú stránku --- */
+  function renderFeatured() {
+    var box = el("featured"); if (!box) return;
+    var n = parseInt(box.dataset.count, 10) || 8;
+    /* po jednom z hlavných druhov tovaru, nech je výber pestrý a reprezentatívny */
+    var order = ["hood", "flexible", "rooftent", "foldable", "blanket",
+                 "tonneau", "rv", "controller"];
+    var disc = function (p) { return p.was ? 1 - p.usd / p.was : 0; };
+    var pick = [], used = {};
+    order.forEach(function (cat) {
+      var best = ALL.filter(function (p) {
+        return p.cat === cat && p.img.length && !used[p.id] && (p.w || p.a);
+      }).sort(function (a, b) { return disc(b) - disc(a); })[0];
+      if (best) { pick.push(best); used[best.id] = 1; }
+    });
+    /* ak by niektorá kategória chýbala, doplníme najvýhodnejšími panelmi */
+    if (pick.length < n) {
+      ALL.filter(function (p) { return p.img.length && p.w && !used[p.id]; })
+         .sort(function (a, b) { return disc(b) - disc(a); })
+         .slice(0, n - pick.length)
+         .forEach(function (p) { pick.push(p); used[p.id] = 1; });
+    }
+    box.innerHTML = pick.slice(0, n).map(cardHTML).join("");
+    box.addEventListener("click", function (e) {
+      var t = e.target.closest("[data-act]"); if (!t) return;
+      var id = t.closest(".card").dataset.id;
+      var p = ALL.filter(function (x) { return x.id === id; })[0];
+      if (!p) return;
+      if (t.dataset.act === "order") openOrder(p); else openDetail(p);
+    });
+  }
+
+  /* --- dlaždice kategórií (aj mimo katalógu, ako rozcestník) --- */
+  function renderTilesInto(box, asLinks) {
+    box.innerHTML = META.cats.map(function (c) {
+      if (asLinks) {
+        return '<a class="tile" href="' + esc(box.dataset.href || "produkty.html") + "?cat=" + esc(c.k) + '">' +
+          '<span class="tile-t">' + esc(c[LANG]) + "</span>" +
+          '<span class="tile-n">' + c.n + "</span></a>";
+      }
+      return '<button type="button" class="tile" data-cat="' + esc(c.k) +
+        '" aria-pressed="' + (S.cat === c.k) + '">' +
+        '<span class="tile-t">' + esc(c[LANG]) + "</span>" +
+        '<span class="tile-n">' + c.n + "</span></button>";
+    }).join("");
+  }
+
   function init() {
-    /* texty */
-    el("heroEyebrow").textContent = T.eyebrow;
-    el("tagline").innerHTML = T.taglineHtml;
-    el("catsTitle").textContent = T.catsTitle;
-    el("catsHint").textContent = T.catsHint;
-    el("utilA").textContent = T.utilA;
-    el("utilPhone").textContent = CFG.phone;
-    el("utilPhone").href = "tel:" + String(CFG.phone || "").replace(/\s+/g, "");
-    el("utilMail").textContent = CFG.orderEmail;
-    el("utilMail").href = "mailto:" + CFG.orderEmail;
-    el("ftrLangH").textContent = T.ftrLangH;
-    el("ftrNote").textContent = T.priceNote;
-    el("heroLead").textContent = T.heroLead;
-    el("statA").innerHTML = "<b>" + META.count + "</b><span>" + esc(T.products) + "</span>";
-    el("statB").innerHTML = "<b>" + META.cats.length + "</b><span>" + esc(T.categories) + "</span>";
-    el("statC").innerHTML = "<b>" + META.brands.length + "</b><span>" + esc(T.brands) + "</span>";
+    /* dlaždice ako rozcestník (domovská stránka) */
+    var linkTiles = el("catTiles");
+    if (linkTiles) renderTilesInto(linkTiles, true);
+
+    /* objednávkový formulár je na každej stránke, kde je katalóg alebo výber */
+    if (el("orderForm")) initOrderForm();
+
+    /* odporúčané produkty */
+    renderFeatured();
+
+    /* ďalej už len plný katalóg */
+    if (!el("grid")) return;
+
     el("q").placeholder = T.search;
     el("resetBtn").textContent = T.reset;
+    if (el("statA")) {
+      el("statA").innerHTML = "<b>" + META.count + "</b><span>" + esc(T.products) + "</span>";
+      el("statB").innerHTML = "<b>" + META.cats.length + "</b><span>" + esc(T.categories) + "</span>";
+      el("statC").innerHTML = "<b>" + META.brands.length + "</b><span>" + esc(T.brands) + "</span>";
+    }
+    if (el("tiles")) renderTilesInto(el("tiles"), false);
 
-    renderTiles();
-
-    /* kategórie */
     el("chips").innerHTML = '<button class="chip" data-cat="" aria-pressed="true">' +
       esc(T.allCats) + "<b>" + META.count + "</b></button>" +
       META.cats.map(function (c) {
         return '<button class="chip" data-cat="' + esc(c.k) + '" aria-pressed="false">' +
           esc(c[LANG]) + "<b>" + c.n + "</b></button>"; }).join("");
 
-    /* značky */
     el("brand").innerHTML = '<option value="">' + esc(T.allBrands) + "</option>" +
       META.brands.map(function (b) {
         return '<option value="' + esc(b.k) + '">' + esc(b.k) + " (" + b.n + ")</option>"; }).join("");
 
-    /* triedenie */
     el("sort").innerHTML = [["", T.sortDefault], ["p-", T.sortPriceUp], ["p+", T.sortPriceDown],
       ["w+", T.sortWattDown], ["w-", T.sortWattUp], ["n", T.sortName]]
       .map(function (o) { return '<option value="' + o[0] + '">' + esc(o[1]) + "</option>"; }).join("");
 
-    /* formulár */
-    var F = [["ofName", T.name, 1], ["ofEmail", T.email, 1], ["ofPhone", T.phone, 1],
-             ["ofCompany", T.company, 0], ["ofStreet", T.street, 1], ["ofCity", T.city, 1],
-             ["ofZip", T.zip, 1], ["ofCountry", T.country, 0]];
-    F.forEach(function (f) {
-      var lb = el(f[0]).closest("label");
-      lb.querySelector("span").innerHTML = esc(f[1]) +
-        (f[2] ? ' <em class="req">*</em>' : ' <em style="font-weight:400;color:var(--fg-3)">(' + esc(T.optional) + ")</em>");
-      if (f[2]) el(f[0]).required = true;
-    });
-    el("ofCountry").value = LANG === "cs" ? "Česká republika" : "Slovensko";
-    el("lbVariant").textContent = T.variant;
-    el("lbQty").textContent = T.qty;
-    el("lbNote").textContent = T.msg;
-    el("ofNote").placeholder = T.msgPh;
-    el("orderTitle").textContent = T.orderTitle;
-    el("orderLead").textContent = T.orderLead;
-    el("btnSend").textContent = T.send;
-    el("btnCopy").textContent = T.copy;
+    /* kategória z adresy: produkty.html?cat=hood */
+    var qs = /[?&]cat=([a-z]+)/.exec(location.search);
+    if (qs && META.cats.some(function (c) { return c.k === qs[1]; })) S.cat = qs[1];
+    var qq = /[?&]q=([^&]*)/.exec(location.search);
+    if (qq) { S.q = decodeURIComponent(qq[1].replace(/\+/g, " ")); el("q").value = S.q; }
+    syncChips();
 
-    /* pätička */
-    el("ftrContact").textContent = T.contact;
-    el("ftrInfoH").textContent = T.info;
-    el("ftrInfo").textContent = T.infoText;
-    el("ftrRights").textContent = "© " + new Date().getFullYear() + " " + CFG.company + ". " + T.rights;
-    el("ftrMail").href = "mailto:" + CFG.orderEmail;
-    el("ftrMail").textContent = CFG.orderEmail;
-    el("ftrPhone").textContent = CFG.phone;
-    el("ftrWeb").textContent = CFG.web;
-    [].forEach.call(document.querySelectorAll(".js-company"), function (n) { n.textContent = CFG.company; });
-    document.querySelectorAll('[data-t="theme"]').forEach(function (n) { n.title = T.theme; });
-
-    /* udalosti */
     var deb;
     el("q").addEventListener("input", function (e) {
       clearTimeout(deb); var v = e.target.value;
@@ -491,11 +510,11 @@
     el("chips").addEventListener("click", function (e) {
       var c = e.target.closest(".chip"); if (!c) return;
       S.cat = c.dataset.cat; syncChips(); render(true);
-      window.scrollTo({ top: el("catalog").offsetTop - 130, behavior: "smooth" });
+      window.scrollTo({ top: el("catalog").offsetTop - 90, behavior: "smooth" });
     });
-    el("tiles").addEventListener("click", function (e) {
+    if (el("tiles")) el("tiles").addEventListener("click", function (e) {
       var t = e.target.closest(".tile"); if (!t) return;
-      S.cat = (S.cat === t.dataset.cat) ? "" : t.dataset.cat;   /* druhý klik zruší */
+      S.cat = (S.cat === t.dataset.cat) ? "" : t.dataset.cat;
       syncChips(); render(true);
       window.scrollTo({ top: el("catalog").offsetTop - 90, behavior: "smooth" });
     });
@@ -510,34 +529,46 @@
       if (t.dataset.act === "order") openOrder(p); else openDetail(p);
     });
 
+    render(true);
+  }
+
+  /* --- objednávkový formulár (spoločný pre katalóg aj domovskú stránku) --- */
+  function initOrderForm() {
+    var F = [["ofName", T.name, 1], ["ofEmail", T.email, 1], ["ofPhone", T.phone, 1],
+             ["ofCompany", T.company, 0], ["ofStreet", T.street, 1], ["ofCity", T.city, 1],
+             ["ofZip", T.zip, 1], ["ofCountry", T.country, 0]];
+    F.forEach(function (f) {
+      var lb = el(f[0]).closest("label");
+      lb.querySelector("span").innerHTML = esc(f[1]) +
+        (f[2] ? ' <em class="req">*</em>' : ' <em class="opt">(' + esc(T.optional) + ")</em>");
+      if (f[2]) el(f[0]).required = true;
+    });
+    el("ofCountry").value = LANG === "cs" ? "Česká republika" : "Slovensko";
+    el("lbVariant").textContent = T.variant;
+    el("lbQty").textContent = T.qty;
+    el("lbNote").textContent = T.msg;
+    el("ofNote").placeholder = T.msgPh;
+    el("orderTitle").textContent = T.orderTitle;
+    el("orderLead").textContent = T.orderLead;
+    el("btnSend").textContent = T.send;
+    el("btnCopy").textContent = T.copy;
+
     [].forEach.call(document.querySelectorAll("[data-close]"), function (b) {
       b.addEventListener("click", function () { closeModal(b.dataset.close); });
     });
     [].forEach.call(document.querySelectorAll(".ov"), function (o) {
       o.addEventListener("click", function (e) { if (e.target === o) closeModal(o.id); });
     });
-    document.addEventListener("keydown", function (e) {
-      if (e.key !== "Escape") return;
-      var open = document.querySelector(".ov:not([hidden])");
-      if (open) closeModal(open.id);
-    });
-
+    if (!window.__escBound) {
+      window.__escBound = true;
+      document.addEventListener("keydown", function (e) {
+        if (e.key !== "Escape") return;
+        var open = document.querySelector(".ov:not([hidden])");
+        if (open) closeModal(open.id);
+      });
+    }
     el("orderForm").addEventListener("submit", submitOrder);
     el("btnCopy").addEventListener("click", copyOrder);
-
-    /* svetlý / tmavý režim */
-    var saved = null;
-    try { saved = localStorage.getItem("theme"); } catch (e) {}
-    if (saved) document.documentElement.setAttribute("data-theme", saved);
-    el("themeBtn").addEventListener("click", function () {
-      var cur = document.documentElement.getAttribute("data-theme");
-      if (!cur) cur = matchMedia("(prefers-color-scheme:dark)").matches ? "dark" : "light";
-      var next = cur === "dark" ? "light" : "dark";
-      document.documentElement.setAttribute("data-theme", next);
-      try { localStorage.setItem("theme", next); } catch (e) {}
-    });
-
-    render(true);
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
