@@ -46,30 +46,87 @@ nefunguje — prehliadač zablokuje načítanie dát.)
 
 ## 3. Nasadenie na GitHub Pages
 
+Repozitár: `github.com/jbendzala/rncexplore` · doména: `rncexplore.com`
+(DNS spravuje **Websupport.sk**, registrátor Gransy)
+
+### Krok 1 — repozitár musí byť verejný
+
+GitHub Pages z **privátneho** repozitára funguje len s plateným plánom
+(GitHub Pro). Náš repozitár je teraz privátny, takže najprv:
+
+**Settings → General → Danger Zone → Change visibility → Make public**
+
+Zverejní sa tým celý kód vrátane `config.js` (e-mail a telefón) — tie sú
+aj tak viditeľné na samotnom webe. Ceny a marža v `config.js` budú tiež
+verejné; ak to nechcete, zvoľte radšej GitHub Pro.
+
+### Krok 2 — zapnúť Pages
+
+**Settings → Pages → Build and deployment**
+- Source: `Deploy from a branch`
+- Branch: `main`, priečinok `/ (root)` → **Save**
+
+Do minúty beží na `https://jbendzala.github.io/rncexplore/`.
+Overte, že web funguje, až potom pokračujte doménou.
+
+### Krok 3 — doména v GitHube
+
+**Settings → Pages → Custom domain** → zadajte `www.rncexplore.com` → **Save**
+
+GitHub tým vytvorí v repozitári súbor `CNAME` (nový commit priamo na
+GitHube). Pred ďalším pushom si preto stiahnite zmeny:
+
 ```bash
-git init
-git add .
-git commit -m "Katalóg solárnych panelov"
-git branch -M main
-git remote add origin https://github.com/POUZIVATEL/REPOZITAR.git
-git push -u origin main
+git pull origin main
 ```
 
-V repozitári: **Settings → Pages → Source: Deploy from a branch**,
-branch `main`, folder `/ (root)`. Do minúty beží na
-`https://POUZIVATEL.github.io/REPOZITAR/`.
+### Krok 4 — DNS na Websupport
 
-### Vlastná doména
+V administrácii Websupport: **Domény → rncexplore.com → DNS záznamy**.
 
-1. **Settings → Pages → Custom domain** — zadajte doménu a uložte
-   (vytvorí sa súbor `CNAME`).
-2. U registrátora domény nastavte DNS:
-   - `www` → `CNAME` na `POUZIVATEL.github.io`
-   - apex (`example.sk`) → `A` záznamy na
-     `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`
-3. Po overení zapnite **Enforce HTTPS**.
+> **Najprv zmažte** existujúce záznamy `A` pre `@` aj `www`, ktoré teraz
+> smerujú na `37.9.175.132`. Ak ich necháte, prevádzka sa bude striedavo
+> posielať na starý server a web bude fungovať len občas.
+> Pri `www` nemôže súčasne existovať `A` aj `CNAME`.
 
----
+Potom pridajte:
+
+| Typ | Názov | Hodnota | TTL |
+|---|---|---|---|
+| CNAME | `www` | `jbendzala.github.io.` | 3600 |
+| A | `@` | `185.199.108.153` | 3600 |
+| A | `@` | `185.199.109.153` | 3600 |
+| A | `@` | `185.199.110.153` | 3600 |
+| A | `@` | `185.199.111.153` | 3600 |
+
+Štyri `A` záznamy pre `@` zabezpečia, že `rncexplore.com` bez `www`
+presmeruje na `www.rncexplore.com`. Voliteľne pridajte aj IPv6 (`AAAA`
+pre `@`): `2606:50c0:8000::153`, `2606:50c0:8001::153`,
+`2606:50c0:8002::153`, `2606:50c0:8003::153`.
+
+### Krok 5 — HTTPS
+
+Keď sa DNS rozšíri (spravidla 10–60 minút, výnimočne až 24 h), vráťte sa
+do **Settings → Pages** a zapnite **Enforce HTTPS**. Certifikát vystaví
+GitHub automaticky. Kým sa nevystaví, políčko je neaktívne — počkajte.
+
+### Overenie
+
+```bash
+dig +short www.rncexplore.com     # má vrátiť jbendzala.github.io
+dig +short rncexplore.com         # má vrátiť štyri 185.199.x.153
+curl -sI https://www.rncexplore.com | head -3
+```
+
+### Aktualizácia webu
+
+Odteraz stačí:
+
+```bash
+git add -A && git commit -m "popis zmeny" && git push
+```
+
+Pages nasadí zmenu do minúty.
 
 ## 4. Štruktúra
 
