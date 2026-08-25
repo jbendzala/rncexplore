@@ -7,17 +7,27 @@ import pages_content as c
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+def catalog_counts():
+    """Skutočné počty z data/products.js, aby texty nezostarli."""
+    import json, re
+    src = open(os.path.join(ROOT, "data", "products.js"), encoding="utf-8").read()
+    meta = json.loads(re.search(r"window\.CATALOG_META=(\{.*?\});", src, re.S).group(1))
+    return meta["count"], len(meta["brands"])
+
+N_PRODUCTS, N_BRANDS = catalog_counts()
+c.N_PRODUCTS, c.N_BRANDS = N_PRODUCTS, N_BRANDS
+
 # slug -> (builder, SK titulok, CZ titulok, SK popis, CZ popis, potrebuje katalóg?)
 PAGES = {
  "index": (c.home,
    "Solárne panely pre vozidlá a karavany",
    "Solární panely pro vozidla a karavany",
-   "Katalóg solárnych panelov na kapotu, flexibilných a skladacích panelov, regulátorov a príslušenstva pre vozidlá, karavany a outdoor.",
-   "Katalog solárních panelů na kapotu, flexibilních a skládacích panelů, regulátorů a příslušenství pro vozidla, karavany a outdoor.", True),
+   "Solárne panely tvarované na kapotu vozidla, flexibilné a skladacie panely, panely pre strešné stany a solárne deky.",
+   "Solární panely tvarované na kapotu vozidla, flexibilní a skládací panely, panely pro střešní stany a solární deky.", True),
  "produkty": (c.produkty,
    "Katalóg produktov", "Katalog produktů",
-   "566 solárnych panelov a príslušenstva pre 44 značiek vozidiel. Filtrujte podľa kategórie, značky a výkonu.",
-   "566 solárních panelů a příslušenství pro 44 značek vozidel. Filtrujte podle kategorie, značky a výkonu.", True),
+   f"{N_PRODUCTS} solárnych panelov pre {N_BRANDS} značiek vozidiel. Filtrujte podľa kategórie, značky a výkonu.",
+   f"{N_PRODUCTS} solárních panelů pro {N_BRANDS} značek vozidel. Filtrujte podle kategorie, značky a výkonu.", True),
  "velkoobchod": (c.velkoobchod,
    "Veľkoobchod a partnerský predaj", "Velkoobchod a partnerský prodej",
    "Veľkoobchodné dodávky solárnych panelov pre predajcov, stavitelov obytných vozidiel a autoservisy.",

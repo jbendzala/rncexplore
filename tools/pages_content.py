@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """Obsah jednotlivých stránok v slovenčine a češtine."""
 
+# naplní build.py pred vykreslením stránok
+N_PRODUCTS = 0
+N_BRANDS = 0
+
 def T(sk, cs, lang):
     return sk if lang == "sk" else cs
 
@@ -434,7 +438,7 @@ def o_nas(lang, base):
 
   <h2>{T("Čím sa zaoberáme","Čím se zabýváme",lang)}</h2>
   <p>{T("Špecializujeme sa na solárne panely tvarované na konkrétne modely vozidiel — na kapotu, strechu, kryt korby aj strešný stan. Okrem panelov dodávame regulátory nabíjania, meniče napätia a montážne príslušenstvo.","Specializujeme se na solární panely tvarované na konkrétní modely vozidel — na kapotu, střechu, kryt korby i střešní stan. Kromě panelů dodáváme regulátory nabíjení, měniče napětí a montážní příslušenství.",lang)}</p>
-  <p>{T("Katalóg obsahuje viac než 560 produktov pre 44 značiek vozidiel. Ak vaše vozidlo v katalógu nenájdete, panel vieme vyrobiť na mieru.","Katalog obsahuje více než 560 produktů pro 44 značek vozidel. Pokud své vozidlo v katalogu nenajdete, panel umíme vyrobit na míru.",lang)}</p>
+  <p>{T(f"Katalóg obsahuje {N_PRODUCTS} produktov pre {N_BRANDS} značiek vozidiel. Ak vaše vozidlo v katalógu nenájdete, panel vieme vyrobiť na mieru.",f"Katalog obsahuje {N_PRODUCTS} produktů pro {N_BRANDS} značek vozidel. Pokud své vozidlo v katalogu nenajdete, panel umíme vyrobit na míru.",lang)}</p>
 
   <h2>{T("Ako nakupujete","Jak nakupujete",lang)}</h2>
   <p>{T("Tento web je katalóg, nie e-shop. Vyberiete si produkt, odošlete nezáväznú objednávku a my sa vám ozveme s cenovou ponukou, dostupnosťou a termínom dodania. Až potom sa rozhodujete.","Tento web je katalog, nikoli e-shop. Vyberete si produkt, odešlete nezávaznou objednávku a my se vám ozveme s cenovou nabídkou, dostupností a termínem dodání. Teprve pak se rozhodujete.",lang)}</p>
