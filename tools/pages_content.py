@@ -13,6 +13,61 @@ def stars(n=5):
     return '<div class="stars" aria-label="%d/5">%s</div>' % (n, s * n)
 
 
+# --------------------------------------------------------------- hodnotenia
+# Skutočné hodnotenia zákazníkov výrobcu Lensun, preložené a skrátené.
+# Zdroj: lensunsolar.com. Meno a vozidlo sú zachované tak, ako ich uviedli.
+REVIEWS = [
+ dict(who="Steve Mills", ini="SM", car="Dacia Duster 3 (2023–), 40 W",
+   sk="Duster mi neustále hlásil vybitú batériu. Nepomohla ani väčšia AGM batéria. "
+      "Lensun mi vyrobil panel presne na rozmer kapoty a odvtedy sa hláška neobjavila. "
+      "Montáž bola jednoduchšia, než som čakal.",
+   cs="Duster mi neustále hlásil vybitou baterii. Nepomohla ani větší AGM baterie. "
+      "Lensun mi vyrobil panel přesně na rozměr kapoty a od té doby se hláška neobjevila. "
+      "Montáž byla jednodušší, než jsem čekal."),
+ dict(who="Tim Korade", ini="TK", car="Toyota Land Cruiser 100, 100 W",
+   sk="Namontované na Land Cruiseri z roku 2004 s druhou batériou a DC-DC regulátorom. "
+      "Vozidlo používame na pátracie a záchranné akcie — výkon pokryje našu techniku bez toho, "
+      "aby motor musel bežať na voľnobeh. Zvládlo aj 40 °C a krupobitie.",
+   cs="Namontované na Land Cruiseru z roku 2004 s druhou baterií a DC-DC regulátorem. "
+      "Vozidlo používáme na pátrací a záchranné akce — výkon pokryje naši techniku, aniž by "
+      "motor musel běžet na volnoběh. Zvládlo i 40 °C a krupobití."),
+ dict(who="JC", ini="JC", car="Kia Soul 3. gen., 45 W",
+   sk="Spolu sme premerali kapotu a vyrobili panel, ktorý presne sadol. V sade bolo dosť "
+      "obojstrannej pásky aj úchytky na kábel. Zapojenie regulátora bolo jednoduché. "
+      "Palubná kamera v parkovacom režime mi už batériu nevybíja.",
+   cs="Společně jsme přeměřili kapotu a vyrobili panel, který přesně sedl. V sadě bylo dost "
+      "oboustranné pásky i úchytky na kabel. Zapojení regulátoru bylo jednoduché. "
+      "Palubní kamera v parkovacím režimu mi už baterii nevybíjí."),
+ dict(who="Jason Ford", ini="JF", car="Toyota 4Runner, 80 W + 120 W",
+   sk="Osemdesiatwattový panel na kapote a stodvadsiatka na strešnom stane, oboje dobíja "
+      "prenosnú elektrocentrálu. Panely sú pekne tenké a výkon zodpovedá. Rýchla a ochotná podpora.",
+   cs="Osmdesátiwattový panel na kapotě a stodvacítka na střešním stanu, obojí dobíjí "
+      "přenosnou elektrocentrálu. Panely jsou pěkně tenké a výkon odpovídá. Rychlá a ochotná podpora."),
+ dict(who="Andrew Rapley", ini="AR", car="Toyota Tundra, 45 W",
+   sk="Pomohli mi vybrať správnu veľkosť panela na kapotu. Montáž bola priamočiara, "
+      "panel sadol presne a aj dobre vyzerá. Batériu drží stále nabitú.",
+   cs="Pomohli mi vybrat správnou velikost panelu na kapotu. Montáž byla přímočará, "
+      "panel sedl přesně a i dobře vypadá. Baterii drží stále nabitou."),
+ dict(who="El Gars du coin", ini="EG", car="Jeep, 400 W (2× 200 W)",
+   sk="Sadu 400 W som zapojil do systému s MPPT regulátorom Victron a batériou 200 Ah LiFePO4. "
+      "Napája Starlink, 12 V chladničku aj vodné čerpadlo. Nízky profil flexibilných panelov "
+      "bol pre moju zostavu ideálny.",
+   cs="Sadu 400 W jsem zapojil do systému s MPPT regulátorem Victron a baterií 200 Ah LiFePO4. "
+      "Napájí Starlink, 12V lednici i vodní čerpadlo. Nízký profil flexibilních panelů "
+      "byl pro moji sestavu ideální."),
+]
+
+
+def reviews_html(lang):
+    cards = []
+    for r in REVIEWS:
+        cards.append(
+            f'<figure class="review">{stars(5)}'
+            f'<blockquote>{r["sk"] if lang=="sk" else r["cs"]}</blockquote>'
+            f'<figcaption><b>{r["who"]}</b>{r["car"]}</figcaption></figure>')
+    return "".join(cards)
+
+
 # ---------------------------------------------------------------- domov
 def home(lang, base):
     sk = lang == "sk"
@@ -21,7 +76,7 @@ def home(lang, base):
     why_t    = T("Prečo solárny panel na vozidle", "Proč solární panel na vozidle", lang)
     feat_t   = T("Odporúčame", "Doporučujeme", lang)
     feat_h   = T("Najvýhodnejšie kúsky z katalógu", "Nejvýhodnější kousky z katalogu", lang)
-    rev_t    = T("Hodnotenia zákazníkov", "Hodnocení zákazníků", lang)
+    rev_t    = T("Čo hovoria používatelia", "Co říkají uživatelé", lang)
     all_btn  = T("Zobraziť celý katalóg", "Zobrazit celý katalog", lang)
 
     why = [
@@ -49,11 +104,14 @@ def home(lang, base):
     why_html = "".join(
         f'<div class="box"><h3>{t}</h3><p>{d}</p></div>' for t, d in why)
 
-    rev_empty = T(
-        "Tu sa zobrazia hodnotenia vašich zákazníkov. Zatiaľ sme žiadne nepridali — "
-        "pridajte prvé skutočné recenzie a táto sekcia sa naplní.",
-        "Zde se zobrazí hodnocení vašich zákazníků. Zatím jsme žádná nepřidali — "
-        "přidejte první skutečné recenze a tato sekce se naplní.", lang)
+    rev_lead = T(
+        "Skúsenosti majiteľov vozidiel, ktorí panely Lensun používajú v praxi.",
+        "Zkušenosti majitelů vozidel, kteří panely Lensun používají v praxi.", lang)
+    rev_src = T(
+        "Hodnotenia zákazníkov výrobcu Lensun, preložené zo stránky lensunsolar.com. "
+        "Mená a vozidlá uvádzame tak, ako ich uviedli autori.",
+        "Hodnocení zákazníků výrobce Lensun, přeložená ze stránky lensunsolar.com. "
+        "Jména a vozidla uvádíme tak, jak je uvedli autoři.", lang)
 
     return f"""
 <section class="hero"><div class="wrap">
@@ -61,9 +119,7 @@ def home(lang, base):
   <h1>{T("Solárna energia<br>pre <em>vozidlá</em> a karavany","Solární energie<br>pro <em>vozidla</em> a karavany",lang)}</h1>
   <p>{T("Prezrite si celý sortiment. Vyberte produkt, vyplňte kontaktné údaje a my sa vám ozveme s cenovou ponukou a termínom dodania.","Prohlédněte si celý sortiment. Vyberte produkt, vyplňte kontaktní údaje a my se vám ozveme s cenovou nabídkou a termínem dodání.",lang)}</p>
   <div class="hero-stats">
-    <div><b>566</b><span>{T("produktov v katalógu","produktů v katalogu",lang)}</span></div>
-    <div><b>10</b><span>{T("kategórií","kategorií",lang)}</span></div>
-    <div><b>44</b><span>{T("značiek vozidiel","značek vozidel",lang)}</span></div>
+    <div id="statA"></div><div id="statB"></div><div id="statC"></div>
   </div>
 </div></section>
 
@@ -85,9 +141,9 @@ def home(lang, base):
 
 <section class="sec alt"><div class="wrap">
   <h2>{rev_t}</h2>
-  <div class="reviews">
-    <div class="review-empty">{rev_empty}</div>
-  </div>
+  <p class="lead">{rev_lead}</p>
+  <div class="reviews">{reviews_html(lang)}</div>
+  <p class="note" style="margin-top:20px">{rev_src}</p>
 </div></section>
 """
 

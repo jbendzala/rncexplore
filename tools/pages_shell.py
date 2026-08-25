@@ -96,8 +96,7 @@ def header(lang, base, slug, page=""):
 
 <header class="hdr"><div class="wrap hdr-in">
   <a class="brand" href="{page}index.html">
-    <span class="brand-mark" aria-hidden="true">{LOGO_SVG}</span>
-    <span class="js-company"></span>
+    <span class="brand-logo js-logo" role="img"></span>
   </a>
   <span class="hdr-sp"></span>
   <ul class="nav" id="nav">{nav}</ul>

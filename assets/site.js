@@ -27,6 +27,8 @@
 
   /* --- údaje firmy z config.js --- */
   fill(".js-company", function (n) { n.textContent = CFG.company || ""; });
+  /* logo nesie názov firmy ako prístupný popis */
+  fill(".js-logo", function (n) { n.setAttribute("aria-label", CFG.company || ""); });
   fill(".js-phone", function (n) {
     n.textContent = CFG.phone || "";
     if (n.tagName === "A") n.href = "tel:" + String(CFG.phone || "").replace(/\s+/g, "");

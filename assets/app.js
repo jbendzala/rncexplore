@@ -469,16 +469,18 @@
     /* odporúčané produkty */
     renderFeatured();
 
-    /* ďalej už len plný katalóg */
-    if (!el("grid")) return;
-
-    el("q").placeholder = T.search;
-    el("resetBtn").textContent = T.reset;
+    /* štatistiky v hero pruhu (domovská stránka aj katalóg) */
     if (el("statA")) {
       el("statA").innerHTML = "<b>" + META.count + "</b><span>" + esc(T.products) + "</span>";
       el("statB").innerHTML = "<b>" + META.cats.length + "</b><span>" + esc(T.categories) + "</span>";
       el("statC").innerHTML = "<b>" + META.brands.length + "</b><span>" + esc(T.brands) + "</span>";
     }
+
+    /* ďalej už len plný katalóg */
+    if (!el("grid")) return;
+
+    el("q").placeholder = T.search;
+    el("resetBtn").textContent = T.reset;
     if (el("tiles")) renderTilesInto(el("tiles"), false);
 
     el("chips").innerHTML = '<button class="chip" data-cat="" aria-pressed="true">' +

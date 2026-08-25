@@ -85,11 +85,17 @@ h1,h2,h3,h4{margin:0;font-family:var(--f-display);line-height:1.08;
 .hdr{position:sticky;top:0;z-index:50;background:var(--paper);
   border-bottom:1px solid var(--line)}
 .hdr-in{display:flex;align-items:center;gap:22px;height:76px}
-.brand{display:flex;align-items:center;gap:11px;font-family:var(--f-display);
-  font-weight:800;font-size:18px;letter-spacing:-.02em;text-transform:uppercase;flex:0 0 auto}
+.brand{display:flex;align-items:center;gap:11px;flex:0 0 auto}
 .brand-mark{width:34px;height:34px;flex:0 0 auto;background:var(--signal);
   display:grid;place-items:center}
 .brand-mark svg{width:19px;height:19px}
+/* Logo je biele SVG. Namiesto prefarbovania súboru ho použijeme ako masku,
+   takže sa samo prispôsobí svetlému aj tmavému režimu. */
+.brand-logo{display:block;width:150px;height:46px;flex:0 0 auto;background-color:var(--ink);
+  -webkit-mask:url("rnc_explore_transparent.svg") left center/contain no-repeat;
+  mask:url("rnc_explore_transparent.svg") left center/contain no-repeat}
+/* na tmavých pruhoch (pätička) sa použije svetlá varianta */
+.ftr .brand-logo{background-color:var(--band-ink)}
 .hdr-sp{flex:1}
 .search{position:relative;flex:1 1 300px;max-width:460px}
 .search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);
