@@ -286,11 +286,9 @@ def _i(pair, lang):
     return pair[0] if lang == "sk" else pair[1]
 
 
-def blog_list(lang, base):
-    """Prehľad všetkých článkov."""
-    cards = []
-    for p in POSTS:
-        cards.append(
+def _card(p, lang, base):
+    """Jedna karta článku — používa ju prehľad aj domovská stránka."""
+    return (
             f'<a class="post" href="{base}blog/{p["slug"]}.html">'
             f'<span class="post-img">'
             f'<img loading="lazy" decoding="async" src="{p["hero"]}?width=760" alt="">'
@@ -304,10 +302,37 @@ def blog_list(lang, base):
             f'<span class="post-lead">{_i(p["lead"], lang)}</span>'
             f'<time datetime="{p["date"]}">{p["date"]}</time>'
             f'</span></a>')
+
+
+def newest(n=None):
+    """Články od najnovšieho po najstarší."""
+    out = sorted(POSTS, key=lambda x: x["date"], reverse=True)
+    return out[:n] if n else out
+
+
+def blog_list(lang, base):
+    """Prehľad všetkých článkov."""
+    cards = "".join(_card(p, lang, base) for p in newest())
     return f'''
 <section class="sec"><div class="wrap">
   <p class="lead">{T("Skúsenosti z montáže, technika a praktické rady k solárnym panelom na vozidlách.","Zkušenosti z montáže, technika a praktické rady k solárním panelům na vozidlech.",lang)}</p>
-  <div class="posts">{"".join(cards)}</div>
+  <div class="posts">{cards}</div>
+</div></section>
+'''
+
+
+def blog_teaser(lang, base, n=3):
+    """Najnovšie články na domovskej stránke."""
+    cards = "".join(_card(p, lang, base) for p in newest(n))
+    return f'''
+<section class="sec"><div class="wrap">
+  <div class="sec-head">
+    <h2>{T("Z blogu","Z blogu",lang)}</h2>
+    <span class="eyebrow">{T("Skúsenosti a technika","Zkušenosti a technika",lang)}</span>
+  </div>
+  <div class="posts three">{cards}</div>
+  <p style="margin-top:26px"><a class="btn ghost" href="{base}blog.html">
+    {T("Všetky články","Všechny články",lang)}</a></p>
 </div></section>
 '''
 

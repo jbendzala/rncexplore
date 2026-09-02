@@ -550,6 +550,10 @@ a.tile:hover{text-decoration:none}
    ========================================================================== */
 .posts{display:grid;gap:16px;margin-top:26px;
   grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+/* na domovskej stránke sú tri články — nech vyplnia celú šírku */
+.posts.three{grid-template-columns:repeat(3,1fr)}
+@media (max-width:900px){.posts.three{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:620px){.posts.three{grid-template-columns:1fr}}
 .post{display:flex;flex-direction:column;background:var(--paper);
   border:1px solid var(--line);overflow:hidden;transition:border-color .14s,box-shadow .14s}
 .post:hover{border-color:var(--ink);box-shadow:var(--shadow);text-decoration:none}

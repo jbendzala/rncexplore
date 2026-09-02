@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """Obsah jednotlivých stránok v slovenčine a češtine."""
 
+import blog_content as _blog
+
 # naplní build.py pred vykreslením stránok
 N_PRODUCTS = 0
 N_BRANDS = 0
@@ -151,6 +153,7 @@ def home(lang, base):
   <div class="reviews">{reviews_html(lang)}</div>
   <p class="note" style="margin-top:20px">{rev_src}</p>
 </div></section>
+{_blog.blog_teaser(lang, base)}
 """
 
 
