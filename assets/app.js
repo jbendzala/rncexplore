@@ -480,14 +480,35 @@
     "Mercedes-Benz": "https://lensunsolar.com/cdn/shop/files/Mercedes_Benz_535x.png",
     "Jeep":          "https://lensunsolar.com/cdn/shop/files/Jeep_535x.jpg"
   };
+  /* logá uložené u nás — doplňte sem ďalšie súbory z priečinka assets/ */
+  var BRAND_LOGO_LOCAL = {
+    "Isuzu":      "Isuzu-logo.png",
+    "Dacia":      "Dacia-logo.png",
+    "Suzuki":     "Suzuki-Logo.wine.png",
+    "Fiat":       "Fiat_logo.svg.webp",
+    "Volkswagen": "Volkswagen_logo.png",
+    "Ineos":      "INEOS_logo.svg.webp"
+  };
+  /* cesta k priečinku assets/ sa líši pre /cz/, odvodíme ju zo štýlov */
+  function assetBase() {
+    var l = document.querySelector('link[rel="stylesheet"][href*="assets/styles.css"]');
+    return l ? l.getAttribute("href").replace(/styles\.css.*$/, "") : "assets/";
+  }
+  function brandLogo(name) {
+    if (BRAND_LOGO_LOCAL[name]) return assetBase() + BRAND_LOGO_LOCAL[name];
+    return BRAND_LOGO[name] || "";
+  }
 
   function renderBrandGrid() {
     var box = el("brandGrid"); if (!box) return;
     var href = box.dataset.href || "produkty.html";
     box.innerHTML = META.brands.map(function (b) {
-      var logo = BRAND_LOGO[b.k];
+      var logo = brandLogo(b.k);
+      /* vzdialené logá majú v obrázku veľa bieleho okraja, vlastné sú orezané
+         na doraz — preto im dávame odlišnú maximálnu veľkosť */
+      var cls = BRAND_LOGO_LOCAL[b.k] ? "logo-tight" : "logo-padded";
       var inner = logo
-        ? '<img loading="lazy" decoding="async" src="' + esc(logo) + '" alt="' + esc(b.k) + '">'
+        ? '<img class="' + cls + '" loading="lazy" decoding="async" src="' + esc(logo) + '" alt="' + esc(b.k) + '">'
         /* pre značky bez loga použijeme čistý nápis v rovnakej dlaždici */
         : '<span class="brand-word">' + esc(b.k) + "</span>";
       return '<a class="brand-cell" href="' + esc(href) + "?brand=" +

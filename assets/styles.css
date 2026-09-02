@@ -506,8 +506,11 @@ a.tile:hover{text-decoration:none}
   padding:18px 16px;background:var(--paper);border:1px solid var(--line);
   transition:border-color .14s,box-shadow .14s}
 .brand-cell:hover{border-color:var(--ink);box-shadow:var(--shadow);text-decoration:none}
-.brand-cell img{max-width:132px;max-height:56px;width:auto;height:auto;object-fit:contain;
-  mix-blend-mode:multiply}
+.brand-cell img{width:auto;height:auto;object-fit:contain;mix-blend-mode:multiply}
+/* obrázky s bielym okrajom môžu byť väčšie, orezané musia byť menšie,
+   aby všetky logá pôsobili opticky rovnako veľké */
+.brand-cell img.logo-padded{max-width:190px;max-height:84px}
+.brand-cell img.logo-tight{max-width:124px;max-height:44px}
 /* v tmavom režime sú logá na bielom podklade, preto im dáme svetlú dlaždicu */
 :root[data-theme="dark"] .brand-cell img,
 :root:not([data-theme="light"]) .brand-cell img{mix-blend-mode:normal;
