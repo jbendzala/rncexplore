@@ -443,6 +443,47 @@
     });
   }
 
+  /* --- mozaika kategórií na domovskej stránke --- */
+  var LS = "https://lensunsolar.com/cdn/shop/files/";
+  var CAT_PHOTO = {
+    hood:     LS + "LensunSolar-Hood-Solar-Panel-for-Toyota-4Runner.jpg?width=1200",
+    flexible: LS + "LensunSolar-Flexible-Solar-Panel-Installed-on-the-Car-Roof.jpg?width=800",
+    blanket:  LS + "LensunSolar-400W-Solar-Blanket.jpg?width=800",
+    foldable: LS + "Lensun-200W-Foldable-Solar-Panel.jpg?width=800",
+    rooftent: "https://cdn.shopify.com/s/files/1/0595/2156/4737/files/" +
+              "lensun-400w-200w-flexible-solar-panel-roof-tent.jpg?width=800"
+  };
+  /* ak kategória nemá vlastnú fotografiu, vezmeme prvý produkt z nej */
+  function catPhoto(k) {
+    if (CAT_PHOTO[k]) return CAT_PHOTO[k];
+    var p = ALL.filter(function (x) { return x.cat === k && x.img.length; })[0];
+    return p ? imgUrl(p.img[0], 800) : "";
+  }
+
+  function renderMosaic() {
+    var box = el("mosaic"); if (!box) return;
+    var href = box.dataset.href || "produkty.html";
+    box.innerHTML = META.cats.map(function (c) {
+      var src = catPhoto(c.k);
+      return '<a class="mos" href="' + esc(href) + "?cat=" + esc(c.k) + '">' +
+        (src ? '<img loading="lazy" decoding="async" src="' + esc(src) +
+               '" alt="' + esc(c[LANG]) + '">' : "") +
+        '<span class="mos-t"><b>' + esc(c[LANG]) + "</b><span>" + c.n + "</span></span></a>";
+    }).join("");
+  }
+
+  /* --- pruh značiek vozidiel --- */
+  function renderBrandBar() {
+    var box = el("brandBar"); if (!box) return;
+    var href = box.dataset.href || "produkty.html";
+    box.innerHTML =
+      '<a class="all" href="' + esc(href) + '">' + esc(T.allBrands) + "</a>" +
+      META.brands.map(function (b) {
+        return '<a href="' + esc(href) + "?brand=" + encodeURIComponent(b.k) + '">' +
+          esc(b.k) + " <b>" + b.n + "</b></a>";
+      }).join("");
+  }
+
   /* --- dlaždice kategórií (aj mimo katalógu, ako rozcestník) --- */
   function renderTilesInto(box, asLinks) {
     box.innerHTML = META.cats.map(function (c) {
@@ -459,9 +500,11 @@
   }
 
   function init() {
-    /* dlaždice ako rozcestník (domovská stránka) */
+    /* rozcestníky na domovskej stránke */
     var linkTiles = el("catTiles");
     if (linkTiles) renderTilesInto(linkTiles, true);
+    renderMosaic();
+    renderBrandBar();
 
     /* objednávkový formulár je na každej stránke, kde je katalóg alebo výber */
     if (el("orderForm")) initOrderForm();
@@ -502,6 +545,13 @@
     if (qs && META.cats.some(function (c) { return c.k === qs[1]; })) S.cat = qs[1];
     var qq = /[?&]q=([^&]*)/.exec(location.search);
     if (qq) { S.q = decodeURIComponent(qq[1].replace(/\+/g, " ")); el("q").value = S.q; }
+    var qb = /[?&]brand=([^&]*)/.exec(location.search);
+    if (qb) {
+      var want = decodeURIComponent(qb[1].replace(/\+/g, " "));
+      if (META.brands.some(function (b) { return b.k === want; })) {
+        S.brand = want; el("brand").value = want;
+      }
+    }
     syncChips();
 
     var deb;

@@ -21,6 +21,8 @@
   --shadow:0 1px 2px rgba(20,19,16,.05);
   --shadow-lg:0 24px 60px rgba(20,19,16,.28);
   --max:1320px;
+  /* fotografia v hlavičke domovskej stránky — sem stačí vložiť inú adresu */
+  --hero-photo:url("https://lensunsolar.com/cdn/shop/files/lensunsolar-hood-solar-panel-2_1780x.jpg?v=1744787362");
   --f-display:"Montserrat",system-ui,-apple-system,"Segoe UI",sans-serif;
   --f-body:"Barlow",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
 }
@@ -115,8 +117,15 @@ h1,h2,h3,h4{margin:0;font-family:var(--f-display);line-height:1.08;
 .icon-btn svg{width:17px;height:17px}
 
 /* ---------- hero: tmavy pas ---------- */
-.hero{background:var(--hero-bg);color:var(--hero-ink);padding:74px 0 66px;
-  border-bottom:1px solid var(--hero-line)}
+.hero{position:relative;isolation:isolate;background:var(--hero-bg);color:var(--hero-ink);
+  padding:104px 0 92px;border-bottom:1px solid var(--hero-line);overflow:hidden}
+/* fotografia na pozadí + tmavý prechod, aby text zostal čitateľný */
+.hero-img::before{content:"";position:absolute;inset:0;z-index:-2;
+  background-image:var(--hero-photo);background-size:cover;background-position:center 62%}
+.hero-img::after{content:"";position:absolute;inset:0;z-index:-1;
+  background:linear-gradient(100deg,rgba(13,12,10,.94) 0%,rgba(13,12,10,.86) 38%,
+                             rgba(13,12,10,.55) 68%,rgba(13,12,10,.35) 100%)}
+.hero .wrap{position:relative}
 .hero h1{font-size:clamp(34px,6vw,66px);font-weight:800;text-transform:uppercase;
   letter-spacing:-.03em;max-width:15ch;margin:16px 0 0}
 .hero h1 em{font-style:normal;color:var(--signal)}
@@ -462,3 +471,53 @@ a.tile:hover{text-decoration:none}
 /* miesta, kde treba doplniť skutočné firemné údaje — po doplnení triedu zmažte */
 .todo{background:var(--signal);color:var(--signal-ink);padding:1px 7px;font-weight:700;
   font-size:.92em;font-family:var(--f-display)}
+
+
+/* ==========================================================================
+   Mozaika kategórií na domovskej stránke
+   ========================================================================== */
+.mosaic{display:grid;gap:11px;margin-top:26px;
+  grid-template-columns:repeat(4,1fr);grid-auto-rows:186px}
+.mos{position:relative;display:block;overflow:hidden;background:var(--bone-2);
+  border:1px solid var(--line)}
+.mos:first-child{grid-column:span 2;grid-row:span 2}
+.mos img{width:100%;height:100%;object-fit:cover;transition:transform .45s ease}
+.mos:hover img{transform:scale(1.05)}
+.mos::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(13,12,10,.82) 0%,rgba(13,12,10,.28) 46%,rgba(13,12,10,0) 72%)}
+.mos-t{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:18px 18px 16px;
+  display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.mos-t b{font-family:var(--f-display);font-weight:700;font-size:16px;color:#f3f1ec;
+  letter-spacing:-.01em;text-shadow:0 1px 12px rgba(0,0,0,.5)}
+.mos:first-child .mos-t b{font-size:22px;text-transform:uppercase;font-weight:800}
+.mos-t span{font-family:var(--f-display);font-weight:700;font-size:12.5px;
+  color:var(--signal);flex:0 0 auto}
+.mos:hover{border-color:var(--ink)}
+
+/* ---------- pruh značiek vozidiel ---------- */
+.brandbar{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.brandbar a{display:inline-flex;align-items:baseline;gap:7px;padding:9px 16px;
+  border:1px solid var(--line-2);border-radius:99px;background:var(--paper);
+  font-family:var(--f-display);font-size:13.5px;font-weight:600;color:var(--ink-2)}
+.brandbar a:hover{background:var(--ink);border-color:var(--ink);color:var(--bone);
+  text-decoration:none}
+.brandbar a b{font-weight:700;font-size:12px;opacity:.6}
+.brandbar a:hover b{opacity:.75}
+.brandbar .all{background:var(--ink);border-color:var(--ink);color:var(--bone)}
+.brandbar .all:hover{background:var(--signal);border-color:var(--signal);color:var(--signal-ink)}
+
+/* ---------- avatar pri hodnotení ---------- */
+.review-head{display:flex;align-items:center;gap:12px}
+.avatar{width:44px;height:44px;flex:0 0 auto;border-radius:50%;display:grid;
+  place-items:center;background:var(--ink);color:var(--bone);
+  font-family:var(--f-display);font-weight:700;font-size:14.5px;letter-spacing:.02em}
+.review-who b{display:block;font-family:var(--f-display);font-size:14.5px;
+  font-weight:700;color:var(--ink);line-height:1.25}
+.review-who span{font-size:12.5px;color:var(--ink-3)}
+.review figcaption{margin-top:auto;font-size:12.5px;color:var(--ink-3)}
+
+@media (max-width:900px){
+  .mosaic{grid-template-columns:repeat(2,1fr);grid-auto-rows:150px}
+  .mos:first-child{grid-column:span 2;grid-row:span 1}
+  .hero{padding:64px 0 56px}
+}

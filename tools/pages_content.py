@@ -66,9 +66,13 @@ def reviews_html(lang):
     cards = []
     for r in REVIEWS:
         cards.append(
-            f'<figure class="review">{stars(5)}'
+            f'<figure class="review">'
+            f'<div class="review-head">'
+            f'<span class="avatar" aria-hidden="true">{r["ini"]}</span>'
+            f'<span class="review-who"><b>{r["who"]}</b><span>{r["car"]}</span></span>'
+            f'</div>{stars(5)}'
             f'<blockquote>{r["sk"] if lang=="sk" else r["cs"]}</blockquote>'
-            f'<figcaption><b>{r["who"]}</b>{r["car"]}</figcaption></figure>')
+            f'</figure>')
     return "".join(cards)
 
 
@@ -118,18 +122,15 @@ def home(lang, base):
         "Jména a vozidla uvádíme tak, jak je uvedli autoři.", lang)
 
     return f"""
-<section class="hero"><div class="wrap">
+<section class="hero hero-img"><div class="wrap">
   <p class="eyebrow">{T("Katalóg produktov","Katalog produktů",lang)}</p>
   <h1>{T("Solárna energia<br>pre <em>vozidlá</em> a karavany","Solární energie<br>pro <em>vozidla</em> a karavany",lang)}</h1>
   <p>{T("Prezrite si celý sortiment. Vyberte produkt, vyplňte kontaktné údaje a my sa vám ozveme s cenovou ponukou a termínom dodania.","Prohlédněte si celý sortiment. Vyberte produkt, vyplňte kontaktní údaje a my se vám ozveme s cenovou nabídkou a termínem dodání.",lang)}</p>
-  <div class="hero-stats">
-    <div id="statA"></div><div id="statB"></div><div id="statC"></div>
-  </div>
 </div></section>
 
 <section class="sec"><div class="wrap">
   <div class="sec-head"><h2>{cats_t}</h2><span class="eyebrow">{cats_h}</span></div>
-  <div class="tiles" id="catTiles" data-href="{base}produkty.html"></div>
+  <div class="mosaic" id="mosaic" data-href="{base}produkty.html"></div>
 </div></section>
 
 <section class="sec alt"><div class="wrap">
@@ -139,7 +140,8 @@ def home(lang, base):
 
 <section class="sec"><div class="wrap">
   <div class="sec-head"><h2>{feat_t}</h2><span class="eyebrow">{feat_h}</span></div>
-  <div class="feat" id="featured" data-count="8"></div>
+  <div class="feat" id="featured" data-count="4"></div>
+  <div class="brandbar" id="brandBar" data-href="{base}produkty.html"></div>
   <p style="margin-top:26px"><a class="btn" href="{base}produkty.html">{all_btn}</a></p>
 </div></section>
 
