@@ -393,8 +393,13 @@ textarea{resize:vertical;min-height:80px}
 
 /* ---------- hodnotenia zákazníkov ---------- */
 .reviews{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));margin-top:26px}
-.review{background:var(--paper);border:1px solid var(--line);padding:24px;
-  display:flex;flex-direction:column;gap:12px}
+.review{background:var(--paper);border:1px solid var(--line);
+  display:flex;flex-direction:column;overflow:hidden}
+.review-photo{display:block;aspect-ratio:16/10;overflow:hidden;background:var(--bone-2);
+  border-bottom:1px solid var(--line)}
+.review-photo img{width:100%;height:100%;object-fit:cover;transition:transform .45s ease}
+.review-photo:hover img{transform:scale(1.04)}
+.review-body{padding:22px 24px 24px;display:flex;flex-direction:column;gap:12px;flex:1}
 .stars{display:flex;gap:3px;color:var(--signal)}
 .stars svg{width:16px;height:16px;fill:currentColor}
 .review blockquote{margin:0;font-size:15px;color:var(--ink-2);line-height:1.6}
@@ -494,17 +499,24 @@ a.tile:hover{text-decoration:none}
   color:var(--signal);flex:0 0 auto}
 .mos:hover{border-color:var(--ink)}
 
-/* ---------- pruh značiek vozidiel ---------- */
-.brandbar{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
-.brandbar a{display:inline-flex;align-items:baseline;gap:7px;padding:9px 16px;
-  border:1px solid var(--line-2);border-radius:99px;background:var(--paper);
-  font-family:var(--f-display);font-size:13.5px;font-weight:600;color:var(--ink-2)}
-.brandbar a:hover{background:var(--ink);border-color:var(--ink);color:var(--bone);
-  text-decoration:none}
-.brandbar a b{font-weight:700;font-size:12px;opacity:.6}
-.brandbar a:hover b{opacity:.75}
-.brandbar .all{background:var(--ink);border-color:var(--ink);color:var(--bone)}
-.brandbar .all:hover{background:var(--signal);border-color:var(--signal);color:var(--signal-ink)}
+/* ---------- mriežka značiek vozidiel (4 x 3) ---------- */
+.brand-grid{display:grid;gap:11px;margin-top:26px;
+  grid-template-columns:repeat(4,1fr)}
+.brand-cell{position:relative;display:grid;place-items:center;min-height:112px;
+  padding:18px 16px;background:var(--paper);border:1px solid var(--line);
+  transition:border-color .14s,box-shadow .14s}
+.brand-cell:hover{border-color:var(--ink);box-shadow:var(--shadow);text-decoration:none}
+.brand-cell img{max-width:132px;max-height:56px;width:auto;height:auto;object-fit:contain;
+  mix-blend-mode:multiply}
+/* v tmavom režime sú logá na bielom podklade, preto im dáme svetlú dlaždicu */
+:root[data-theme="dark"] .brand-cell img,
+:root:not([data-theme="light"]) .brand-cell img{mix-blend-mode:normal;
+  background:#fff;padding:8px 10px;border-radius:3px}
+.brand-word{font-family:var(--f-display);font-weight:800;font-size:19px;
+  letter-spacing:-.02em;color:var(--ink);text-transform:uppercase;text-align:center}
+.brand-n{position:absolute;top:9px;right:11px;font-family:var(--f-display);
+  font-size:11.5px;font-weight:700;color:var(--ink-3)}
+.brand-cell:hover .brand-n{color:var(--brass)}
 
 /* ---------- avatar pri hodnotení ---------- */
 .review-head{display:flex;align-items:center;gap:12px}
@@ -520,4 +532,12 @@ a.tile:hover{text-decoration:none}
   .mosaic{grid-template-columns:repeat(2,1fr);grid-auto-rows:150px}
   .mos:first-child{grid-column:span 2;grid-row:span 1}
   .hero{padding:64px 0 56px}
+}
+
+@media (max-width:900px){
+  .brand-grid{grid-template-columns:repeat(3,1fr)}
+}
+@media (max-width:560px){
+  .brand-grid{grid-template-columns:repeat(2,1fr)}
+  .brand-cell{min-height:92px}
 }

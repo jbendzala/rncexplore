@@ -472,16 +472,28 @@
     }).join("");
   }
 
-  /* --- pruh značiek vozidiel --- */
-  function renderBrandBar() {
-    var box = el("brandBar"); if (!box) return;
+  /* --- mriežka značiek vozidiel s logami --- */
+  var BRAND_LOGO = {
+    "Toyota":        "https://lensunsolar.com/cdn/shop/files/Toyota_535x.jpg",
+    "Ford":          "https://lensunsolar.com/cdn/shop/files/Ford_535x.jpg",
+    "Land Rover":    "https://lensunsolar.com/cdn/shop/files/LandRover_535x.jpg",
+    "Mercedes-Benz": "https://lensunsolar.com/cdn/shop/files/Mercedes_Benz_535x.png",
+    "Jeep":          "https://lensunsolar.com/cdn/shop/files/Jeep_535x.jpg"
+  };
+
+  function renderBrandGrid() {
+    var box = el("brandGrid"); if (!box) return;
     var href = box.dataset.href || "produkty.html";
-    box.innerHTML =
-      '<a class="all" href="' + esc(href) + '">' + esc(T.allBrands) + "</a>" +
-      META.brands.map(function (b) {
-        return '<a href="' + esc(href) + "?brand=" + encodeURIComponent(b.k) + '">' +
-          esc(b.k) + " <b>" + b.n + "</b></a>";
-      }).join("");
+    box.innerHTML = META.brands.map(function (b) {
+      var logo = BRAND_LOGO[b.k];
+      var inner = logo
+        ? '<img loading="lazy" decoding="async" src="' + esc(logo) + '" alt="' + esc(b.k) + '">'
+        /* pre značky bez loga použijeme čistý nápis v rovnakej dlaždici */
+        : '<span class="brand-word">' + esc(b.k) + "</span>";
+      return '<a class="brand-cell" href="' + esc(href) + "?brand=" +
+        encodeURIComponent(b.k) + '" title="' + esc(b.k) + '">' +
+        inner + '<span class="brand-n">' + b.n + "</span></a>";
+    }).join("");
   }
 
   /* --- dlaždice kategórií (aj mimo katalógu, ako rozcestník) --- */
@@ -504,7 +516,7 @@
     var linkTiles = el("catTiles");
     if (linkTiles) renderTilesInto(linkTiles, true);
     renderMosaic();
-    renderBrandBar();
+    renderBrandGrid();
 
     /* objednávkový formulár je na každej stránke, kde je katalóg alebo výber */
     if (el("orderForm")) initOrderForm();

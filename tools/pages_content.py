@@ -22,6 +22,8 @@ def stars(n=5):
 # Zdroj: lensunsolar.com. Meno a vozidlo sú zachované tak, ako ich uviedli.
 REVIEWS = [
  dict(who="Steve Mills", ini="SM", car="Dacia Duster 3 (2023–), 40 W",
+   pid="dacia-duster-lensun-40w-hood-bonnet-solar-panel",
+   img="https://cdn.shopify.com/s/files/1/0595/2156/4737/files/Dacia-Duster-_Lensun-40W-Hood-Bonnet-Solar-Panel.jpg",
    sk="Duster mi neustále hlásil vybitú batériu. Nepomohla ani väčšia AGM batéria. "
       "Lensun mi vyrobil panel presne na rozmer kapoty a odvtedy sa hláška neobjavila. "
       "Montáž bola jednoduchšia, než som čakal.",
@@ -29,30 +31,17 @@ REVIEWS = [
       "Lensun mi vyrobil panel přesně na rozměr kapoty a od té doby se hláška neobjevila. "
       "Montáž byla jednodušší, než jsem čekal."),
  dict(who="Tim Korade", ini="TK", car="Toyota Land Cruiser 100, 100 W",
+   pid="toyota-land-cruiser-100-series-lensun-100w-hood-flexible-solar-panel",
+   img="https://cdn.shopify.com/s/files/1/0595/2156/4737/files/Toyota_LandCruiser_100_Series_J100_Lensun_100W_Hood_Flexible_Solar_Panel-1.jpg",
    sk="Namontované na Land Cruiseri z roku 2004 s druhou batériou a DC-DC regulátorom. "
       "Vozidlo používame na pátracie a záchranné akcie — výkon pokryje našu techniku bez toho, "
       "aby motor musel bežať na voľnobeh. Zvládlo aj 40 °C a krupobitie.",
    cs="Namontované na Land Cruiseru z roku 2004 s druhou baterií a DC-DC regulátorem. "
       "Vozidlo používáme na pátrací a záchranné akce — výkon pokryje naši techniku, aniž by "
       "motor musel běžet na volnoběh. Zvládlo i 40 °C a krupobití."),
- dict(who="JC", ini="JC", car="Kia Soul 3. gen., 45 W",
-   sk="Spolu sme premerali kapotu a vyrobili panel, ktorý presne sadol. V sade bolo dosť "
-      "obojstrannej pásky aj úchytky na kábel. Zapojenie regulátora bolo jednoduché. "
-      "Palubná kamera v parkovacom režime mi už batériu nevybíja.",
-   cs="Společně jsme přeměřili kapotu a vyrobili panel, který přesně sedl. V sadě bylo dost "
-      "oboustranné pásky i úchytky na kabel. Zapojení regulátoru bylo jednoduché. "
-      "Palubní kamera v parkovacím režimu mi už baterii nevybíjí."),
- dict(who="Jason Ford", ini="JF", car="Toyota 4Runner, 80 W + 120 W",
-   sk="Osemdesiatwattový panel na kapote a stodvadsiatka na strešnom stane, oboje dobíja "
-      "prenosnú elektrocentrálu. Panely sú pekne tenké a výkon zodpovedá. Rýchla a ochotná podpora.",
-   cs="Osmdesátiwattový panel na kapotě a stodvacítka na střešním stanu, obojí dobíjí "
-      "přenosnou elektrocentrálu. Panely jsou pěkně tenké a výkon odpovídá. Rychlá a ochotná podpora."),
- dict(who="Andrew Rapley", ini="AR", car="Toyota Tundra, 45 W",
-   sk="Pomohli mi vybrať správnu veľkosť panela na kapotu. Montáž bola priamočiara, "
-      "panel sadol presne a aj dobre vyzerá. Batériu drží stále nabitú.",
-   cs="Pomohli mi vybrat správnou velikost panelu na kapotu. Montáž byla přímočará, "
-      "panel sedl přesně a i dobře vypadá. Baterii drží stále nabitou."),
  dict(who="El Gars du coin", ini="EG", car="Jeep, 400 W (2× 200 W)",
+   pid="lensun-400w-200w-flexible-solar-panel",
+   img="https://cdn.shopify.com/s/files/1/0595/2156/4737/files/2pcs-lensun-200w-flexible-solar-panel-1.jpg",
    sk="Sadu 400 W som zapojil do systému s MPPT regulátorom Victron a batériou 200 Ah LiFePO4. "
       "Napája Starlink, 12 V chladničku aj vodné čerpadlo. Nízky profil flexibilných panelov "
       "bol pre moju zostavu ideálny.",
@@ -65,14 +54,19 @@ REVIEWS = [
 def reviews_html(lang):
     cards = []
     for r in REVIEWS:
+        href = ("produkty.html?q=" + r["pid"]) if r.get("pid") else ""
+        photo = (f'<a class="review-photo" href="{href}">'
+                 f'<img loading="lazy" decoding="async" src="{r["img"]}?width=700" '
+                 f'alt="{r["car"]}"></a>') if r.get("img") else ""
         cards.append(
-            f'<figure class="review">'
+            f'<figure class="review">{photo}'
+            f'<div class="review-body">'
             f'<div class="review-head">'
             f'<span class="avatar" aria-hidden="true">{r["ini"]}</span>'
             f'<span class="review-who"><b>{r["who"]}</b><span>{r["car"]}</span></span>'
             f'</div>{stars(5)}'
             f'<blockquote>{r["sk"] if lang=="sk" else r["cs"]}</blockquote>'
-            f'</figure>')
+            f'</div></figure>')
     return "".join(cards)
 
 
@@ -86,6 +80,8 @@ def home(lang, base):
     feat_h   = T("Najvýhodnejšie kúsky z katalógu", "Nejvýhodnější kousky z katalogu", lang)
     rev_t    = T("Čo hovoria používatelia", "Co říkají uživatelé", lang)
     all_btn  = T("Zobraziť celý katalóg", "Zobrazit celý katalog", lang)
+    brands_t = T("Značky vozidiel", "Značky vozidel", lang)
+    brands_h = T("Vyberte značku svojho auta", "Vyberte značku svého auta", lang)
 
     why = [
         (T("Energia bez motora", "Energie bez motoru", lang),
@@ -141,7 +137,11 @@ def home(lang, base):
 <section class="sec"><div class="wrap">
   <div class="sec-head"><h2>{feat_t}</h2><span class="eyebrow">{feat_h}</span></div>
   <div class="feat" id="featured" data-count="4"></div>
-  <div class="brandbar" id="brandBar" data-href="{base}produkty.html"></div>
+</div></section>
+
+<section class="sec alt"><div class="wrap">
+  <div class="sec-head"><h2>{brands_t}</h2><span class="eyebrow">{brands_h}</span></div>
+  <div class="brand-grid" id="brandGrid" data-href="{base}produkty.html"></div>
   <p style="margin-top:26px"><a class="btn" href="{base}produkty.html">{all_btn}</a></p>
 </div></section>
 
