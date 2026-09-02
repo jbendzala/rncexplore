@@ -9,6 +9,7 @@ NAV = [
     ("na-mieru",    "Na mieru",     "Na míru"),
     ("montaz",      "Montáž",       "Montáž"),
     ("o-nas",       "O nás",        "O nás"),
+    ("blog",        "Blog",         "Blog"),
     ("faq",         "FAQ",          "FAQ"),
     ("kontakt",     "Kontakt",      "Kontakt"),
 ]
@@ -60,7 +61,7 @@ def head(lang, base, slug, title, desc):
 """
 
 
-def header(lang, base, slug, page=""):
+def header(lang, base, slug, page="", langlinks=None):
     i = 1 if lang == "sk" else 2
     items = []
     for s, sk, cs in NAV:
@@ -81,7 +82,9 @@ def header(lang, base, slug, page=""):
     nav = "".join(items)
 
     f = "index.html" if slug == "index" else slug + ".html"
-    if lang == "sk":
+    if langlinks:
+        to_sk, to_cs = langlinks
+    elif lang == "sk":
         to_sk, to_cs = f, "cz/" + f
     else:
         to_sk, to_cs = "../" + f, f

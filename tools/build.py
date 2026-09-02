@@ -4,6 +4,7 @@ import os, sys, shutil
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import pages_shell as sh
 import pages_content as c
+import blog_content as bl
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -49,6 +50,9 @@ PAGES = {
  "kontakt": (c.kontakt, "Kontakt", "Kontakt",
    "Napíšte nám značku a model vozidla — poradíme s výberom panela aj regulátora.",
    "Napište nám značku a model vozidla — poradíme s výběrem panelu i regulátoru.", False),
+ "blog": (bl.blog_list, "Blog", "Blog",
+   "Skúsenosti z montáže solárnych panelov na vozidlá, technika a praktické rady.",
+   "Zkušenosti z montáže solárních panelů na vozidla, technika a praktické rady.", False),
  "podmienky": (c.podmienky, "Obchodné podmienky", "Obchodní podmínky",
    "Objednávka, ceny, dodanie, záruka, odstúpenie od zmluvy a ochrana osobných údajov.",
    "Objednávka, ceny, dodání, záruka, odstoupení od smlouvy a ochrana osobních údajů.", False),
@@ -63,6 +67,7 @@ HEADS = {
  "o-nas":       ("O nás", "O nás"),
  "faq":         ("Časté otázky", "Časté dotazy"),
  "kontakt":     ("Kontakt", "Kontakt"),
+ "blog":        ("Blog", "Blog"),
  "podmienky":   ("Obchodné podmienky", "Obchodní podmínky"),
 }
 
@@ -96,6 +101,31 @@ def build():
                 out.append(sh.catalog_scripts(abase))
             out.append(sh.close())
             path = os.path.join(outdir, ("index.html" if slug == "index" else slug + ".html"))
+            open(path, "w", encoding="utf-8").write("".join(out))
+            made.append(os.path.relpath(path, ROOT))
+
+        # ---- detaily článkov v podpriečinku blog/ ----
+        bdir = os.path.join(outdir, "blog")
+        os.makedirs(bdir, exist_ok=True)
+        b_abase = "../" if lang == "sk" else "../../"   # k assets/
+        b_pbase = "../"                                  # k ostatným stránkam
+        for post in bl.POSTS:
+            title = post["title"][0 if lang == "sk" else 1]
+            desc  = post["lead"][0 if lang == "sk" else 1]
+            fn = post["slug"] + ".html"
+            links = ((fn, "../cz/blog/" + fn) if lang == "sk"
+                     else ("../../blog/" + fn, fn))
+            out = [sh.head(lang, b_abase, "blog/" + post["slug"], title, desc),
+                   sh.header(lang, b_abase, "blog", b_pbase, links),
+                   ('<section class="page-head"><div class="wrap">'
+                    f'<p class="crumb"><a href="{b_pbase}index.html">'
+                    f'{"Domov" if lang == "sk" else "Domů"}</a> / '
+                    f'<a href="{b_pbase}blog.html">Blog</a></p>'
+                    f'<h1>{title}</h1></div></section>\n'),
+                   bl.blog_post(post, lang, b_pbase),
+                   sh.footer(lang, b_abase, b_pbase),
+                   sh.close()]
+            path = os.path.join(bdir, fn)
             open(path, "w", encoding="utf-8").write("".join(out))
             made.append(os.path.relpath(path, ROOT))
     return made
