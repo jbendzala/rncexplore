@@ -168,5 +168,10 @@ def catalog_scripts(base):
             f'<script src="{base}assets/app.js"></script>\n')
 
 
+def catalog_scripts_light(base):
+    """Stránka produktu má dáta vložené priamo v sebe, načíta len logiku."""
+    return f'<script src="{base}assets/app.js"></script>\n'
+
+
 def close():
     return "</body>\n</html>\n"

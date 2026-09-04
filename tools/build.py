@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 """Vygeneruje všetky stránky webu v SK a CZ.  Spustenie:  python3 tools/build.py"""
-import os, sys, shutil
+import os, sys, shutil, re
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import pages_shell as sh
 import pages_content as c
 import blog_content as bl
+import product_pages as pp
+import json as _json
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -80,6 +82,8 @@ def page_head(lang, slug, title):
             f'<h1>{title}</h1><p>{desc}</p></div></section>\n')
 
 def build():
+    import pages_content as _pc
+    bl_reviews = _pc.REVIEWS
     made = []
     for lang in ("sk", "cs"):
         outdir = ROOT if lang == "sk" else os.path.join(ROOT, "cz")
@@ -128,9 +132,41 @@ def build():
             path = os.path.join(bdir, fn)
             open(path, "w", encoding="utf-8").write("".join(out))
             made.append(os.path.relpath(path, ROOT))
+        # ---- stránky jednotlivých produktov ----
+        pdir = os.path.join(outdir, "produkt")
+        os.makedirs(pdir, exist_ok=True)
+        p_abase = "../" if lang == "sk" else "../../"
+        p_pbase = "../"
+        src_js = open(os.path.join(ROOT, "data", "products.js"), encoding="utf-8").read()
+        ALLP = _json.loads(re.search(r"window\.PRODUCTS=(\[.*\]);", src_js, re.S).group(1))
+        for prod in ALLP:
+            nm = prod["n"]["sk" if lang == "sk" else "cs"]
+            dsc = prod["d"]["sk" if lang == "sk" else "cs"][:155]
+            fn = prod["id"] + ".html"
+            links = ((fn, "../cz/produkt/" + fn) if lang == "sk"
+                     else ("../../produkt/" + fn, fn))
+            out = [sh.head(lang, p_abase, "produkt/" + prod["id"], nm, dsc),
+                   sh.header(lang, p_abase, "produkty", p_pbase, links),
+                   ('<section class="page-head"><div class="wrap">'
+                    f'<p class="crumb"><a href="{p_pbase}index.html">'
+                    f'{"Domov" if lang == "sk" else "Domů"}</a> / '
+                    f'<a href="{p_pbase}produkty.html">'
+                    f'{"Katalóg" if lang == "sk" else "Katalog"}</a></p>'
+                    '</div></section>\n'),
+                   pp.render(prod, ALLP, "sk" if lang == "sk" else "cs",
+                             bl_reviews, p_pbase),
+                   c.MODALS % {"close": "Zavrieť" if lang == "sk" else "Zavřít"},
+                   sh.footer(lang, p_abase, p_pbase),
+                   sh.catalog_scripts_light(p_abase),
+                   sh.close()]
+            path = os.path.join(pdir, fn)
+            open(path, "w", encoding="utf-8").write("".join(out))
+            made.append(os.path.relpath(path, ROOT))
     return made
 
 if __name__ == "__main__":
     files = build()
+    import sitemap
+    print("URL v sitemape:", sitemap.build())
     print("vygenerované stránky:", len(files))
     for f in sorted(files): print("  ", f)

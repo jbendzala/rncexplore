@@ -607,3 +607,57 @@ a.tile:hover{text-decoration:none}
 /* na stránke Kontakt už veľká ikona nad údajom je, druhú nepotrebujeme */
 .contact .box .js-mail::before,
 .contact .box .js-phone::before{content:none}
+
+/* ==========================================================================
+   Stránka produktu
+   ========================================================================== */
+.pd{display:grid;grid-template-columns:1.05fr 1fr;gap:38px;align-items:start}
+.pd-main{aspect-ratio:1/1;background:var(--paper);border:1px solid var(--line);overflow:hidden}
+.pd-main img{width:100%;height:100%;object-fit:contain}
+.pd-thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.pd-thumbs button{width:66px;height:66px;padding:0;overflow:hidden;cursor:pointer;
+  background:var(--paper);border:1px solid var(--line)}
+.pd-thumbs button[aria-current="true"]{border-color:var(--ink);outline:1px solid var(--ink)}
+.pd-thumbs img{width:100%;height:100%;object-fit:cover}
+
+.pd-buy h1{font-size:clamp(22px,2.7vw,32px);font-weight:800;letter-spacing:-.025em;
+  margin:8px 0 18px;text-transform:none}
+.pd-price{display:flex;align-items:baseline;gap:11px;flex-wrap:wrap;
+  padding:16px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.pd-price b{font-family:var(--f-display);font-size:30px;font-weight:800;letter-spacing:-.03em}
+.pd-price s{color:var(--ink-3);font-size:15px}
+.pd-sku{font-size:12.5px;color:var(--ink-3);margin-left:auto}
+
+/* prevedenia */
+.swatches{display:flex;flex-direction:column;gap:8px;margin:22px 0 24px}
+.swatch{display:flex;align-items:center;justify-content:space-between;gap:14px;
+  width:100%;padding:13px 16px;cursor:pointer;text-align:left;
+  background:var(--paper);border:1px solid var(--line-2);
+  font-family:var(--f-body);font-size:14.5px;color:var(--ink-2);
+  transition:border-color .14s,background .14s}
+.swatch:hover{border-color:var(--ink);color:var(--ink)}
+.swatch[aria-pressed="true"]{border-color:var(--ink);background:var(--bone-2);
+  color:var(--ink);box-shadow:inset 3px 0 0 var(--signal)}
+.swatch-p{font-family:var(--f-display);font-weight:700;font-size:14.5px;
+  color:var(--ink);white-space:nowrap}
+
+.pd-actions{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:14px}
+.pd-qty{gap:6px;font-size:11px}
+.pd-qty input{width:88px;padding:12px 13px;border:1px solid var(--line-2);
+  background:var(--paper);font-size:15px;text-align:center}
+.pd-actions .btn{flex:1 1 200px;padding:14px 22px;font-size:14px}
+
+.pack{list-style:none;padding:0;margin:0 0 18px}
+.pack li{padding:9px 0 9px 22px;border-bottom:1px solid var(--line);position:relative;
+  color:var(--ink-2)}
+.pack li::before{content:"";position:absolute;left:2px;top:16px;width:7px;height:7px;
+  background:var(--signal)}
+
+@media (max-width:900px){
+  .pd{grid-template-columns:1fr;gap:26px}
+}
+
+/* karta: obrázok aj názov sú odkazy */
+.card-img{display:block}
+.card-t a{color:inherit}
+.card-t a:hover{color:var(--brass);text-decoration:none}

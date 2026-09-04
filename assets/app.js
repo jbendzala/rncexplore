@@ -136,6 +136,11 @@
     if (!src || src.indexOf("data:") === 0) return src;
     return src + (src.indexOf("?") === -1 ? "?" : "&") + "width=" + w;
   }
+  /* cesta na stránku produktu; z /produkt/ je to súrodenec */
+  function productHref(id) {
+    var here = /\/produkt\//.test(location.pathname);
+    return (here ? "" : "produkt/") + id + ".html";
+  }
   function nameOf(p) { return p.n[LANG] || p.n.sk; }
   function descOf(p) { return p.d[LANG] || p.d.sk; }
   function varName(v) { return v[LANG] || v.sk; }
@@ -179,16 +184,17 @@
     if (p.a) specs.push(p.a + " A");
     if (p.kg) specs.push(p.kg + " kg");
 
+    var href = productHref(p.id);
     return '<article class="card" data-id="' + esc(p.id) + '">' +
-      '<div class="card-img" data-act="detail">' +
+      '<a class="card-img" href="' + esc(href) + '">' +
         (img ? '<img loading="lazy" decoding="async" src="' + esc(imgUrl(img, 600)) +
                '" alt="' + esc(nameOf(p)) + '">'
              : '<div class="ph">' + esc(T.noImg) + "</div>") +
         (off > 5 ? '<span class="badge">−' + off + "%</span>" : "") +
-      "</div>" +
+      "</a>" +
       '<div class="card-b">' +
         '<div class="card-cat">' + esc(catName(p.cat)) + "</div>" +
-        '<h3 class="card-t" data-act="detail">' + esc(nameOf(p)) + "</h3>" +
+        '<h3 class="card-t"><a href="' + esc(href) + '">' + esc(nameOf(p)) + "</a></h3>" +
         (specs.length ? '<div class="specs">' + specs.map(function (s) {
           return '<span class="spec">' + esc(s) + "</span>"; }).join("") + "</div>" : "") +
         '<div class="card-f">' + priceHTML(p) +
@@ -439,7 +445,7 @@
       var id = t.closest(".card").dataset.id;
       var p = ALL.filter(function (x) { return x.id === id; })[0];
       if (!p) return;
-      if (t.dataset.act === "order") openOrder(p); else openDetail(p);
+      if (t.dataset.act === "order") openOrder(p);
     });
   }
 
@@ -532,6 +538,81 @@
     }).join("");
   }
 
+  /* ================= stránka jedného produktu ================= */
+  function renderProductPage() {
+    var pid = window.PRODUCT_ID; if (!pid) return;
+    var p = ALL.filter(function (x) { return x.id === pid; })[0];
+    if (!p) return;
+    var vs = (p.var && p.var.length) ? p.var : [{ sk: "", cs: "", p: p.usd, sku: p.sku }];
+    var sel = 0;
+
+    function paint() {
+      var v = vs[sel];
+      var box = el("pdPrice");
+      if (box) {
+        box.innerHTML = (CFG.showPrices === false)
+          ? '<b>' + esc(T.askPrice) + "</b>"
+          : ((p.was && CFG.showCompareAt ? "<s>" + esc(money(p.was)) + "</s>" : "") +
+             "<b>" + esc(money(v.p)) + "</b>" +
+             (v.sku ? '<span class="pd-sku">' + esc(v.sku) + "</span>" : ""));
+      }
+      [].forEach.call(document.querySelectorAll("#pdSwatch .swatch"), function (b, k) {
+        b.setAttribute("aria-pressed", String(k === sel));
+      });
+    }
+
+    /* prevedenia */
+    var sw = el("pdSwatch");
+    if (sw && vs.length > 1) {
+      sw.innerHTML = vs.map(function (v, k) {
+        var label = varName(v) || nameOf(p);
+        var price = (CFG.showPrices === false) ? "" :
+          '<span class="swatch-p">' + esc(money(v.p)) + "</span>";
+        return '<button type="button" class="swatch" data-i="' + k +
+          '" aria-pressed="' + (k === 0) + '"><span>' + esc(label) + "</span>" + price + "</button>";
+      }).join("");
+      sw.addEventListener("click", function (e) {
+        var b = e.target.closest(".swatch"); if (!b) return;
+        sel = parseInt(b.dataset.i, 10) || 0; paint();
+      });
+    }
+    paint();
+
+    /* galéria */
+    [].forEach.call(document.querySelectorAll(".pd-thumbs button"), function (b) {
+      b.onclick = function () {
+        el("pdMain").src = b.dataset.src;
+        [].forEach.call(document.querySelectorAll(".pd-thumbs button"), function (x) {
+          x.setAttribute("aria-current", String(x === b));
+        });
+      };
+    });
+
+    /* objednávka s predvoleným prevedením */
+    var ob = el("pdOrder");
+    if (ob) ob.addEventListener("click", function () {
+      openOrder(p);
+      var vsel = el("ofVariant");
+      if (vsel && vsel.options.length > sel) vsel.selectedIndex = sel;
+      var q = el("pdQty"), oq = el("ofQty");
+      if (q && oq) oq.value = Math.max(1, parseInt(q.value, 10) || 1);
+    });
+
+    /* podobné produkty */
+    var rel = el("related");
+    if (rel) {
+      var others = ALL.filter(function (x) { return x.id !== pid; });
+      rel.innerHTML = others.map(cardHTML).join("");
+      rel.addEventListener("click", function (e) {
+        var t = e.target.closest("[data-act]"); if (!t) return;
+        var id = t.closest(".card").dataset.id;
+        if (t.dataset.act !== "order") return;
+        var q = others.filter(function (x) { return x.id === id; })[0];
+        if (q) openOrder(q);
+      });
+    }
+  }
+
   function init() {
     /* rozcestníky na domovskej stránke */
     var linkTiles = el("catTiles");
@@ -544,6 +625,9 @@
 
     /* odporúčané produkty */
     renderFeatured();
+
+    /* stránka jedného produktu */
+    renderProductPage();
 
     /* štatistiky v hero pruhu (domovská stránka aj katalóg) */
     if (el("statA")) {
@@ -611,7 +695,7 @@
       var t = e.target.closest("[data-act]"); if (!t) return;
       var p = ALL.filter(function (x) { return x.id === t.closest(".card").dataset.id; })[0];
       if (!p) return;
-      if (t.dataset.act === "order") openOrder(p); else openDetail(p);
+      if (t.dataset.act === "order") openOrder(p);
     });
 
     render(true);
