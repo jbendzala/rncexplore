@@ -19,7 +19,11 @@
           contact: "Doručovacie a fakturačné údaje",
           order: "Objednávka zaväzujúca k platbe",
           copy: "Skopírovať objednávku",
-          sent: "Otvorili sme váš e-mailový klient s objednávkou. Odošlite ju a my vám obratom pošleme faktúru s QR kódom na zaplatenie.",
+          sent: "Objednávka odoslaná. Obratom vám pošleme faktúru s QR kódom na zaplatenie.",
+          sending: "Odosielam objednávku…",
+          mailFallback: "Objednávku sa nepodarilo odoslať automaticky, preto sme otvorili váš e-mailový klient. Správu už len odošlite.",
+          thanks: "Ďakujeme za objednávku",
+          thanksNote: "Kópiu sme poslali aj na váš e-mail. Faktúru s QR kódom vám pošleme obratom.",
           copied: "Objednávka skopírovaná do schránky.",
           hint: "Ak sa e-mailový klient neotvorí, skopírujte objednávku a pošlite nám ju na ",
           terms: "Odoslaním objednávky potvrdzujete, že ste sa oboznámili s obchodnými podmienkami a že objednávka je spojená s povinnosťou platby.",
@@ -32,7 +36,11 @@
           contact: "Doručovací a fakturační údaje",
           order: "Objednávka zavazující k platbě",
           copy: "Zkopírovat objednávku",
-          sent: "Otevřeli jsme váš e-mailový klient s objednávkou. Odešlete ji a my vám obratem pošleme fakturu s QR kódem k zaplacení.",
+          sent: "Objednávka odeslána. Obratem vám pošleme fakturu s QR kódem k zaplacení.",
+          sending: "Odesílám objednávku…",
+          mailFallback: "Objednávku se nepodařilo odeslat automaticky, proto jsme otevřeli váš e-mailový klient. Zprávu už jen odešlete.",
+          thanks: "Děkujeme za objednávku",
+          thanksNote: "Kopii jsme poslali i na váš e-mail. Fakturu s QR kódem vám pošleme obratem.",
           copied: "Objednávka zkopírována do schránky.",
           hint: "Pokud se e-mailový klient neotevře, zkopírujte objednávku a pošlete nám ji na ",
           terms: "Odesláním objednávky potvrzujete, že jste se seznámili s obchodními podmínkami a že objednávka je spojena s povinností platby.",
@@ -192,17 +200,88 @@
     return ok;
   }
 
-  function submit(e) {
-    e.preventDefault();
-    var box = el("cartMsg");
-    if (!read().length) return;
-    if (!valid()) { box.className = "msg"; box.textContent = T.need; return; }
-    var o = buildOrder();
+  function mailtoFallback(o) {
     var href = "mailto:" + encodeURIComponent(CFG.orderEmail) +
       "?subject=" + encodeURIComponent(o.subject) + "&body=" + encodeURIComponent(o.body);
     if (href.length > 1900) href = href.slice(0, 1900);
     window.location.href = href;
-    box.className = "msg ok"; box.textContent = T.sent;
+  }
+
+  /* Objednávku odošle služba, ktorá ju prepošle e-mailom.
+     Stránka nemá server, preto sa volá priamo z prehliadača. */
+  function send(o) {
+    var how = (CFG.orderSend || "mailto").toLowerCase();
+    var g = function (id) { var n = el(id); return n ? (n.value || "").trim() : ""; };
+    if (how === "web3forms" && CFG.formKey) {
+      return fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          access_key: CFG.formKey,
+          subject: o.subject,
+          from_name: g("cName") || "Objednávka",
+          replyto: g("cEmail"),
+          email: g("cEmail"),
+          message: o.body
+        })
+      }).then(function (r) { return r.json(); })
+        .then(function (j) { if (!j || j.success !== true) throw new Error("web3forms"); });
+    }
+    if (how === "formsubmit") {
+      return fetch("https://formsubmit.co/ajax/" + encodeURIComponent(CFG.orderEmail), {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          _subject: o.subject,
+          _captcha: "false",
+          _template: "table",
+          name: g("cName"),
+          email: g("cEmail"),
+          phone: g("cPhone"),
+          company: g("cCompany"),
+          address: g("cStreet") + ", " + g("cZip") + " " + g("cCity") + ", " + g("cCountry"),
+          note: g("cNote"),
+          order: o.body
+        })
+      }).then(function (r) { return r.json(); })
+        .then(function (j) {
+          var ok = j && (j.success === true || String(j.success) === "true");
+          if (!ok) throw new Error("formsubmit");
+        });
+    }
+    return Promise.reject(new Error("mailto"));
+  }
+
+  function done(msg, ok) {
+    var box = el("cartMsg");
+    if (box) { box.className = ok ? "msg ok" : "msg"; box.textContent = msg; }
+  }
+
+  function submit(e) {
+    e.preventDefault();
+    if (!read().length) return;
+    if (!valid()) { done(T.need, false); return; }
+
+    var o = buildOrder();
+    var btn = el("cartOrder");
+    var label = btn ? btn.textContent : "";
+    if (btn) { btn.disabled = true; btn.textContent = T.sending; }
+    done(T.sending, false);
+
+    send(o).then(function () {
+      write([]);                       /* košík je vybavený */
+      var box = el("cartBox");
+      if (box) box.innerHTML = '<div class="cart-empty"><h3>' + esc(T.thanks) +
+        "</h3><p>" + esc(T.thanksNote) + "</p></div>";
+      var f = el("cartForm"); if (f) f.hidden = true;
+      done(T.sent, true);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }).catch(function () {
+      /* keď služba zlyhá, objednávka nesmie zmiznúť */
+      if (btn) { btn.disabled = false; btn.textContent = label; }
+      done(T.mailFallback, false);
+      mailtoFallback(o);
+    });
   }
 
   function copyOrder() {

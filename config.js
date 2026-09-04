@@ -29,4 +29,20 @@ window.SITE_CONFIG = {
 
   /* Zobraziť ceny vôbec? false = všade "Cena na vyžiadanie"               */
   showPrices: true,
+
+  /* --- 3. ODOSIELANIE OBJEDNÁVOK ----------------------------------------
+     Stránka nemá vlastný server, objednávku preto odošle cez službu,
+     ktorá ju prepošle e-mailom na adresu orderEmail vyššie.
+
+     "formsubmit" — netreba nič zriaďovať. Pri úplne prvej objednávke
+                    príde na orderEmail e-mail od formsubmit.co s odkazom
+                    na potvrdenie. Kým naň nekliknete, objednávky nechodia.
+     "web3forms"  — na web3forms.com zadáte e-mail, obratom vám pošlú
+                    prístupový kľúč. Vložte ho nižšie do formKey.
+     "mailto"     — otvorí e-mailového klienta zákazníka (bez služby).
+
+     Ak odoslanie zlyhá, formulár sa vždy prepne na "mailto",
+     aby objednávka nezostala visieť.                                     */
+  orderSend: "formsubmit",
+  formKey: "",
 };
