@@ -125,7 +125,7 @@ def render(p, ALL, lang, reviews, base):
     <div class="pd-actions">
       <label class="pd-qty"><span>{T("Počet","Počet",lang)}</span>
         <input id="pdQty" type="number" min="1" max="99" value="1"></label>
-      <button class="btn lg" id="pdOrder">{T("Objednať","Objednat",lang)}</button>
+      <button class="btn lg" id="pdOrder">{T("Do košíka","Do košíku",lang)}</button>
     </div>
     <p class="note">{T("Objednávka je nezáväzná. Ozveme sa vám s cenovou ponukou a termínom dodania.","Objednávka je nezávazná. Ozveme se vám s cenovou nabídkou a termínem dodání.",lang)}</p>
   </div>

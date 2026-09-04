@@ -89,6 +89,7 @@ def header(lang, base, slug, page="", langlinks=None):
     else:
         to_sk, to_cs = "../" + f, f
 
+    cart_label = "Košík" if lang == "sk" else "Košík"
     util = "Solárne panely pre vozidlá, karavany a outdoor" if lang == "sk" else "Solární panely pro vozidla, karavany a outdoor"
     search_ph = "Hľadať produkt…" if lang == "sk" else "Hledat produkt…"
     menu = "Menu"
@@ -103,6 +104,12 @@ def header(lang, base, slug, page="", langlinks=None):
   </a>
   <span class="hdr-sp"></span>
   <ul class="nav" id="nav">{nav}</ul>
+  <a class="icon-btn cart-link" href="{page}kosik.html" aria-label="{cart_label}">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 4h2l2.6 10.4a1 1 0 0 0 1 .8h8.2a1 1 0 0 0 1-.8L20 7H6"/>
+      <circle cx="9" cy="19" r="1.6"/><circle cx="17" cy="19" r="1.6"/></svg>
+    <span class="cart-n" hidden>0</span>
+  </a>
   <button class="icon-btn" id="themeBtn" data-t-theme>
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
       <path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
@@ -159,7 +166,7 @@ def footer(lang, base, page=""):
 
 <script src="{base}config.js"></script>
 <script>window.LANG="{'sk' if sk else 'cs'}";</script>
-<script src="{base}assets/site.js"></script>
+<script src="{base}assets/site.js"></script>\n<script src="{base}assets/cart.js"></script>
 """
 
 

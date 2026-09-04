@@ -632,3 +632,52 @@ def podmienky(lang, base):
   <p>{d}</p>
 </div></div></section>
 """
+
+
+# ---------------------------------------------------------------- košík
+FULL_FIELDS = ("cStreet", "cCountry", "cNote")
+
+def _field(fid, label, required, lang):
+    cls = ' class="full"' if fid in FULL_FIELDS else ""
+    star = ' <em class="req">*</em>' if required else ""
+    if fid == "cNote":
+        control = '<textarea id="%s"></textarea>' % fid
+    else:
+        typ = "email" if fid == "cEmail" else ("tel" if fid == "cPhone" else "text")
+        control = '<input id="%s" type="%s" placeholder=" ">' % (fid, typ)
+    return "<label%s><span>%s%s</span>%s</label>" % (cls, label, star, control)
+
+
+def kosik(lang, base):
+    rows = [
+        ("cName",    T("Meno a priezvisko", "Jméno a příjmení", lang), True),
+        ("cEmail",   "E-mail", True),
+        ("cPhone",   T("Telefón", "Telefon", lang), True),
+        ("cCompany", T("Firma / IČO", "Firma / IČO", lang), False),
+        ("cStreet",  T("Ulica a číslo", "Ulice a číslo", lang), True),
+        ("cCity",    T("Mesto", "Město", lang), True),
+        ("cZip",     T("PSČ", "PSČ", lang), True),
+        ("cCountry", T("Krajina", "Země", lang), False),
+        ("cNote",    T("Poznámka", "Poznámka", lang), False),
+    ]
+    fields = "".join(_field(i, l, r, lang) for i, l, r in rows)
+    invoice = T("Po prijatí objednávky vám pošleme faktúru s QR kódom na zaplatenie.",
+                "Po přijetí objednávky vám pošleme fakturu s QR kódem k zaplacení.", lang)
+    return """
+<section class="sec"><div class="wrap">
+  <div id="cartBox"></div>
+
+  <form class="cart-form" id="cartForm" novalidate>
+    <h2 id="cartContactH"></h2>
+    <div class="fields">%s</div>
+    <div class="msg" id="cartMsg"></div>
+    <p class="note" id="cartTerms"></p>
+    <div class="f-actions">
+      <button class="btn signal lg" type="submit" id="cartOrder"></button>
+      <button class="btn ghost" type="button" id="cartCopy"></button>
+    </div>
+    <p class="note" id="cartHint"></p>
+    <p class="note">%s</p>
+  </form>
+</div></section>
+""" % (fields, invoice)

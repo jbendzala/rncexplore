@@ -52,6 +52,9 @@ PAGES = {
  "kontakt": (c.kontakt, "Kontakt", "Kontakt",
    "Napíšte nám značku a model vozidla — poradíme s výberom panela aj regulátora.",
    "Napište nám značku a model vozidla — poradíme s výběrem panelu i regulátoru.", False),
+ "kosik": (c.kosik, "Košík", "Košík",
+   "Obsah košíka, doručovacie údaje a odoslanie objednávky.",
+   "Obsah košíku, doručovací údaje a odeslání objednávky.", False),
  "blog": (bl.blog_list, "Blog", "Blog",
    "Skúsenosti z montáže solárnych panelov na vozidlá, technika a praktické rady.",
    "Zkušenosti z montáže solárních panelů na vozidla, technika a praktické rady.", False),
@@ -69,6 +72,7 @@ HEADS = {
  "o-nas":       ("O nás", "O nás"),
  "faq":         ("Časté otázky", "Časté dotazy"),
  "kontakt":     ("Kontakt", "Kontakt"),
+ "kosik":       ("Košík", "Košík"),
  "blog":        ("Blog", "Blog"),
  "podmienky":   ("Obchodné podmienky", "Obchodní podmínky"),
 }
