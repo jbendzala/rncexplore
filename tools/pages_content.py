@@ -674,7 +674,6 @@ def kosik(lang, base):
     <p class="note" id="cartTerms"></p>
     <div class="f-actions">
       <button class="btn signal lg" type="submit" id="cartOrder"></button>
-      <button class="btn ghost" type="button" id="cartCopy"></button>
     </div>
     <p class="note" id="cartHint"></p>
     <p class="note">%s</p>

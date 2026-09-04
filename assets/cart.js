@@ -18,13 +18,12 @@
           total: "Celkom", vatNote: "Ceny sú vrátane DPH. Dopravu doúčtujeme podľa hmotnosti zásielky.",
           contact: "Doručovacie a fakturačné údaje",
           order: "Objednávka zaväzujúca k platbe",
-          copy: "Skopírovať objednávku",
           sent: "Objednávka odoslaná. Obratom vám pošleme faktúru s QR kódom na zaplatenie.",
           sending: "Odosielam objednávku…",
           mailFallback: "Objednávku sa nepodarilo odoslať automaticky, preto sme otvorili váš e-mailový klient. Správu už len odošlite.",
+          needsActivation: "Formulár ešte nie je aktivovaný. V schránke objednavky@rncexplore.com nájdete e-mail od formsubmit.co — kliknite na odkaz Activate Form. Objednávka sa zatiaľ odosiela e-mailovým klientom.",
           thanks: "Ďakujeme za objednávku",
           thanksNote: "Kópiu sme poslali aj na váš e-mail. Faktúru s QR kódom vám pošleme obratom.",
-          copied: "Objednávka skopírovaná do schránky.",
           hint: "Ak sa e-mailový klient neotvorí, skopírujte objednávku a pošlite nám ju na ",
           terms: "Odoslaním objednávky potvrdzujete, že ste sa oboznámili s obchodnými podmienkami a že objednávka je spojená s povinnosťou platby.",
           need: "Vyplňte prosím povinné údaje označené hviezdičkou." },
@@ -35,13 +34,12 @@
           total: "Celkem", vatNote: "Ceny jsou včetně DPH. Dopravu doúčtujeme podle hmotnosti zásilky.",
           contact: "Doručovací a fakturační údaje",
           order: "Objednávka zavazující k platbě",
-          copy: "Zkopírovat objednávku",
           sent: "Objednávka odeslána. Obratem vám pošleme fakturu s QR kódem k zaplacení.",
           sending: "Odesílám objednávku…",
           mailFallback: "Objednávku se nepodařilo odeslat automaticky, proto jsme otevřeli váš e-mailový klient. Zprávu už jen odešlete.",
+          needsActivation: "Formulář ještě není aktivovaný. Ve schránce objednavky@rncexplore.com najdete e-mail od formsubmit.co — klikněte na odkaz Activate Form. Objednávka se zatím odesílá e-mailovým klientem.",
           thanks: "Děkujeme za objednávku",
           thanksNote: "Kopii jsme poslali i na váš e-mail. Fakturu s QR kódem vám pošleme obratem.",
-          copied: "Objednávka zkopírována do schránky.",
           hint: "Pokud se e-mailový klient neotevře, zkopírujte objednávku a pošlete nám ji na ",
           terms: "Odesláním objednávky potvrzujete, že jste se seznámili s obchodními podmínkami a že objednávka je spojena s povinností platby.",
           need: "Vyplňte prosím povinné údaje označené hvězdičkou." }
@@ -246,7 +244,12 @@
       }).then(function (r) { return r.json(); })
         .then(function (j) {
           var ok = j && (j.success === true || String(j.success) === "true");
-          if (!ok) throw new Error("formsubmit");
+          if (ok) return;
+          var msg = (j && j.message) || "";
+          var e = new Error(msg || "formsubmit");
+          /* prvá objednávka len vyžiada potvrdenie adresy */
+          e.activation = /activat/i.test(msg);
+          throw e;
         });
     }
     return Promise.reject(new Error("mailto"));
@@ -276,27 +279,13 @@
       var f = el("cartForm"); if (f) f.hidden = true;
       done(T.sent, true);
       window.scrollTo({ top: 0, behavior: "smooth" });
-    }).catch(function () {
+    }).catch(function (err) {
       /* keď služba zlyhá, objednávka nesmie zmiznúť */
       if (btn) { btn.disabled = false; btn.textContent = label; }
-      done(T.mailFallback, false);
+      if (err && err.message) { try { console.warn("objednávka:", err.message); } catch (e) {} }
+      done(err && err.activation ? T.needsActivation : T.mailFallback, false);
       mailtoFallback(o);
     });
-  }
-
-  function copyOrder() {
-    var o = buildOrder(), text = o.subject + "\n\n" + o.body, box = el("cartMsg");
-    var done = function () { box.className = "msg ok"; box.textContent = T.copied; };
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(done, function () { fb(text, done); });
-    } else fb(text, done);
-  }
-  function fb(text, done) {
-    var ta = document.createElement("textarea");
-    ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
-    document.body.appendChild(ta); ta.select();
-    try { document.execCommand("copy"); done(); } catch (e) {}
-    document.body.removeChild(ta);
   }
 
   /* ---------- štart ---------- */
@@ -306,13 +295,11 @@
     var f = el("cartForm");
     if (f) {
       f.addEventListener("submit", submit);
-      var cp = el("cartCopy"); if (cp) cp.addEventListener("click", copyOrder);
       var h = el("cartHint");
       if (h) h.innerHTML = esc(T.hint) + '<a href="mailto:' + esc(CFG.orderEmail) + '">' +
         esc(CFG.orderEmail) + "</a>";
       var tt = el("cartTerms"); if (tt) tt.textContent = T.terms;
       var ob = el("cartOrder"); if (ob) ob.textContent = T.order;
-      var cb = el("cartCopy"); if (cb) cb.textContent = T.copy;
       var lh = el("cartContactH"); if (lh) lh.textContent = T.contact;
     }
   }
