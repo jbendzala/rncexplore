@@ -279,8 +279,13 @@ label input:focus,label select:focus,label textarea:focus{border-color:var(--ink
 label input:invalid:not(:placeholder-shown){border-color:var(--danger)}
 textarea{resize:vertical;min-height:80px}
 .req{color:var(--danger);font-style:normal}
+/* úvodný odsek sekcie a poznámka pod formulárom */
+.sec-note{max-width:640px;margin:-6px 0 4px;color:var(--ink-2);font-size:15px}
+.sec-note a{color:var(--brass);font-weight:600}
+.f-note{font-size:12.5px;color:var(--ink-3);margin:14px 0 0}
 .f-actions{display:flex;gap:10px;flex-wrap:wrap}
 .f-actions .btn{flex:1 1 auto}
+.msg:empty{display:none}
 .msg{font-size:13.5px;padding:12px 14px;background:var(--bone-2);
   border-left:3px solid var(--brass);color:var(--ink-2)}
 .msg a{color:var(--brass);font-weight:600;text-decoration:underline}
@@ -506,15 +511,19 @@ a.tile:hover{text-decoration:none}
   padding:18px 16px;background:var(--paper);border:1px solid var(--line);
   transition:border-color .14s,box-shadow .14s}
 .brand-cell:hover{border-color:var(--ink);box-shadow:var(--shadow);text-decoration:none}
-.brand-cell img{width:auto;height:auto;object-fit:contain;mix-blend-mode:multiply}
-/* obrázky s bielym okrajom môžu byť väčšie, orezané musia byť menšie,
-   aby všetky logá pôsobili opticky rovnako veľké */
-.brand-cell img.logo-padded{max-width:190px;max-height:84px}
-.brand-cell img.logo-tight{max-width:124px;max-height:44px}
-/* v tmavom režime sú logá na bielom podklade, preto im dáme svetlú dlaždicu */
+.brand-cell img{width:auto;height:auto;object-fit:contain}
+.brand-cell img.logo-tight,
+.brand-cell img.logo-padded{max-width:132px;max-height:48px}
+/* V tmavom režime nechávame dlaždicu tmavú a logo vykreslíme nabielo,
+   takže zmizne biely obdĺžnik za obrázkom. Dlaždica má jemný svetlý okraj. */
 :root[data-theme="dark"] .brand-cell img,
-:root:not([data-theme="light"]) .brand-cell img{mix-blend-mode:normal;
-  background:#fff;padding:8px 10px;border-radius:3px}
+:root:not([data-theme="light"]) .brand-cell img{filter:grayscale(1) invert(1) contrast(1.08);opacity:.94}
+:root[data-theme="dark"] .brand-cell,
+:root:not([data-theme="light"]) .brand-cell{border-color:rgba(243,241,236,.22)}
+:root[data-theme="dark"] .brand-cell:hover,
+:root:not([data-theme="light"]) .brand-cell:hover{border-color:rgba(243,241,236,.6)}
+:root[data-theme="dark"] .brand-cell:hover img,
+:root:not([data-theme="light"]) .brand-cell:hover img{opacity:1}
 .brand-word{font-family:var(--f-display);font-weight:800;font-size:19px;
   letter-spacing:-.02em;color:var(--ink);text-transform:uppercase;text-align:center}
 .brand-n{position:absolute;top:9px;right:11px;font-family:var(--f-display);

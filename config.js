@@ -6,7 +6,12 @@ window.SITE_CONFIG = {
   /* --- 1. VAŠA FIRMA / VAŠE FIRMA ---------------------------------------
      Nahraďte zástupné hodnoty svojimi údajmi.
      Replace these placeholders with your own details.                     */
-  company: "Safiri s.r.o.",
+  company: "Fabrika SAIL s.r.o.",
+  street: "Pšurnovice 221",
+  city: "014 01 Bytča",
+  ico: "56774907",
+  dic: "2122424018",
+  hours: "9:00 – 18:00",
   orderEmail: "objednavky@rncexplore.com", // sem chodia objednávky / sem chodí objednávky
   phone: "+421 905 698 410",
   web: "www.rncexplore.com",

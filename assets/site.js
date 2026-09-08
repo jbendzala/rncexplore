@@ -38,11 +38,47 @@
     if (n.tagName === "A") n.href = "mailto:" + (CFG.orderEmail || "");
   });
   fill(".js-web", function (n) { n.textContent = CFG.web || ""; });
+  fill(".js-street", function (n) { n.textContent = CFG.street || ""; });
+  fill(".js-city", function (n) { n.textContent = CFG.city || ""; });
+  fill(".js-address", function (n) {
+    n.textContent = [CFG.street, CFG.city].filter(Boolean).join(", ");
+  });
+  fill(".js-ico", function (n) { n.textContent = CFG.ico || ""; });
+  fill(".js-dic", function (n) { n.textContent = CFG.dic || ""; });
+  fill(".js-hours", function (n) { n.textContent = CFG.hours || ""; });
   fill(".js-year", function (n) { n.textContent = new Date().getFullYear(); });
   fill(".js-rights", function (n) {
     n.textContent = "© " + new Date().getFullYear() + " " + (CFG.company || "") + ". " + T.rights;
   });
   fill("[data-t-theme]", function (n) { n.title = T.theme; n.setAttribute("aria-label", T.theme); });
+
+  /* --- filter rubrík na blogu ---
+     Odkaz typu blog.html?rubrika=technika otvorí prehľad rovno vo filtri. --- */
+  var bCats = el("blogCats"), bPosts = el("blogPosts");
+  if (bCats && bPosts) {
+    var chips = [].slice.call(bCats.querySelectorAll(".chip"));
+    var cards = [].slice.call(bPosts.querySelectorAll(".post"));
+    var apply = function (cat) {
+      chips.forEach(function (c) {
+        c.setAttribute("aria-pressed", String(c.getAttribute("data-cat") === cat));
+      });
+      cards.forEach(function (c) {
+        c.hidden = !!cat && c.getAttribute("data-cat") !== cat;
+      });
+    };
+    bCats.addEventListener("click", function (e) {
+      var c = e.target.closest(".chip");
+      if (!c) return;
+      var cat = c.getAttribute("data-cat");
+      apply(cat);
+      var u = new URL(location.href);
+      if (cat) u.searchParams.set("rubrika", cat); else u.searchParams.delete("rubrika");
+      history.replaceState(null, "", u);
+    });
+    var want = new URLSearchParams(location.search).get("rubrika") || "";
+    if (want && chips.some(function (c) { return c.getAttribute("data-cat") === want; }))
+      apply(want);
+  }
 
   /* --- mobilná navigácia --- */
   var burger = el("burger"), nav = el("nav");

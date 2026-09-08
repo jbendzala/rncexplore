@@ -135,10 +135,7 @@ def footer(lang, base, page=""):
     h_con  = "Kontakt"
     h_inf  = "Informácie" if sk else "Informace"
     terms  = "Obchodné podmienky" if sk else "Obchodní podmínky"
-    info   = ("Katalóg slúži na prezeranie sortimentu. Objednávky vybavujeme "
-              "individuálne e-mailom." if sk else
-              "Katalog slouží k prohlížení sortimentu. Objednávky vyřizujeme "
-              "individuálně e-mailem.")
+    info   = ""
     return f"""
 <footer class="ftr">
   <div class="wrap ftr-in">
@@ -157,7 +154,6 @@ def footer(lang, base, page=""):
     </div>
     <div>
       <h4>{h_inf}</h4>
-      <p>{info}</p>
       <ul><li><a href="{page}podmienky.html">{terms}</a></li></ul>
     </div>
   </div>
@@ -166,7 +162,7 @@ def footer(lang, base, page=""):
 
 <script src="{base}config.js"></script>
 <script>window.LANG="{'sk' if sk else 'cs'}";</script>
-<script src="{base}assets/site.js"></script>\n<script src="{base}assets/cart.js"></script>
+<script src="{base}assets/site.js"></script>\n<script src="{base}assets/cart.js"></script>\n<script src="{base}assets/inquiry.js"></script>
 """
 
 

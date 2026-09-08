@@ -224,6 +224,38 @@ MODALS = """
 """
 
 
+# ---------------------------------------------------------------- dopytový formulár
+def inquiry_form(lang, subject, fields, button, note=""):
+    """Formulár, ktorý odošle assets/inquiry.js. `fields` sú n-tice
+    (id, popis, typ, povinné, celá šírka, voľby-pre-select)."""
+    rows = []
+    for f in fields:
+        fid, label, typ, req, full, opts = f
+        cls = ' class="full"' if full else ""
+        star = ' <em class="req">*</em>' if req else ""
+        rq = " required" if req else ""
+        role = ""
+        if fid.endswith("Email"):
+            role = ' data-role="email"'
+        elif fid.endswith("Name"):
+            role = ' data-role="name"'
+        attrs = 'id="%s" data-label="%s"%s%s' % (fid, label, role, rq)
+        if typ == "textarea":
+            control = "<textarea %s></textarea>" % attrs
+        elif typ == "select":
+            o = "".join('<option value="%s">%s</option>' % (v, v) for v in opts)
+            o = '<option value=""></option>' + o
+            control = "<select %s>%s</select>" % (attrs, o)
+        else:
+            control = '<input %s type="%s" placeholder=" ">' % (attrs, typ)
+        rows.append("<label%s><span>%s%s</span>%s</label>" % (cls, label, star, control))
+    nt = '<p class="f-note">%s</p>' % note if note else ""
+    return ('<form class="cart-form inq-form" novalidate data-subject="%s">'
+            '<div class="fields">%s</div>%s<div class="msg"></div>'
+            '<div class="f-actions"><button class="btn signal lg" type="submit">%s</button></div>'
+            "</form>") % (subject, "".join(rows), nt, button)
+
+
 # ---------------------------------------------------------------- veľkoobchod
 def velkoobchod(lang, base):
     sk = lang == "sk"
@@ -271,6 +303,30 @@ def velkoobchod(lang, base):
     ]
     st = "".join(f'<div class="step"><div><h3>{t}</h3><p>{d}</p></div></div>' for t, d in steps)
 
+    volume = (["Do 10 kusov ročne", "10 – 50 kusov ročne", "50 – 200 kusov ročne",
+               "Viac ako 200 kusov ročne", "Zatiaľ neviem odhadnúť"] if sk else
+              ["Do 10 kusů ročně", "10 – 50 kusů ročně", "50 – 200 kusů ročně",
+               "Více než 200 kusů ročně", "Zatím neumím odhadnout"])
+    wf = [
+        ("wCompany", T("Firma", "Firma", lang), "text", True, False, ()),
+        ("wIco", T("IČO", "IČO", lang), "text", False, False, ()),
+        ("wName", T("Meno a priezvisko", "Jméno a příjmení", lang), "text", True, False, ()),
+        ("wEmail", T("E-mail", "E-mail", lang), "email", True, False, ()),
+        ("wPhone", T("Telefón", "Telefon", lang), "tel", False, False, ()),
+        ("wVolume", T("Predpokladaný odber", "Předpokládaný odběr", lang),
+         "select", False, False, tuple(volume)),
+        ("wMsg", T("O aký sortiment máte záujem?", "O jaký sortiment máte zájem?", lang),
+         "textarea", False, True, ()),
+    ]
+    form = inquiry_form(
+        lang,
+        T("Žiadosť o veľkoobchodný cenník", "Žádost o velkoobchodní ceník", lang),
+        wf,
+        T("Odoslať žiadosť o cenník", "Odeslat žádost o ceník", lang),
+        T("Údaje použijeme len na vybavenie vašej žiadosti.",
+          "Údaje použijeme jen k vyřízení vaší žádosti.", lang),
+    )
+
     return f"""
 <section class="sec"><div class="wrap">
   <div class="prose">
@@ -285,28 +341,9 @@ def velkoobchod(lang, base):
 </div></section>
 
 <section class="sec"><div class="wrap">
-  <h2>{T("Orientačné úrovne odberu","Orientační úrovně odběru",lang)}</h2>
-  <p class="lead">{T("Presné ceny a hranice si dohodneme individuálne — nasledujúca tabuľka je len rámcová.","Přesné ceny a hranice si domluvíme individuálně — následující tabulka je jen rámcová.",lang)}</p>
-  <div class="table-wrap"><table class="data">
-    <thead><tr>
-      <th>{T("Úroveň","Úroveň",lang)}</th>
-      <th>{T("Ročný odber","Roční odběr",lang)}</th>
-      <th>{T("Podmienky","Podmínky",lang)}</th>
-    </tr></thead>
-    <tbody>
-      <tr><td><strong>{T("Začínajúci partner","Začínající partner",lang)}</strong></td><td>{todo(T("doplňte","doplňte",lang))}</td><td>{T("Veľkoobchodný cenník, podpora pri výbere","Velkoobchodní ceník, podpora při výběru",lang)}</td></tr>
-      <tr><td><strong>{T("Stály partner","Stálý partner",lang)}</strong></td><td>{todo(T("doplňte","doplňte",lang))}</td><td>{T("Lepšie ceny, rezervácia tovaru","Lepší ceny, rezervace zboží",lang)}</td></tr>
-      <tr><td><strong>{T("Kľúčový partner","Klíčový partner",lang)}</strong></td><td>{todo(T("doplňte","doplňte",lang))}</td><td>{T("Individuálne ceny, plánované dodávky","Individuální ceny, plánované dodávky",lang)}</td></tr>
-    </tbody>
-  </table></div>
-</div></section>
-
-<section class="cta"><div class="wrap cta-in">
-  <div>
-    <h2>{T("Máte záujem o veľkoobchod?","Máte zájem o velkoobchod?",lang)}</h2>
-    <p>{T("Napíšte nám a pošleme vám cenník aj podmienky.","Napište nám a pošleme vám ceník i podmínky.",lang)}</p>
-  </div>
-  <a class="btn signal lg js-mail" href="#"></a>
+  <h2>{T("Máte záujem o veľkoobchod?","Máte zájem o velkoobchod?",lang)}</h2>
+  <p class="sec-note">{T("Vyplňte formulár a pošleme vám cenník aj podmienky. Alebo nám napíšte priamo na ","Vyplňte formulář a pošleme vám ceník i podmínky. Nebo nám napište přímo na ",lang)}<a class="js-mail" href="#"></a>.</p>
+  {form}
 </div></section>
 """
 
@@ -425,10 +462,17 @@ def montaz(lang, base):
   <div class="cols">{nb}</div>
 </div></section>
 
+<section class="sec alt"><div class="wrap"><div class="prose">
+  <h2>{T("Namontujeme vám ho","Namontujeme vám ho",lang)}</h2>
+  <p>{T("Ak si montáž nechcete robiť sami, panel vám namontujeme u nás v Bytči. Napíšte nám značku, model a rok výroby vozidla spolu s vybraným panelom a pošleme vám cenu montáže aj voľný termín.","Pokud si montáž nechcete dělat sami, panel vám namontujeme u nás v Bytči. Napište nám značku, model a rok výroby vozidla spolu s vybraným panelem a pošleme vám cenu montáže i volný termín.",lang)}</p>
+  <p>{T("Cena závisí od typu panela a náročnosti vedenia kábla, preto ju posielame na vyžiadanie.","Cena závisí na typu panelu a náročnosti vedení kabelu, proto ji posíláme na vyžádání.",lang)}</p>
+  <p><strong class="js-company"></strong><br><span class="js-address"></span></p>
+</div></div></section>
+
 <section class="cta"><div class="wrap cta-in">
   <div>
-    <h2>{T("Neviete si rady s montážou?","Nevíte si rady s montáží?",lang)}</h2>
-    <p>{T("Napíšte nám — poradíme s výberom aj zapojením.","Napište nám — poradíme s výběrem i zapojením.",lang)}</p>
+    <h2>{T("Chcete cenu montáže?","Chcete cenu montáže?",lang)}</h2>
+    <p>{T("Napíšte nám vozidlo a vybraný panel — ozveme sa s cenou a termínom.","Napište nám vozidlo a vybraný panel — ozveme se s cenou a termínem.",lang)}</p>
   </div>
   <a class="btn signal lg js-mail" href="#"></a>
 </div></section>
@@ -452,10 +496,8 @@ def o_nas(lang, base):
   <h2>{T("Firemné údaje","Firemní údaje",lang)}</h2>
   <p>
     <strong class="js-company"></strong><br>
-    {T("Sídlo","Sídlo",lang)}: {todo(T("doplňte adresu","doplňte adresu",lang))}<br>
-    {T("IČO","IČO",lang)}: {todo(T("doplňte","doplňte",lang))} &nbsp;
-    {T("DIČ","DIČ",lang)}: {todo(T("doplňte","doplňte",lang))}<br>
-    {T("Zapísaná v","Zapsána v",lang)}: {todo(T("doplňte register","doplňte rejstřík",lang))}
+    {T("Sídlo","Sídlo",lang)}: <span class="js-address"></span><br>
+    IČO: <span class="js-ico"></span> &nbsp; DIČ: <span class="js-dic"></span>
   </p>
 </div></div></section>
 
@@ -576,12 +618,12 @@ def kontakt(lang, base):
     <div class="box">
       <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="10" r="3"/><path d="M12 21s-6-5.3-6-10a6 6 0 1112 0c0 4.7-6 10-6 10z"/></svg></div>
       <strong>{T("Adresa","Adresa",lang)}</strong>
-      <p>{todo(T("doplňte adresu","doplňte adresu",lang))}</p>
+      <p><span class="js-street"></span><br><span class="js-city"></span></p>
     </div>
     <div class="box">
       <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
       <strong>{T("Kedy sme dostupní","Kdy jsme dostupní",lang)}</strong>
-      <p>{todo(T("doplňte otváracie hodiny","doplňte otevírací dobu",lang))}</p>
+      <p>{T("Pondelok – piatok","Pondělí – pátek",lang)}<br><span class="js-hours"></span></p>
     </div>
   </div>
 </div></section>
@@ -603,8 +645,9 @@ def podmienky(lang, base):
 
   <h2>{T("Predávajúci","Prodávající",lang)}</h2>
   <p><strong class="js-company"></strong><br>
-     {T("Sídlo","Sídlo",lang)}: {d}<br>IČO: {d} &nbsp; DIČ: {d}<br>
-     E-mail: <a class="js-mail" href="#"></a></p>
+     {T("Sídlo","Sídlo",lang)}: <span class="js-address"></span><br>
+     IČO: <span class="js-ico"></span> &nbsp; DIČ: <span class="js-dic"></span><br>
+     E-mail: <a class="js-mail" href="#"></a> &nbsp; {T("Telefón","Telefon",lang)}: <a class="js-phone" href="#"></a></p>
 
   <h2>{T("Objednávka a uzavretie zmluvy","Objednávka a uzavření smlouvy",lang)}</h2>
   <p>{T("Odoslanie formulára z katalógu je nezáväzný dopyt, nie objednávka. Kúpna zmluva vzniká až potvrdením cenovej ponuky oboma stranami.","Odeslání formuláře z katalogu je nezávazná poptávka, nikoli objednávka. Kupní smlouva vzniká až potvrzením cenové nabídky oběma stranami.",lang)}</p>
