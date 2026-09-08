@@ -56,5 +56,5 @@ window.SITE_CONFIG = {
      nefunguje alebo sa k nej neviete dostať — na webe sa aj tak
      všade zobrazuje orderEmail, zákazník túto adresu nevidí.
      Príklad: "j.bendzala.j@gmail.com"                                    */
-  deliverTo: "",
+  deliverTo: "objednavky@rncexplore.com",
 };
