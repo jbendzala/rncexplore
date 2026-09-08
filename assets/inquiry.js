@@ -14,17 +14,17 @@
           sent: "Ďakujeme, správu sme dostali. Ozveme sa vám obratom.",
           need: "Vyplňte prosím povinné údaje označené hviezdičkou.",
           mailFallback: "Správu sa nepodarilo odoslať automaticky, preto sme otvorili váš e-mailový klient. Správu už len odošlite.",
-          needsActivation: "Formulár ešte nie je aktivovaný. V schránke " +
-            (CFG.orderEmail || "") + " nájdete e-mail od formsubmit.co — kliknite na odkaz Activate Form. Správa sa zatiaľ odosiela e-mailovým klientom.",
+          needsActivation: "Formulár ešte nie je aktivovaný. V schránke, kam sa správy doručujú, nájdete e-mail od formsubmit.co — kliknite v ňom na Activate Form. Správa sa zatiaľ odosiela e-mailovým klientom.",
           src: "Odoslané z" },
     cs: { sending: "Odesílám…",
           sent: "Děkujeme, zprávu jsme dostali. Ozveme se vám obratem.",
           need: "Vyplňte prosím povinné údaje označené hvězdičkou.",
           mailFallback: "Zprávu se nepodařilo odeslat automaticky, proto jsme otevřeli váš e-mailový klient. Zprávu už jen odešlete.",
-          needsActivation: "Formulář ještě není aktivovaný. Ve schránce " +
-            (CFG.orderEmail || "") + " najdete e-mail od formsubmit.co — klikněte na odkaz Activate Form. Zpráva se zatím odesílá e-mailovým klientem.",
+          needsActivation: "Formulář ještě není aktivovaný. Ve schránce, kam se zprávy doručují, najdete e-mail od formsubmit.co — klikněte v něm na Activate Form. Zpráva se zatím odesílá e-mailovým klientem.",
           src: "Odesláno z" }
   }[LANG];
+
+  function deliveryEmail() { return CFG.deliverTo || CFG.orderEmail; }
 
   function fields(form) {
     return Array.prototype.slice.call(form.querySelectorAll("[data-label]"));
@@ -77,7 +77,7 @@
         var v = (n.value || "").trim();
         if (v) payload[n.getAttribute("data-label")] = v;
       });
-      return fetch("https://formsubmit.co/ajax/" + encodeURIComponent(CFG.orderEmail), {
+      return fetch("https://formsubmit.co/ajax/" + encodeURIComponent(deliveryEmail()), {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify(payload)

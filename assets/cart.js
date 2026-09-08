@@ -21,7 +21,7 @@
           sent: "Objednávka odoslaná. Obratom vám pošleme faktúru s QR kódom na zaplatenie.",
           sending: "Odosielam objednávku…",
           mailFallback: "Objednávku sa nepodarilo odoslať automaticky, preto sme otvorili váš e-mailový klient. Správu už len odošlite.",
-          needsActivation: "Formulár ešte nie je aktivovaný. V schránke objednavky@rncexplore.com nájdete e-mail od formsubmit.co — kliknite na odkaz Activate Form. Objednávka sa zatiaľ odosiela e-mailovým klientom.",
+          needsActivation: "Formulár ešte nie je aktivovaný. V schránke, kam sa objednávky doručujú, nájdete e-mail od formsubmit.co — kliknite v ňom na Activate Form. Objednávka sa zatiaľ odosiela e-mailovým klientom.",
           thanks: "Ďakujeme za objednávku",
           thanksNote: "Kópiu sme poslali aj na váš e-mail. Faktúru s QR kódom vám pošleme obratom.",
           hint: "Ak sa e-mailový klient neotvorí, skopírujte objednávku a pošlite nám ju na ",
@@ -37,13 +37,17 @@
           sent: "Objednávka odeslána. Obratem vám pošleme fakturu s QR kódem k zaplacení.",
           sending: "Odesílám objednávku…",
           mailFallback: "Objednávku se nepodařilo odeslat automaticky, proto jsme otevřeli váš e-mailový klient. Zprávu už jen odešlete.",
-          needsActivation: "Formulář ještě není aktivovaný. Ve schránce objednavky@rncexplore.com najdete e-mail od formsubmit.co — klikněte na odkaz Activate Form. Objednávka se zatím odesílá e-mailovým klientem.",
+          needsActivation: "Formulář ještě není aktivovaný. Ve schránce, kam se objednávky doručují, najdete e-mail od formsubmit.co — klikněte v něm na Activate Form. Objednávka se zatím odesílá e-mailovým klientem.",
           thanks: "Děkujeme za objednávku",
           thanksNote: "Kopii jsme poslali i na váš e-mail. Fakturu s QR kódem vám pošleme obratem.",
           hint: "Pokud se e-mailový klient neotevře, zkopírujte objednávku a pošlete nám ji na ",
           terms: "Odesláním objednávky potvrzujete, že jste se seznámili s obchodními podmínkami a že objednávka je spojena s povinností platby.",
           need: "Vyplňte prosím povinné údaje označené hvězdičkou." }
   }[LANG];
+
+  /* Kam službа objednávku doručí. Zákazník vidí vždy CFG.orderEmail,
+     doručovacia adresa sa dá prepnúť v config.js cez deliverTo. */
+  function deliveryEmail() { return CFG.deliverTo || CFG.orderEmail; }
 
   /* ---------- ceny ---------- */
   function convert(usd) {
@@ -226,7 +230,7 @@
         .then(function (j) { if (!j || j.success !== true) throw new Error("web3forms"); });
     }
     if (how === "formsubmit") {
-      return fetch("https://formsubmit.co/ajax/" + encodeURIComponent(CFG.orderEmail), {
+      return fetch("https://formsubmit.co/ajax/" + encodeURIComponent(deliveryEmail()), {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({

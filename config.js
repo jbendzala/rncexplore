@@ -50,4 +50,11 @@ window.SITE_CONFIG = {
      aby objednávka nezostala visieť.                                     */
   orderSend: "formsubmit",
   formKey: "",
+
+  /* Kam objednávku reálne doručiť. Nechajte prázdne = doručí sa na
+     orderEmail. Vyplňte len vtedy, keď schránka orderEmail ešte
+     nefunguje alebo sa k nej neviete dostať — na webe sa aj tak
+     všade zobrazuje orderEmail, zákazník túto adresu nevidí.
+     Príklad: "j.bendzala.j@gmail.com"                                    */
+  deliverTo: "",
 };
