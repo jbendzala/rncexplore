@@ -13,6 +13,7 @@ SRC = "https://lensunsolar.com/blogs/"
 CATS = [
     ("kapota",   ("Panely na kapotu",     "Panely na kapotu")),
     ("montaz",   ("Skúsenosti z montáže", "Zkušenosti z montáže")),
+    ("prenosne", ("Prenosné panely",      "Přenosné panely")),
     ("technika", ("Technika",             "Technika")),
 ]
 CAT = dict(CATS)
@@ -732,6 +733,579 @@ POSTS = [
       "Do jedné větve spojujte jen panely se stejnými parametry. Panel s nižším "
       "proudem v sérii stáhne celou větev na svoji hodnotu, panel s nižším napětím "
       "paralelně odebírá z ostatních.")]),
+  ]),
+ dict(
+  slug="toyota-land-cruiser-80-90w",
+  video="qugwHNNU41o",
+  hero="https://cdn.shopify.com/s/files/1/0595/2156/4737/files/Toyota_LandCruiser_80_Series_J80_Fz80_Lensun_90W_Hood_Flexible_Solar_Panel-1.jpg",
+  date="2026-04-15",
+  source=SRC + "hood-solar-panel/is-it-any-good-lensun-90w-hood-mounted-solar-panel-kit-for-lc80-cruisinmiles-review",
+  product="toyota-land-cruiser-80series-j80-lensun-90w-hood-bonnet-solar-panel",
+  cat="kapota",
+  title=("Land Cruiser 80: keď alternátor na AGM batériu nestačí",
+         "Land Cruiser 80: když alternátor na AGM baterii nestačí"),
+  lead=("Rok a pol prevádzky na J80. Zaujímavý je dôvod, prečo panel na tomto aute "
+        "urobil väčší rozdiel než na modernejších vozidlách.",
+        "Rok a půl provozu na J80. Zajímavý je důvod, proč panel na tomto autě "
+        "udělal větší rozdíl než na modernějších vozidlech."),
+  body=[
+   (("Slabina osemdesiatky", "Slabina osmdesátky"),
+    [("Sériový alternátor Land Cruisera 80 dáva 80 A. Na dobíjanie AGM batérie to "
+      "vyzerá ako dosť, lenže AGM potrebuje na plné nabitie vyššie napätie a dlhší "
+      "čas, než mu bežná jazda dopraje. Batéria sa preto zastaví okolo 90 % kapacity.",
+      "Sériový alternátor Land Cruiseru 80 dává 80 A. Na dobíjení AGM baterie to "
+      "vypadá jako dost, jenže AGM potřebuje k plnému nabití vyšší napětí a delší "
+      "čas, než mu běžná jízda dopřeje. Baterie se proto zastaví kolem 90 % kapacity."),
+     ("Panel s MPPT regulátorom dotiahne posledných desať percent tam, kde na to "
+      "alternátor nemá čas. Rozdiel medzi 90 a 100 % pritom rozhoduje o životnosti "
+      "AGM batérie — nedobitá AGM sulfatuje.",
+      "Panel s MPPT regulátorem dotáhne posledních deset procent tam, kde na to "
+      "alternátor nemá čas. Rozdíl mezi 90 a 100 % přitom rozhoduje o životnosti "
+      "AGM baterie — nedobitá AGM sulfatuje.")]),
+   (("Čo je v zostave", "Co je v sestavě"),
+    [("Panel, vinylová fólia na ochranu laku a MPPT regulátor. Regulátor sám "
+      "rozhoduje, kam energiu pošle, a po dosiahnutí plného nabitia panel odpojí.",
+      "Panel, vinylová fólie na ochranu laku a MPPT regulátor. Regulátor sám "
+      "rozhoduje, kam energii pošle, a po dosažení plného nabití panel odpojí."),
+     ("Regulátor komunikuje cez bluetooth s aplikáciou, takže stav batérie aj "
+      "okamžitý výkon panela vidíte v telefóne. Sústava sa dá neskôr rozšíriť o "
+      "druhý panel a druhú batériu.",
+      "Regulátor komunikuje přes bluetooth s aplikací, takže stav baterie i "
+      "okamžitý výkon panelu vidíte v telefonu. Soustava se dá později rozšířit o "
+      "druhý panel a druhou baterii.")]),
+   (("Prečo práve na osemdesiatku sadne", "Proč právě na osmdesátku sedne"),
+    [("Kapota J80 je veľká a takmer rovná — panel na nej má kde ležať a nemusí sa "
+      "prehýbať. Čierny povrch s ETFE fóliou navyše ladí s karosériou a nepôsobí "
+      "ako dodatočný doplnok.",
+      "Kapota J80 je velká a téměř rovná — panel na ní má kde ležet a nemusí se "
+      "prohýbat. Černý povrch s ETFE fólií navíc ladí s karoserií a nepůsobí "
+      "jako dodatečný doplněk.")]),
+  ]),
+
+ dict(
+  slug="mercedes-g-wagen-135w",
+  video=None,
+  hero="https://cdn.shopify.com/s/files/1/0595/2156/4737/files/Mercedes-Benz-G-Wagen-G-Class-Lensun-135W-Hood-Bonnet-Flexible-Solar-Panel.jpg",
+  date="2026-07-29",
+  source=SRC + "hood-solar-panel/real-g-wagen-owners-share-why-the-lensun-135w-hood-solar-panel-changed-their-overlanding-game-1",
+  product="mercedes-benz-g-wagen-g-class-lensun-135w-hood-flexible-solar-panel",
+  cat="kapota",
+  title=("Mercedes G: 135 W a koniec voľnobehu kvôli chladničke",
+         "Mercedes G: 135 W a konec volnoběhu kvůli lednici"),
+  lead=("Hranatá kapota triedy G je pre solárny panel takmer ideálna plocha. "
+        "So 135 W ide o jeden z najvýkonnejších panelov na kapotu v ponuke.",
+        "Hranatá kapota třídy G je pro solární panel téměř ideální plocha. "
+        "Se 135 W jde o jeden z nejvýkonnějších panelů na kapotu v nabídce."),
+  body=[
+   (("Parametre", "Parametry"),
+    [("Špičkový výkon 135 W, účinnosť článkov 23,5 %, napätie v bode maximálneho "
+      "výkonu 16,5 V a prúd 8,18 A. Hmotnosť 3,5 kg, hrúbka 3 mm.",
+      "Špičkový výkon 135 W, účinnost článků 23,5 %, napětí v bodě maximálního "
+      "výkonu 16,5 V a proud 8,18 A. Hmotnost 3,5 kg, tloušťka 3 mm."),
+     ("Panel je tvarovaný pre modely W460 a W463. Prípojná skrinka má krytie IP 68, "
+      "takže zimné soľné postreky ani letné búrky jej neuškodia.",
+      "Panel je tvarovaný pro modely W460 a W463. Připojovací krabice má krytí IP 68, "
+      "takže zimní solné postřiky ani letní bouřky jí neuškodí.")]),
+   (("Čo 135 W utiahne", "Co 135 W utáhne"),
+    [("Chladnička s odberom 45 až 60 W, LED osvetlenie 15 až 30 W, palubná kamera "
+      "v režime nepretržitého záznamu 5 až 10 W, nabíjanie telefónov a tabletov. "
+      "Pri dobrom počasí zvýši aj na dobíjanie prenosnej elektrocentrály.",
+      "Lednice s odběrem 45 až 60 W, LED osvětlení 15 až 30 W, palubní kamera "
+      "v režimu nepřetržitého záznamu 5 až 10 W, nabíjení telefonů a tabletů. "
+      "Za dobrého počasí zbude i na dobíjení přenosné elektrocentrály.")]),
+   (("Úspora, na ktorú sa zabúda", "Úspora, na kterou se zapomíná"),
+    [("Kto nechá motor bežať na voľnobeh, aby udržal chladničku, spáli zhruba dva "
+      "až štyri litre nafty za hodinu. Pri dvadsiatich až tridsiatich dňoch v "
+      "teréne za rok to nie sú zanedbateľné peniaze.",
+      "Kdo nechá motor běžet na volnoběh, aby udržel lednici, spálí zhruba dva "
+      "až čtyři litry nafty za hodinu. Při dvaceti až třiceti dnech v terénu "
+      "za rok to nejsou zanedbatelné peníze."),
+     ("Voľnobeh navyše opotrebúva motor viac, než zodpovedá prejdenej vzdialenosti "
+      "— filter pevných častíc pri nízkych otáčkach nemá ako regenerovať.",
+      "Volnoběh navíc opotřebovává motor víc, než odpovídá ujeté vzdálenosti "
+      "— filtr pevných částic při nízkých otáčkách nemá jak regenerovat.")]),
+   (("Montáž", "Montáž"),
+    [("Podľa majiteľov trvá montáž hodinu až dve. Kapotu treba dôkladne vyčistiť, "
+      "priložiť ochrannú fóliu, umiestniť panel a zapojiť predpripravenú kabeláž "
+      "s poistkami a konektormi.",
+      "Podle majitelů trvá montáž hodinu až dvě. Kapotu je třeba důkladně vyčistit, "
+      "přiložit ochrannou fólii, umístit panel a zapojit předpřipravenou kabeláž "
+      "s pojistkami a konektory.")]),
+  ]),
+
+ dict(
+  slug="range-rover-l322",
+  video="oCwL47aFH94",
+  hero="https://cdn.shopify.com/s/files/1/0595/2156/4737/files/Ranger_Rover_L322_2001-2012_Lensun_100W_12V_Hood_Bonnet_Flexible_Solar_Panel-1.jpg",
+  date="2026-08-26",
+  source=SRC + "solar-panel-review/90w-bonnet-hood-solar-panel-on-range-rover-l322-overlanding-4wd-review",
+  product="ranger-rover-l322-lensun-100w-hood-bonnet-flexible-solar-panel",
+  cat="kapota",
+  title=("Range Rover L322: hodina práce a zopár trikov navyše",
+         "Range Rover L322: hodina práce a pár triků navíc"),
+  lead=("Montáž na L322 je dobre zdokumentovaná a ukazuje niekoľko detailov, ktoré "
+        "v návode nenájdete — od výberu dňa až po medzeru na prúdenie vzduchu.",
+        "Montáž na L322 je dobře zdokumentovaná a ukazuje několik detailů, které "
+        "v návodu nenajdete — od výběru dne až po mezeru na proudění vzduchu."),
+  body=[
+   (("Fóliu lepte v zamračený deň", "Fólii lepte v zamračený den"),
+    [("Vinylová fólia je o niečo väčšia než panel a musí kopírovať zaoblenie kapoty. "
+      "Na priamom slnku sa lepidlo chytí okamžite a fóliu už neposuniete — preto je "
+      "lepší zamračený deň alebo tieň haly.",
+      "Vinylová fólie je o něco větší než panel a musí kopírovat zaoblení kapoty. "
+      "Na přímém slunci se lepidlo chytí okamžitě a fólii už neposunete — proto je "
+      "lepší zamračený den nebo stín haly."),
+     ("Pomôže mydlová voda: fólia po nej kĺže, dá sa presne usadiť a až potom "
+      "vytlačíte vodu stierkou od stredu k okrajom.",
+      "Pomůže mýdlová voda: fólie po ní klouže, dá se přesně usadit a až potom "
+      "vytlačíte vodu stěrkou od středu k okrajům.")]),
+   (("Príprava povrchu rozhoduje", "Příprava povrchu rozhoduje"),
+    [("Kapotu umyte a potom prejdite izopropylalkoholom. Vosk, leštenka ani zvyšky "
+      "autošampónu na plechu ostať nesmú — na nich páska VHB nedrží.",
+      "Kapotu umyjte a potom přejděte izopropylalkoholem. Vosk, leštěnka ani zbytky "
+      "autošamponu na plechu zůstat nesmí — na nich páska VHB nedrží."),
+     ("Na spoj medzi páskou a vinylovou fóliou sa oplatí použiť aktivačný prípravok "
+      "3M. Je to drobnosť za pár eur, ktorá výrazne zvýši pevnosť lepenia.",
+      "Na spoj mezi páskou a vinylovou fólií se vyplatí použít aktivační přípravek "
+      "3M. Je to drobnost za pár eur, která výrazně zvýší pevnost lepení.")]),
+   (("Nechajte pod panelom prúdiť vzduch", "Nechte pod panelem proudit vzduch"),
+    [("Páska VHB sa nedáva po celej ploche, ale do pruhov. Panel tak zostane mierne "
+      "nadvihnutý a pod ním prúdi vzduch, ktorý ho chladí. Chladnejší článok má "
+      "vyššiu účinnosť.",
+      "Páska VHB se nedává po celé ploše, ale do pruhů. Panel tak zůstane mírně "
+      "nadzvednutý a pod ním proudí vzduch, který ho chladí. Chladnější článek má "
+      "vyšší účinnost.")]),
+   (("Kabeláž a regulátor", "Kabeláž a regulátor"),
+    [("Regulátor sa uchytí páskou VHB v motorovom priestore, kábel sa vedie cez "
+      "existujúci prieduch. Celá montáž trvá zhruba tri štvrte hodiny až hodinu — "
+      "a práve na nej sa neoplatí ponáhľať.",
+      "Regulátor se uchytí páskou VHB v motorovém prostoru, kabel se vede přes "
+      "existující průduch. Celá montáž trvá zhruba tři čtvrtě hodiny až hodinu — "
+      "a právě na ní se nevyplatí spěchat."),
+     ("Pre L322 máme v katalógu panel s výkonom 100 W. Ďalšie modely Land Rover "
+      "vrátane Discovery, Defendera, Freelandera a Range Roveru Sport nájdete "
+      "vo filtri podľa značky.",
+      "Pro L322 máme v katalogu panel s výkonem 100 W. Další modely Land Rover "
+      "včetně Discovery, Defenderu, Freelanderu a Range Roveru Sport najdete "
+      "ve filtru podle značky.")]),
+  ]),
+
+ dict(
+  slug="ako-nalepit-panel-na-kapotu",
+  video=None,
+  hero="/assets/hood-install.jpg",
+  date="2026-09-02",
+  source=SRC + "hood-solar-panel/is-it-any-good-lensun-90w-hood-mounted-solar-panel-kit-for-lc80-cruisinmiles-review",
+  product=None,
+  cat="kapota",
+  title=("Postup montáže krok za krokom",
+         "Postup montáže krok za krokem"),
+  lead=("Panel na kapotu zvládne namontovať aj bežne zručný človek. Celá práca "
+        "zaberie hodinu až dve a nepotrebujete na ňu špeciálne náradie.",
+        "Panel na kapotu zvládne namontovat i běžně zručný člověk. Celá práce "
+        "zabere hodinu až dvě a nepotřebujete na ni speciální nářadí."),
+  body=[
+   (("Čo si pripravte", "Co si připravte"),
+    [("Izopropylalkohol, mikrovláknovú utierku, rozprašovač s mydlovou vodou, "
+      "stierku, maliarsku pásku na značenie, príchytky na kábel a nožnice. "
+      "Ak montujete v zime, aj teplovzdušnú pištoľ na nahriatie plechu.",
+      "Izopropylalkohol, mikrovláknovou utěrku, rozprašovač s mýdlovou vodou, "
+      "stěrku, malířskou pásku na značení, příchytky na kabel a nůžky. "
+      "Pokud montujete v zimě, také horkovzdušnou pistoli na nahřátí plechu.")]),
+   (("1. Rozbaľte a skontrolujte", "1. Rozbalte a zkontrolujte"),
+    [("Prejdite si obsah balenia podľa zoznamu — panel, fólia, regulátor, káble, "
+      "poistky, konektory. Panel nechajte v obale, kým naň nepríde rad.",
+      "Projděte si obsah balení podle seznamu — panel, fólie, regulátor, kabely, "
+      "pojistky, konektory. Panel nechte v obalu, dokud na něj nepřijde řada.")]),
+   (("2. Vyčistite kapotu", "2. Vyčistěte kapotu"),
+    [("Umyte, osušte a nakoniec prejdite izopropylalkoholom. Toto je krok, ktorý "
+      "sa najčastejšie odbije — a potom sa panel po pár mesiacoch odlepí.",
+      "Umyjte, osušte a nakonec přejděte izopropylalkoholem. Tohle je krok, který "
+      "se nejčastěji odbyde — a potom se panel po pár měsících odlepí.")]),
+   (("3. Nalepte ochrannú fóliu", "3. Nalepte ochrannou fólii"),
+    [("Fóliu usaďte na mydlovú vodu, skontrolujte medzery po obvode a až potom "
+      "vytlačte vodu stierkou od stredu von. Fólia chráni lak a pri prípadnej "
+      "demontáži uľahčí odstránenie lepidla.",
+      "Fólii usaďte na mýdlovou vodu, zkontrolujte mezery po obvodu a až potom "
+      "vytlačte vodu stěrkou od středu ven. Fólie chrání lak a při případné "
+      "demontáži usnadní odstranění lepidla.")]),
+   (("4. Umiestnite a prilepte panel", "4. Umístěte a přilepte panel"),
+    [("Polohu si najprv vyznačte maliarskou páskou. Pásku VHB nalepte v pruhoch, "
+      "nie po celej ploche — pod panelom má prúdiť vzduch. Potom sťahujte krycí "
+      "papier postupne a panel priťahujte od stredu k okrajom.",
+      "Polohu si nejprve vyznačte malířskou páskou. Pásku VHB nalepte v pruzích, "
+      "ne po celé ploše — pod panelem má proudit vzduch. Potom stahujte krycí "
+      "papír postupně a panel přitlačujte od středu k okrajům.")]),
+   (("5. Veďte kábel a zapojte", "5. Veďte kabel a zapojte"),
+    [("Kábel veďte existujúcim prieduchom do motorového priestoru, uchyťte ho "
+      "príchytkami mimo horúcich a pohyblivých častí. Pripojte panel na regulátor "
+      "a až potom regulátor na batériu.",
+      "Kabel veďte existujícím průduchem do motorového prostoru, uchyťte ho "
+      "příchytkami mimo horké a pohyblivé části. Připojte panel na regulátor "
+      "a až potom regulátor na baterii."),
+     ("Kým zapájate, panel zakryte nepriehľadnou látkou. Na svetle vyrába napätie "
+      "a svorky sú pod prúdom.",
+      "Dokud zapojujete, panel zakryjte neprůhlednou látkou. Na světle vyrábí napětí "
+      "a svorky jsou pod proudem.")]),
+   (("Kedy nelepit", "Kdy nelepit"),
+    [("Pod 15 °C lepidlo nechytá tak, ako má. Ak nemáte vyhriatu garáž, počkajte "
+      "na teplejší deň — alebo nám auto privezte, montáž robíme v Bytči.",
+      "Pod 15 °C lepidlo nechytá tak, jak má. Pokud nemáte vytopenou garáž, počkejte "
+      "na teplejší den — nebo nám auto přivezte, montáž děláme v Bytči.")]),
+  ]),
+
+ dict(
+  slug="vw-t4-t5-panely-na-strechu",
+  video=None,
+  hero="https://cdn.shopify.com/s/files/1/0595/2156/4737/files/lensunsolar-240w-flexible-solar-panel-1.jpg",
+  date="2026-06-17",
+  source=SRC + "solar-panel-installation/volkswagen-vw-t4-or-t5-camping-vans-bus-install-flexible-solar-panels-guide-how-many-ways-to-install-the-flexible-solar-panels-on-the-campers-or-caravans-roof",
+  product=None,
+  cat="montaz",
+  title=("VW T4, T5 a T6: štyri spôsoby uchytenia panela",
+         "VW T4, T5 a T6: čtyři způsoby uchycení panelu"),
+  lead=("Na streche obytnej dodávky sa flexibilný panel dá uchytiť štyrmi spôsobmi. "
+        "Líšia sa v tom, či musíte vŕtať a ako ľahko panel neskôr dolu dostanete.",
+        "Na střeše obytné dodávky se flexibilní panel dá uchytit čtyřmi způsoby. "
+        "Liší se v tom, jestli musíte vrtat a jak snadno panel později dolů dostanete."),
+  body=[
+   (("1. Skrutky priamo cez oká panela", "1. Šrouby přímo přes oka panelu"),
+    [("Najrýchlejšie a najlacnejšie. Znamená to však otvory v streche, ktoré treba "
+      "poriadne utesniť — a každý otvor je potenciálne miesto zatekania.",
+      "Nejrychlejší a nejlevnější. Znamená to však otvory ve střeše, které je třeba "
+      "pořádně utěsnit — a každý otvor je potenciální místo zatékání.")]),
+   (("2. Hliníkové profily", "2. Hliníkové profily"),
+    [("Panel sa uchytí na profily a tie sa priskrutkujú alebo prilepia na strechu. "
+      "Vzniká medzera na prúdenie vzduchu, panel sa menej prehrieva a dá sa "
+      "jednoducho demontovať.",
+      "Panel se uchytí na profily a ty se přišroubují nebo přilepí na střechu. "
+      "Vzniká mezera na proudění vzduchu, panel se méně přehřívá a dá se "
+      "jednoduše demontovat."),
+     ("Toto je najlepší kompromis, ak vám nevadí o niečo väčšia stavebná výška.",
+      "Tohle je nejlepší kompromis, pokud vám nevadí o něco větší stavební výška.")]),
+   (("3. Páska VHB priamo na strechu", "3. Páska VHB přímo na střechu"),
+    [("Bez vŕtania, bez otvorov. Vyžaduje čistý a rovný povrch a teplotu nad "
+      "pätnásť stupňov. Panel drží roky, demontáž je však prácna.",
+      "Bez vrtání, bez otvorů. Vyžaduje čistý a rovný povrch a teplotu nad "
+      "patnáct stupňů. Panel drží roky, demontáž je však pracná.")]),
+   (("4. Lepenie tmelom", "4. Lepení tmelem"),
+    [("Sikaflex alebo podobný pružný tmel po obvode panela. Spoj je vodotesný a "
+      "znesie aj mierne pnutie strechy. Nevýhodou je dlhší čas vytvrdnutia.",
+      "Sikaflex nebo podobný pružný tmel po obvodu panelu. Spoj je vodotěsný a "
+      "snese i mírné pnutí střechy. Nevýhodou je delší čas vytvrzení.")]),
+   (("Aký výkon na T4 alebo T5", "Jaký výkon na T4 nebo T5"),
+    [("Na strechu transportéra sa najčastejšie dávajú panely 50 až 100 W, prípadne "
+      "dva vedľa seba. Na zdvíhaciu strechu voľte ľahší a menší panel — nosnosť "
+      "zdvíhacieho mechanizmu je obmedzená.",
+      "Na střechu transportéru se nejčastěji dávají panely 50 až 100 W, případně "
+      "dva vedle sebe. Na zvedací střechu volte lehčí a menší panel — nosnost "
+      "zvedacího mechanismu je omezená."),
+     ("Ak vám štandardný rozmer nesadne, panel vieme vyrobiť na mieru — vrátane "
+      "polohy prípojnej skrinky a dĺžky káblov.",
+      "Pokud vám standardní rozměr nesedne, panel umíme vyrobit na míru — včetně "
+      "polohy připojovací krabice a délky kabelů.")]),
+  ]),
+
+ dict(
+  slug="panel-na-strechu-obytneho-auta",
+  video="nTP2G3q6f7s",
+  hero="https://cdn.shopify.com/s/files/1/0595/2156/4737/files/LensunSolar-150W-12V-Flexible-Solar-Panel-Installed-on-Roof-Tent.jpg",
+  date="2026-08-12",
+  source=SRC + "solar-panel-installation/how-to-mount-lensun-100w-etfe-flexible-solar-panel-complete-kit-on-the-roof-of-motorhomes-rvs-campers-or-caravans",
+  product=None,
+  cat="montaz",
+  title=("Sto wattov na streche obytného auta",
+         "Sto wattů na střeše obytného auta"),
+  lead=("Kompletná zostava so 100 W panelom, regulátorom a káblami sa na strechu "
+        "obytného auta či karavanu montuje rovnako ako na dodávku — s pár rozdielmi.",
+        "Kompletní sestava se 100W panelem, regulátorem a kabely se na střechu "
+        "obytného auta či karavanu montuje stejně jako na dodávku — s pár rozdíly."),
+  body=[
+   (("Kde panel umiestniť", "Kam panel umístit"),
+    [("Strecha karavanu býva plná — strešné okno, ventilácia, anténa, klimatizácia. "
+      "Panel dajte tak, aby naň v priebehu dňa nepadal tieň týchto prvkov; aj "
+      "čiastočné zatienenie výrazne zníži výkon.",
+      "Střecha karavanu bývá plná — střešní okno, ventilace, anténa, klimatizace. "
+      "Panel dejte tak, aby na něj v průběhu dne nepadal stín těchto prvků; i "
+      "částečné zastínění výrazně sníží výkon."),
+     ("Nechajte okolo panela priestor na umytie strechy a odtok vody.",
+      "Nechte kolem panelu prostor na umytí střechy a odtok vody.")]),
+   (("Prestup káblov cez strechu", "Prostup kabelů přes střechu"),
+    [("Použite strešnú káblovú priechodku a utesnite ju tmelom určeným na strešné "
+      "plášte. Toto je jediné miesto, kde sa vŕtaniu spravidla nevyhnete — o to "
+      "dôkladnejšie ho utesnite.",
+      "Použijte střešní kabelovou průchodku a utěsněte ji tmelem určeným na střešní "
+      "pláště. Tohle je jediné místo, kde se vrtání zpravidla nevyhnete — o to "
+      "důkladněji ho utěsněte.")]),
+   (("Regulátor patrí čo najbližšie k batérii", "Regulátor patří co nejblíže k baterii"),
+    [("Nie k panelu. Medzi panelom a regulátorom tečie nižší prúd pri vyššom napätí, "
+      "medzi regulátorom a batériou naopak — a práve tam sa straty prejavia najviac.",
+      "Ne k panelu. Mezi panelem a regulátorem teče nižší proud při vyšším napětí, "
+      "mezi regulátorem a baterií naopak — a právě tam se ztráty projeví nejvíc.")]),
+   (("Nezabudnite na poistku", "Nezapomeňte na pojistku"),
+    [("Medzi regulátor a batériu patrí poistka čo najbližšie k plusovej svorke. "
+      "V kompletných zostavách býva súčasťou dodávky.",
+      "Mezi regulátor a baterii patří pojistka co nejblíže k plusové svorce. "
+      "V kompletních sestavách bývá součástí dodávky.")]),
+  ]),
+
+ dict(
+  slug="panel-na-stresny-stan",
+  video="bB_NPOikh4w",
+  hero="https://lensunsolar.com/cdn/shop/articles/img-1743583970744_6a76eda4-f43c-4d9c-b493-b60a6f897734_1024x1024.jpg",
+  date="2026-07-15",
+  source=SRC + "solar-panel-review/stay-off-grid-longer-lensun-solar-80w-ikamper-skycamp-mini-panel-install-and-review-by-horizon-bound",
+  product="lensun-400w-flexible-solar-panel-for-roof-tent",
+  cat="prenosne",
+  title=("Solárny panel na strešný stan",
+         "Solární panel na střešní stan"),
+  lead=("Strešný stan zaberie celú strechu a panel už nemá kam. Riešením je nalepiť "
+        "ho priamo na škrupinu stanu — plocha, ktorá inak nič nerobí.",
+        "Střešní stan zabere celou střechu a panel už nemá kam. Řešením je nalepit "
+        "ho přímo na skořepinu stanu — plocha, která jinak nic nedělá."),
+  body=[
+   (("Prečo práve na stan", "Proč právě na stan"),
+    [("Škrupina zloženého strešného stanu je rovná, tvrdá a celý deň na slnku. "
+      "Flexibilný panel s hrúbkou tri milimetre na nej takmer nie je vidieť a "
+      "nepridá výšku, ktorá by prekážala v garáži.",
+      "Skořepina složeného střešního stanu je rovná, tvrdá a celý den na slunci. "
+      "Flexibilní panel s tloušťkou tři milimetry na ní téměř není vidět a "
+      "nepřidá výšku, která by vadila v garáži."),
+     ("Podmienkou je, aby sa škrupina neprehýbala. Mäkký alebo tenký plášť na "
+      "lepenie panela nie je vhodný.",
+      "Podmínkou je, aby se skořepina neprohýbala. Měkký nebo tenký plášť na "
+      "lepení panelu není vhodný.")]),
+   (("Postup", "Postup"),
+    [("Strechu stanu očistite mikrovláknovou utierkou a izopropylalkoholom. Polohu "
+      "vyznačte maliarskou páskou, panel usaďte na obojstrannú pásku a kábel "
+      "veďte príchytkami dolu k regulátoru.",
+      "Střechu stanu očistěte mikrovláknovou utěrkou a izopropylalkoholem. Polohu "
+      "vyznačte malířskou páskou, panel usaďte na oboustrannou pásku a kabel "
+      "veďte příchytkami dolů k regulátoru."),
+     ("Kábel musí mať vôľu na otváranie a zatváranie stanu. Toto je najčastejšia "
+      "chyba — priveľmi napnutý kábel sa po pár otvoreniach preruší.",
+      "Kabel musí mít vůli na otevírání a zavírání stanu. Tohle je nejčastější "
+      "chyba — příliš napnutý kabel se po pár otevřeních přeruší.")]),
+   (("Regulátor s aplikáciou sa hodí", "Regulátor s aplikací se hodí"),
+    [("Pri paneli, na ktorý nevidíte, je bluetooth regulátor obzvlášť užitočný. "
+      "V telefóne skontrolujete, že panel vyrába, bez toho, aby ste liezli na "
+      "strechu.",
+      "U panelu, na který nevidíte, je bluetooth regulátor obzvlášť užitečný. "
+      "V telefonu zkontrolujete, že panel vyrábí, aniž byste lezli na střechu.")]),
+  ]),
+
+ dict(
+  slug="solarna-deka-po-dvoch-rokoch",
+  video="2Mvw8KzfGNE",
+  hero="https://cdn.shopify.com/s/files/1/0595/2156/4737/files/lensunsolar-400w-solar-blanket-panel-1.png",
+  date="2026-08-30",
+  source=SRC + "solar-panel-review/lensun-300w-solar-panel-blanket-wandering-beast-2-year-review",
+  product="lensunsolar-400w-36v-solar-blanket-for-24v-battery-or-power-station",
+  cat="prenosne",
+  title=("Solárna deka po dvoch rokoch používania",
+         "Solární deka po dvou letech používání"),
+  lead=("Deka nie je len skladací panel v inom obale. Má zmysel presne tam, kde "
+        "pevný panel na streche naráža na svoje limity.",
+        "Deka není jen skládací panel v jiném obalu. Má smysl přesně tam, kde "
+        "pevný panel na střeše naráží na své limity."),
+  body=[
+   (("Auto môže stáť v tieni", "Auto může stát ve stínu"),
+    [("Toto je hlavná výhoda. V lete zaparkujete pod stromom, kde je v aute "
+      "znesiteľne, a deku rozložíte o dvadsať metrov ďalej na slnku. Pevný panel "
+      "vás núti stáť tam, kde je horúco.",
+      "Tohle je hlavní výhoda. V létě zaparkujete pod stromem, kde je v autě "
+      "snesitelně, a deku rozložíte o dvacet metrů dál na slunci. Pevný panel "
+      "vás nutí stát tam, kde je horko."),
+     ("V zime je to naopak: pevný panel zapadne snehom a ľadom, deku vytiahnete "
+      "z auta až vtedy, keď svieti slnko.",
+      "V zimě je to naopak: pevný panel zapadne sněhem a ledem, deku vytáhnete "
+      "z auta až tehdy, když svítí slunce.")]),
+   (("Čo utiahne", "Co utáhne"),
+    [("Tristowattová deka dodá okolo pätnástich ampérov. To stačí aj na spotrebiče, "
+      "ktoré by ste od jedného panela nečakali — teplovzdušnú fritézu alebo "
+      "indukčnú platničku cez menič.",
+      "Třistawattová deka dodá kolem patnácti ampérů. To stačí i na spotřebiče, "
+      "které byste od jednoho panelu nečekali — horkovzdušnou fritézu nebo "
+      "indukční plotýnku přes měnič.")]),
+   (("Praktické detaily", "Praktické detaily"),
+    [("Deka sa zloží na rozmer zhruba 57 × 39 × 7 cm a váži okolo deviatich "
+      "kilogramov. Vozí sa vo vnútri auta, takže zostáva čistá a nezvetráva.",
+      "Deka se složí na rozměr zhruba 57 × 39 × 7 cm a váží kolem devíti "
+      "kilogramů. Vozí se uvnitř auta, takže zůstává čistá a nezvětrává."),
+     ("Po dvoch rokoch bežného používania nemal obal viditeľné škrabance. Konektory "
+      "Anderson a suchý zips sú tie časti, ktoré sa opotrebujú ako prvé — stojí za "
+      "to ich občas prezrieť.",
+      "Po dvou letech běžného používání neměl obal viditelné škrábance. Konektory "
+      "Anderson a suchý zip jsou ty části, které se opotřebují jako první — stojí za "
+      "to je občas prohlédnout.")]),
+   (("Deka ako záloha", "Deka jako záloha"),
+    [("Aj keď máte panel na kapote alebo na streche, deka sa hodí ako druhý zdroj "
+      "s vlastným regulátorom. Keď zlyhá hlavná sústava, máte čím dobiť.",
+      "I když máte panel na kapotě nebo na střeše, deka se hodí jako druhý zdroj "
+      "s vlastním regulátorem. Když selže hlavní soustava, máte čím dobít.")]),
+  ]),
+
+ dict(
+  slug="skladaci-panel-na-kempovanie",
+  video=None,
+  hero="https://cdn.shopify.com/s/files/1/0595/2156/4737/files/1000-lensunsolar-400w-waterproof-solar-panel-1.jpg",
+  date="2026-05-20",
+  source=SRC + "solar-panel-review/keep-your-battery-topped-off-on-the-camping-trip-review-of-lensun-100w-foldable-solar-panel",
+  product="lensunsolar-400w-waterproof-foldable-solar-panel",
+  cat="prenosne",
+  title=("Skladací panel: pre karavan a stan",
+         "Skládací panel: pro karavan a stan"),
+  lead=("Skladací panel je najjednoduchší spôsob, ako mať na dovolenke elektrinu "
+        "bez toho, aby ste čokoľvek lepili alebo vŕtali.",
+        "Skládací panel je nejjednodušší způsob, jak mít na dovolené elektřinu "
+        "bez toho, abyste cokoli lepili nebo vrtali."),
+  body=[
+   (("Pre koho má zmysel", "Pro koho má smysl"),
+    [("Pre toho, kto stojí niekoľko dní na jednom mieste — obytný príves, kemping "
+      "so stanom, chata bez prípojky. Panel ráno rozložíte, natočíte za slnkom a "
+      "večer zložíte späť do obalu.",
+      "Pro toho, kdo stojí několik dní na jednom místě — obytný přívěs, kempování "
+      "se stanem, chata bez přípojky. Panel ráno rozložíte, natočíte za sluncem a "
+      "večer složíte zpátky do obalu."),
+     ("Ak sa každý deň presúvate, bude vás rozkladanie a skladanie otravovať — "
+      "tam je lepší panel na kapote.",
+      "Pokud se každý den přesouváte, bude vás rozkládání a skládání otravovat — "
+      "tam je lepší panel na kapotě.")]),
+   (("Typické parametre", "Typické parametry"),
+    [("Stowattový skladací panel má rozložený rozmer okolo 130 × 57 cm, zložený "
+      "58 × 44 × 6 cm a váži necelé štyri kilogramy. Pracovné napätie 18 V, "
+      "prúd 5,56 A, účinnosť článkov okolo 21 %.",
+      "Stowattový skládací panel má rozložený rozměr kolem 130 × 57 cm, složený "
+      "58 × 44 × 6 cm a váží necelé čtyři kilogramy. Pracovní napětí 18 V, "
+      "proud 5,56 A, účinnost článků kolem 21 %.")]),
+   (("Čo býva v balení", "Co bývá v balení"),
+    [("Panel, regulátor, päťmetrový kábel s konektormi Anderson a krátky kábel s "
+      "krokosvorkami na priame pripojenie k batérii. Niektoré modely majú aj "
+      "USB výstupy priamo na paneli.",
+      "Panel, regulátor, pětimetrový kabel s konektory Anderson a krátký kabel s "
+      "krokosvorkami na přímé připojení k baterii. Některé modely mají i "
+      "USB výstupy přímo na panelu.")]),
+   (("Na čo si dať pozor pri kúpe", "Na co si dát pozor při koupi"),
+    [("Lacné skladacie panely s látkovým povrchom po jednej sezóne blednú a "
+      "krivia sa. Rozdiel je v povrchovej fólii — ETFE laminát znesie UV žiarenie "
+      "podstatne lepšie než mäkká PET vrstva.",
+      "Levné skládací panely s látkovým povrchem po jedné sezoně blednou a "
+      "kroutí se. Rozdíl je v povrchové fólii — ETFE laminát snese UV záření "
+      "podstatně lépe než měkká PET vrstva.")]),
+  ]),
+
+ dict(
+  slug="perc-clanky",
+  video=None,
+  hero="https://cdn.shopify.com/s/files/1/0595/2156/4737/files/lensun-back-contact-solar-cell.jpg",
+  date="2026-04-29",
+  source=SRC + "solar-technology-information/whats-perc-solar-cells-whats-the-difference-between-the-standard-and-perc-solar-cells",
+  product=None,
+  cat="technika",
+  title=("Čo znamená PERC na štítku panela",
+         "Co znamená PERC na štítku panelu"),
+  lead=("Skratka PERC sa objavuje v parametroch takmer každého kvalitného panela. "
+        "Ide o jednu vrstvu navyše, ktorá zvýši účinnosť o niekoľko percent.",
+        "Zkratka PERC se objevuje v parametrech téměř každého kvalitního panelu. "
+        "Jde o jednu vrstvu navíc, která zvýší účinnost o několik procent."),
+  body=[
+   (("Ako vyzerá bežný článok", "Jak vypadá běžný článek"),
+    [("Klasický kryštalický článok má zhora nadol strieborné kontakty, "
+      "antireflexnú vrstvu, kremíkovú doštičku s prechodom P-N a na zadnej strane "
+      "hliníkovú vrstvu. Táto stavba sa používa vyše tridsať rokov.",
+      "Klasický krystalický článek má shora dolů stříbrné kontakty, "
+      "antireflexní vrstvu, křemíkovou destičku s přechodem P-N a na zadní straně "
+      "hliníkovou vrstvu. Tato stavba se používá přes třicet let.")]),
+   (("Čo pridáva PERC", "Co přidává PERC"),
+    [("PERC znamená pasivovaný emitor a zadná strana článku. Medzi kremík a zadnú "
+      "hliníkovú vrstvu pribudne dielektrická pasivačná vrstva. Tá robí tri veci "
+      "naraz.",
+      "PERC znamená pasivovaný emitor a zadní strana článku. Mezi křemík a zadní "
+      "hliníkovou vrstvu přibude dielektrická pasivační vrstva. Ta dělá tři věci "
+      "najednou."),
+     ("Po prvé obmedzí rekombináciu elektrónov, ktorá inak bráni ich voľnému toku. "
+      "Po druhé odrazí neabsorbované svetlo späť do článku na druhý pokus. Po "
+      "tretie vypustí von vlnové dĺžky, ktoré by článok len zohrievali.",
+      "Zaprvé omezí rekombinaci elektronů, která jinak brání jejich volnému toku. "
+      "Zadruhé odrazí neabsorbované světlo zpět do článku na druhý pokus. "
+      "Zatřetí vypustí ven vlnové délky, které by článek jen zahřívaly.")]),
+   (("Čo z toho máte", "Co z toho máte"),
+    [("Účinnosť okolo 21,5 až 22,5 % namiesto zhruba 19 % u bežných článkov. Pri "
+      "rovnakej ploche kapoty to znamená o desatinu až pätinu vyšší výkon.",
+      "Účinnost kolem 21,5 až 22,5 % místo zhruba 19 % u běžných článků. Při "
+      "stejné ploše kapoty to znamená o desetinu až pětinu vyšší výkon."),
+     ("Tretí bod — odvod tepla — je pri paneli na kapote obzvlášť užitočný. "
+      "Chladnejší článok má vyššiu účinnosť a dlhšiu životnosť.",
+      "Třetí bod — odvod tepla — je u panelu na kapotě obzvlášť užitečný. "
+      "Chladnější článek má vyšší účinnost a delší životnost.")]),
+   (("Čo znamená 5BB", "Co znamená 5BB"),
+    [("Údaj 4BB alebo 5BB hovorí o počte zberných pásikov na článku. Viac pásikov "
+      "znamená kratšiu cestu pre elektróny, nižšie odporové straty a menšiu "
+      "citlivosť na mikrotrhliny.",
+      "Údaj 4BB nebo 5BB říká o počtu sběrných pásků na článku. Více pásků "
+      "znamená kratší cestu pro elektrony, nižší odporové ztráty a menší "
+      "citlivost na mikrotrhliny.")]),
+  ]),
+
+ dict(
+  slug="druha-bateria-a-solar",
+  video=None,
+  hero="https://cdn.shopify.com/s/files/1/0595/2156/4737/files/lensunsolar-20a-waterproof-mppt-solar-controller-01.jpg",
+  date="2026-09-01",
+  source=SRC + "solar-panel-installation/how-do-you-set-your-offroad-overland-vehicles-solar-system-why-you-need-solar-powered",
+  product=None,
+  cat="technika",
+  title=("Druhá batéria v aute a prečo k nej patrí solár",
+         "Druhá baterie v autě a proč k ní patří solár"),
+  lead=("Bez solárneho panela je druhá batéria v modernom aute z veľkej časti "
+        "zbytočná. Dôvodom je inteligentný alternátor.",
+        "Bez solárního panelu je druhá baterie v moderním autě z velké části "
+        "zbytečná. Důvodem je inteligentní alternátor."),
+  body=[
+   (("Prečo samotné prepojenie batérií nefunguje", "Proč samotné propojení baterií nefunguje"),
+    [("Najjednoduchšie riešenie — spojiť obe batérie a nechať to na alternátor — "
+      "v starých autách fungovalo. V moderných nie: inteligentný alternátor vidí "
+      "len prednú batériu, a keď je plná, obe považuje za nabité.",
+      "Nejjednodušší řešení — spojit obě baterie a nechat to na alternátor — "
+      "ve starých autech fungovalo. V moderních ne: inteligentní alternátor vidí "
+      "jen přední baterii, a když je plná, obě považuje za nabité."),
+     ("Zadná batéria potom dostáva len udržiavací prúd a postupne odchádza. "
+      "Oddeľovač batérií tento problém nerieši, len ho posunie.",
+      "Zadní baterie potom dostává jen udržovací proud a postupně odchází. "
+      "Oddělovač baterií tento problém neřeší, jen ho posune.")]),
+   (("Správna zostava", "Správná sestava"),
+    [("Nabíjačka DC-DC medzi štartovacou a druhou batériou. Zvýši napätie na "
+      "hodnotu, ktorú druhá batéria naozaj potrebuje, a od štartovacej ju "
+      "elektricky oddelí.",
+      "Nabíječka DC-DC mezi startovací a druhou baterií. Zvýší napětí na "
+      "hodnotu, kterou druhá baterie skutečně potřebuje, a od startovací ji "
+      "elektricky oddělí."),
+     ("Solárny panel sa pripája na tú istú nabíjačku alebo na vlastný regulátor. "
+      "Alternátor nabíja počas jazdy, panel počas státia — a to je väčšina času, "
+      "keď auto stojí v kempe.",
+      "Solární panel se připojuje na tutéž nabíječku nebo na vlastní regulátor. "
+      "Alternátor nabíjí za jízdy, panel při stání — a to je většina času, "
+      "kdy auto stojí v kempu.")]),
+   (("Koľko wattov naozaj potrebujete", "Kolik wattů skutečně potřebujete"),
+    [("Chladnička s odberom päť ampérov pri dvanástich voltoch spotrebuje pri "
+      "polovičnom chode zhruba 700 Wh za deň. Aby ste to v našich šírkach pokryli, "
+      "počítajte v lete so zhruba 200 W panelov, na jar a jeseň s dvojnásobkom.",
+      "Lednice s odběrem pět ampérů při dvanácti voltech spotřebuje při "
+      "polovičním chodu zhruba 700 Wh za den. Abyste to v našich šířkách pokryli, "
+      "počítejte v létě se zhruba 200 W panelů, na jaře a na podzim s dvojnásobkem."),
+     ("V praxi sa preto kombinuje pevný panel na kapote alebo streche s dekou "
+      "alebo skladacím panelom, ktorý rozložíte, keď je horúco a chladnička "
+      "beží častejšie.",
+      "V praxi se proto kombinuje pevný panel na kapotě nebo střeše s dekou "
+      "nebo skládacím panelem, který rozložíte, když je horko a lednice "
+      "běží častěji.")]),
+   (("Batéria musí odber uniesť", "Baterie musí odběr unést"),
+    [("Kapacitu druhej batérie voľte podľa nočnej spotreby, nie podľa výkonu "
+      "panelov. Osemdesiatampérhodinová batéria pokryje chladničku, osvetlenie a "
+      "nabíjanie drobnej elektroniky cez noc s rezervou.",
+      "Kapacitu druhé baterie volte podle noční spotřeby, ne podle výkonu "
+      "panelů. Osmdesátiampérhodinová baterie pokryje lednici, osvětlení a "
+      "nabíjení drobné elektroniky přes noc s rezervou.")]),
   ]),
 ]
 
