@@ -425,7 +425,8 @@
   /* ---------- štart ---------- */
   /* položka do košíka si nesie vlastnú kópiu údajov */
   function cartItem(p, vi, qty) {
-    var vs = (p.var && p.var.length) ? p.var : [{ sk: "", cs: "", p: p.usd, sku: p.sku }];
+    var vs = (p.var && p.var.length) ? p.var
+      : [{ sk: "", cs: "", p: p.usd, was: p.was, sku: p.sku }];
     var v = vs[vi] || vs[0];
     return { id: p.id, vi: vi, qty: qty || 1,
              sk: p.n.sk, cs: p.n.cs, vsk: v.sk, vcs: v.cs,
@@ -567,7 +568,8 @@
       if (box) {
         box.innerHTML = (CFG.showPrices === false)
           ? '<b>' + esc(T.askPrice) + "</b>"
-          : ((p.was && CFG.showCompareAt ? "<s>" + esc(money(p.was)) + "</s>" : "") +
+          : (((v.was || p.was) && CFG.showCompareAt
+                ? "<s>" + esc(money(v.was || p.was)) + "</s>" : "") +
              "<b>" + esc(money(v.p)) + "</b>" +
              (v.sku ? '<span class="pd-sku">' + esc(v.sku) + "</span>" : ""));
       }
