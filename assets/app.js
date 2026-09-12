@@ -529,8 +529,13 @@
       /* vzdialené logá majú v obrázku veľa bieleho okraja, vlastné sú orezané
          na doraz — preto im dávame odlišnú maximálnu veľkosť */
       var cls = "logo-tight";
+      /* Keď sa logo nenačíta — blokovač obsahu, výpadok siete — nech v dlaždici
+         nezostane ikona rozbitého obrázka, ale čitateľný názov značky. */
       var inner = logo
-        ? '<img class="' + cls + '" loading="lazy" decoding="async" src="' + esc(logo) + '" alt="' + esc(b.k) + '">'
+        ? '<img class="' + cls + '" loading="lazy" decoding="async" src="' + esc(logo) +
+          '" alt="' + esc(b.k) + '" onerror="this.parentNode.insertAdjacentHTML(' +
+          "'afterbegin','<span class=\\'brand-word\\'>" + esc(b.k) +
+          "</span>');this.remove()\">"
         /* pre značky bez loga použijeme čistý nápis v rovnakej dlaždici */
         : '<span class="brand-word">' + esc(b.k) + "</span>";
       return '<a class="brand-cell" href="' + esc(href) + "?brand=" +
