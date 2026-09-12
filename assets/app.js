@@ -443,18 +443,20 @@
     /* po jednom z hlavných druhov tovaru, nech je výber pestrý a reprezentatívny */
     var order = ["hood", "flexible", "rooftent", "foldable", "blanket",
                  "tonneau", "rv", "controller"];
-    var disc = function (p) { return p.was ? 1 - p.usd / p.was : 0; };
+    /* Výber reprezentanta kategórie: najsilnejší panel, pri zhode lacnejší.
+       Podľa zľavy sa triediť nedá — je len prepočtom ceny, nie skutočnou. */
+    var rank = function (a, b) { return (b.w || 0) - (a.w || 0) || a.usd - b.usd; };
     var pick = [], used = {};
     order.forEach(function (cat) {
       var best = ALL.filter(function (p) {
         return p.cat === cat && p.img.length && !used[p.id] && (p.w || p.a);
-      }).sort(function (a, b) { return disc(b) - disc(a); })[0];
+      }).sort(rank)[0];
       if (best) { pick.push(best); used[best.id] = 1; }
     });
     /* ak by niektorá kategória chýbala, doplníme najvýhodnejšími panelmi */
     if (pick.length < n) {
       ALL.filter(function (p) { return p.img.length && p.w && !used[p.id]; })
-         .sort(function (a, b) { return disc(b) - disc(a); })
+         .sort(rank)
          .slice(0, n - pick.length)
          .forEach(function (p) { pick.push(p); used[p.id] = 1; });
     }

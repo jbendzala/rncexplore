@@ -29,8 +29,13 @@ window.SITE_CONFIG = {
                                    null -> presne prepočítané             */
   rounding: "9",
 
-  /* Zobraziť pôvodnú prečiarknutú cenu, ak ju výrobca uvádza?             */
-  showCompareAt: true,
+  /* Zobraziť pôvodnú prečiarknutú cenu, ak ju výrobca uvádza?
+     Necháme vypnuté. Lensun uvádza „pôvodnú" cenu pri úplne každom
+     produkte a počíta ju vzorcom cena ÷ 0,65 — nie je to cena, za ktorú
+     sa kedy predávalo. Oznámená zľava musí podľa zákona vychádzať
+     z najnižšej ceny za posledných 30 dní, preto ju nezobrazujeme.
+     Zapnite až vtedy, keď budete mať vlastnú cenovú históriu.           */
+  showCompareAt: false,
 
   /* Zobraziť ceny vôbec? false = všade "Cena na vyžiadanie"               */
   showPrices: true,
