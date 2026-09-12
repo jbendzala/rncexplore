@@ -280,6 +280,9 @@ label input:invalid:not(:placeholder-shown){border-color:var(--danger)}
 textarea{resize:vertical;min-height:80px}
 .req{color:var(--danger);font-style:normal}
 /* úvodný odsek sekcie a poznámka pod formulárom */
+/* prázdny výsledok hľadania */
+.empty-help{max-width:440px;margin:10px auto 0;color:var(--ink-2)}
+.empty-acts{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:18px}
 .sec-note{max-width:640px;margin:-6px 0 4px;color:var(--ink-2);font-size:15px}
 .sec-note a{color:var(--brass);font-weight:600}
 .f-note{font-size:12.5px;color:var(--ink-3);margin:14px 0 0}

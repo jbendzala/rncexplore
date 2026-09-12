@@ -123,7 +123,7 @@ def home(lang, base):
 <section class="hero hero-img"><div class="wrap">
   <p class="eyebrow">{T("Katalóg produktov","Katalog produktů",lang)}</p>
   <h1>{T("Solárna energia<br>pre <em>vozidlá</em> a karavany","Solární energie<br>pro <em>vozidla</em> a karavany",lang)}</h1>
-  <p>{T("Prezrite si celý sortiment. Vyberte produkt, vyplňte kontaktné údaje a my sa vám ozveme s cenovou ponukou a termínom dodania.","Prohlédněte si celý sortiment. Vyberte produkt, vyplňte kontaktní údaje a my se vám ozveme s cenovou nabídkou a termínem dodání.",lang)}</p>
+  <p>{T("Vyberte si produkt a prevedenie, vložte do košíka a objednajte. Faktúru s QR kódom pošleme e-mailom, tovar expedujeme po zaplatení.","Vyberte si produkt a provedení, vložte do košíku a objednejte. Fakturu s QR kódem pošleme e-mailem, zboží expedujeme po zaplacení.",lang)}</p>
 </div></section>
 
 <section class="sec"><div class="wrap">
@@ -489,9 +489,9 @@ def o_nas(lang, base):
   <p>{T("Špecializujeme sa na solárne panely tvarované na konkrétne modely vozidiel — na kapotu, strechu, kryt korby aj strešný stan. Okrem panelov dodávame regulátory nabíjania, meniče napätia a montážne príslušenstvo.","Specializujeme se na solární panely tvarované na konkrétní modely vozidel — na kapotu, střechu, kryt korby i střešní stan. Kromě panelů dodáváme regulátory nabíjení, měniče napětí a montážní příslušenství.",lang)}</p>
   <p>{T(f"Katalóg obsahuje {N_PRODUCTS} produktov pre {N_BRANDS} značiek vozidiel. Ak vaše vozidlo v katalógu nenájdete, panel vieme vyrobiť na mieru.",f"Katalog obsahuje {N_PRODUCTS} produktů pro {N_BRANDS} značek vozidel. Pokud své vozidlo v katalogu nenajdete, panel umíme vyrobit na míru.",lang)}</p>
 
-  <h2>{T("Ako nakupujete","Jak nakupujete",lang)}</h2>
-  <p>{T("Tento web je katalóg, nie e-shop. Vyberiete si produkt, odošlete nezáväznú objednávku a my sa vám ozveme s cenovou ponukou, dostupnosťou a termínom dodania. Až potom sa rozhodujete.","Tento web je katalog, nikoli e-shop. Vyberete si produkt, odešlete nezávaznou objednávku a my se vám ozveme s cenovou nabídkou, dostupností a termínem dodání. Teprve pak se rozhodujete.",lang)}</p>
-  <p>{T("Vďaka tomu vám vieme poradiť s výberom správneho panela k vozidlu a dimenzovaním regulátora ešte pred tým, než niečo zaplatíte.","Díky tomu vám umíme poradit s výběrem správného panelu k vozidlu a dimenzováním regulátoru ještě dříve, než něco zaplatíte.",lang)}</p>
+  <h2>{T("Ako u nás nakupujete","Jak u nás nakupujete",lang)}</h2>
+  <p>{T("Vyberiete si produkt aj prevedenie, vložíte ho do košíka a odošlete objednávku. Obratom vám pošleme faktúru s QR kódom na zaplatenie a po pripísaní platby tovar expedujeme.","Vyberete si produkt i provedení, vložíte ho do košíku a odešlete objednávku. Obratem vám pošleme fakturu s QR kódem k zaplacení a po připsání platby zboží expedujeme.",lang)}</p>
+  <p>{T("Ak si výberom nie ste istí, napíšte nám ešte pred objednaním — poradíme s panelom k vozidlu aj s dimenzovaním regulátora.","Pokud si výběrem nejste jistí, napište nám ještě před objednáním — poradíme s panelem k vozidlu i s dimenzováním regulátoru.",lang)}</p>
 
   <h2>{T("Firemné údaje","Firemní údaje",lang)}</h2>
   <p>
@@ -559,19 +559,19 @@ def faq(lang, base):
            "Vyhněte se však kartáčové myčce a škrabání ledu z povrchu panelu — mechanické "
            "poškození povrchu je nejčastější příčina reklamací.</p>", lang)),
         (T("Ako prebieha objednávka?", "Jak probíhá objednávka?", lang),
-         T("<p>Tento web je katalóg, nie e-shop. Pri produkte kliknite na <strong>Objednať</strong>, "
-           "vyplňte kontaktné údaje a odošlite. Príde nám e-mail s vybraným produktom a vašimi "
-           "údajmi.</p><p>Ozveme sa vám s cenovou ponukou, dostupnosťou a termínom dodania. "
-           "Objednávka je nezáväzná — nič neplatíte vopred.</p>",
-           "<p>Tento web je katalog, nikoli e-shop. U produktu klikněte na <strong>Objednat</strong>, "
-           "vyplňte kontaktní údaje a odešlete. Přijde nám e-mail s vybraným produktem a vašimi "
-           "údaji.</p><p>Ozveme se vám s cenovou nabídkou, dostupností a termínem dodání. "
-           "Objednávka je nezávazná — nic neplatíte předem.</p>", lang)),
-        (T("Sú ceny v katalógu konečné?", "Jsou ceny v katalogu konečné?", lang),
-         T("<p>Ceny v katalógu sú orientačné a slúžia na porovnanie produktov. Záväznú cenu "
-           "vrátane dopravy dostanete v cenovej ponuke e-mailom.</p>",
-           "<p>Ceny v katalogu jsou orientační a slouží k porovnání produktů. Závaznou cenu "
-           "včetně dopravy dostanete v cenové nabídce e-mailem.</p>", lang)),
+         T("<p>Pri produkte kliknite na <strong>Do košíka</strong>. V košíku skontrolujete obsah, "
+           "vyplníte doručovacie a fakturačné údaje a objednávku odošlete.</p>"
+           "<p>Obratom vám pošleme potvrdenie objednávky a faktúru s QR kódom. Po zaplatení "
+           "tovar expedujeme a pošleme vám číslo zásielky.</p>",
+           "<p>U produktu klikněte na <strong>Do košíku</strong>. V košíku zkontrolujete obsah, "
+           "vyplníte doručovací a fakturační údaje a objednávku odešlete.</p>"
+           "<p>Obratem vám pošleme potvrzení objednávky a fakturu s QR kódem. Po zaplacení "
+           "zboží expedujeme a pošleme vám číslo zásilky.</p>", lang)),
+        (T("Je v cene aj doprava?", "Je v ceně i doprava?", lang),
+         T("<p>Uvedená cena je za tovar. Dopravu doúčtujeme podľa hmotnosti zásielky a miesta "
+           "doručenia a uvedieme ju na faktúre, ktorú vám pošleme po prijatí objednávky.</p>",
+           "<p>Uvedená cena je za zboží. Dopravu doúčtujeme podle hmotnosti zásilky a místa "
+           "doručení a uvedeme ji na faktuře, kterou vám pošleme po přijetí objednávky.</p>", lang)),
         (T("Moje vozidlo nie je v katalógu. Čo teraz?",
            "Moje vozidlo není v katalogu. Co teď?", lang),
          T("<p>Väčšinu tvarovaných panelov vieme vyrobiť na mieru podľa rozmerov vášho vozidla. "
@@ -601,6 +601,44 @@ def faq(lang, base):
 
 # ---------------------------------------------------------------- kontakt
 def kontakt(lang, base):
+    steps = [
+        (T("Vyberiete produkt", "Vyberete produkt", lang),
+         T("Podľa značky a modelu vozidla nájdete panel, ktorý sadne na vašu kapotu. "
+           "Pri každom produkte si zvolíte prevedenie — samotný panel alebo kompletnú sadu.",
+           "Podle značky a modelu vozidla najdete panel, který sedne na vaši kapotu. "
+           "U každého produktu si zvolíte provedení — samotný panel nebo kompletní sadu.", lang)),
+        (T("Odošlete objednávku", "Odešlete objednávku", lang),
+         T("V košíku vyplníte doručovacie a fakturačné údaje. Objednávku potvrdíme e-mailom.",
+           "V košíku vyplníte doručovací a fakturační údaje. Objednávku potvrdíme e-mailem.", lang)),
+        (T("Zaplatíte cez QR kód", "Zaplatíte přes QR kód", lang),
+         T("Pošleme vám faktúru s QR kódom — stačí ju načítať v mobilnej banke. "
+           "Na faktúre je aj cena dopravy podľa hmotnosti zásielky.",
+           "Pošleme vám fakturu s QR kódem — stačí ji načíst v mobilním bankovnictví. "
+           "Na faktuře je i cena dopravy podle hmotnosti zásilky.", lang)),
+        (T("Tovar expedujeme", "Zboží expedujeme", lang),
+         T("Po pripísaní platby zásielku odosielame a pošleme vám číslo na sledovanie.",
+           "Po připsání platby zásilku odesíláme a pošleme vám číslo pro sledování.", lang)),
+    ]
+    st = "".join(f'<div class="step"><div><h3>{t}</h3><p>{d}</p></div></div>' for t, d in steps)
+
+    kf = [
+        ("kName", T("Meno a priezvisko", "Jméno a příjmení", lang), "text", True, False, ()),
+        ("kEmail", T("E-mail", "E-mail", lang), "email", True, False, ()),
+        ("kPhone", T("Telefón", "Telefon", lang), "tel", False, False, ()),
+        ("kCar", T("Vozidlo (značka, model, rok)", "Vozidlo (značka, model, rok)", lang),
+         "text", False, False, ()),
+        ("kMsg", T("S čím potrebujete poradiť?", "S čím potřebujete poradit?", lang),
+         "textarea", True, True, ()),
+    ]
+    form = inquiry_form(
+        lang,
+        T("Otázka z webu", "Dotaz z webu", lang),
+        kf,
+        T("Odoslať správu", "Odeslat zprávu", lang),
+        T("Údaje použijeme len na odpoveď na vašu otázku.",
+          "Údaje použijeme jen k odpovědi na váš dotaz.", lang),
+    )
+
     return f"""
 <section class="sec"><div class="wrap">
   <p class="lead">{T("Napíšte nám, s čím potrebujete poradiť — značku a model vozidla, prípadne aké spotrebiče chcete napájať. Ozveme sa s odporúčaním a cenou.","Napište nám, s čím potřebujete poradit — značku a model vozidla, případně jaké spotřebiče chcete napájet. Ozveme se s doporučením a cenou.",lang)}</p>
@@ -628,11 +666,17 @@ def kontakt(lang, base):
   </div>
 </div></section>
 
-<section class="sec alt"><div class="wrap"><div class="prose">
-  <h2>{T("Objednávka z katalógu","Objednávka z katalogu",lang)}</h2>
-  <p>{T("Najrýchlejšie to ide priamo z katalógu: pri produkte kliknite na Objednať, vyplňte údaje a odošlite. Príde nám e-mail s presným produktom, prevedením aj počtom kusov — nemusíte nič prepisovať.","Nejrychleji to jde přímo z katalogu: u produktu klikněte na Objednat, vyplňte údaje a odešlete. Přijde nám e-mail s přesným produktem, provedením i počtem kusů — nemusíte nic přepisovat.",lang)}</p>
-  <p><a class="btn" href="{base}produkty.html">{T("Prejsť do katalógu","Přejít do katalogu",lang)}</a></p>
-</div></div></section>
+<section class="sec alt"><div class="wrap">
+  <h2>{T("Ako u nás nakupujete","Jak u nás nakupujete",lang)}</h2>
+  <div class="steps">{st}</div>
+  <p style="margin-top:26px"><a class="btn" href="{base}produkty.html">{T("Prejsť k produktom","Přejít k produktům",lang)}</a></p>
+</div></section>
+
+<section class="sec" id="napiste-nam"><div class="wrap">
+  <h2>{T("Napíšte nám","Napište nám",lang)}</h2>
+  <p class="sec-note">{T("Poradíme s výberom panela k vozidlu aj s regulátorom. Odpovedáme spravidla do jedného pracovného dňa.","Poradíme s výběrem panelu k vozidlu i s regulátorem. Odpovídáme zpravidla do jednoho pracovního dne.",lang)}</p>
+  {form}
+</div></section>
 """
 
 
@@ -650,10 +694,10 @@ def podmienky(lang, base):
      E-mail: <a class="js-mail" href="#"></a> &nbsp; {T("Telefón","Telefon",lang)}: <a class="js-phone" href="#"></a></p>
 
   <h2>{T("Objednávka a uzavretie zmluvy","Objednávka a uzavření smlouvy",lang)}</h2>
-  <p>{T("Odoslanie formulára z katalógu je nezáväzný dopyt, nie objednávka. Kúpna zmluva vzniká až potvrdením cenovej ponuky oboma stranami.","Odeslání formuláře z katalogu je nezávazná poptávka, nikoli objednávka. Kupní smlouva vzniká až potvrzením cenové nabídky oběma stranami.",lang)}</p>
+  <p>{T("Odoslaním objednávky z košíka podávate návrh na uzavretie kúpnej zmluvy a objednávka je spojená s povinnosťou platby. Objednávku vám potvrdíme e-mailom spolu s faktúrou — potvrdením je kúpna zmluva uzavretá.","Odesláním objednávky z košíku podáváte návrh na uzavření kupní smlouvy a objednávka je spojena s povinností platby. Objednávku vám potvrdíme e-mailem spolu s fakturou — potvrzením je kupní smlouva uzavřena.",lang)}</p>
 
   <h2>{T("Ceny","Ceny",lang)}</h2>
-  <p>{T("Ceny uvedené v katalógu sú orientačné. Záväzná je cena v cenovej ponuke. Informácia o DPH a nákladoch na dopravu:","Ceny uvedené v katalogu jsou orientační. Závazná je cena v cenové nabídce. Informace o DPH a nákladech na dopravu:",lang)} {d}</p>
+  <p>{T("Ceny uvedené pri produktoch platia za tovar. Cena dopravy sa pripočítava podľa hmotnosti zásielky a miesta doručenia a je uvedená na faktúre. Informácia o DPH:","Ceny uvedené u produktů platí za zboží. Cena dopravy se připočítává podle hmotnosti zásilky a místa doručení a je uvedena na faktuře. Informace o DPH:",lang)} {d}</p>
 
   <h2>{T("Dodanie","Dodání",lang)}</h2>
   <p>{T("Spôsob dopravy, cena a obvyklý termín dodania:","Způsob dopravy, cena a obvyklý termín dodání:",lang)} {d}</p>
@@ -667,8 +711,8 @@ def podmienky(lang, base):
   <p>{T("Pri paneloch vyrobených na mieru podľa rozmerov vášho vozidla sa právo na odstúpenie nemusí uplatniť — ide o tovar upravený na želanie zákazníka.","U panelů vyrobených na míru podle rozměrů vašeho vozidla se právo na odstoupení nemusí uplatnit — jde o zboží upravené na přání zákazníka.",lang)}</p>
 
   <h2>{T("Ochrana osobných údajov","Ochrana osobních údajů",lang)}</h2>
-  <p>{T("Údaje z objednávkového formulára (meno, e-mail, telefón, adresa) použijeme výhradne na vybavenie vášho dopytu. Formulár neodosiela dáta na náš server — otvorí váš e-mailový klient a správu odosielate vy.","Údaje z objednávkového formuláře (jméno, e-mail, telefon, adresa) použijeme výhradně k vyřízení vaší poptávky. Formulář neodesílá data na náš server — otevře váš e-mailový klient a zprávu odesíláte vy.",lang)}</p>
-  <p>{T("Web nepoužíva analytické ani reklamné cookies. Do prehliadača ukladáme len vašu voľbu svetlého alebo tmavého režimu.","Web nepoužívá analytické ani reklamní cookies. Do prohlížeče ukládáme pouze vaši volbu světlého nebo tmavého režimu.",lang)}</p>
+  <p>{T("Údaje z objednávkového a kontaktného formulára (meno, e-mail, telefón, adresa) použijeme výhradne na vybavenie objednávky alebo odpoveď na vašu otázku. Formuláre odosiela sprostredkovateľ formsubmit.co, ktorý správu doručí na našu e-mailovú adresu.","Údaje z objednávkového a kontaktního formuláře (jméno, e-mail, telefon, adresa) použijeme výhradně k vyřízení objednávky nebo odpovědi na váš dotaz. Formuláře odesílá zprostředkovatel formsubmit.co, který zprávu doručí na naši e-mailovou adresu.",lang)}</p>
+  <p>{T("Web nepoužíva analytické ani reklamné cookies. V prehliadači si ukladáme len obsah vášho košíka a voľbu svetlého alebo tmavého režimu — tieto údaje neopúšťajú vaše zariadenie.","Web nepoužívá analytické ani reklamní cookies. V prohlížeči si ukládáme pouze obsah vašeho košíku a volbu světlého nebo tmavého režimu — tato data neopouštějí vaše zařízení.",lang)}</p>
   <p>{T("Prevádzkovateľ a kontakt pre uplatnenie práv:","Správce a kontakt pro uplatnění práv:",lang)} {d}</p>
 
   <h2>{T("Orgán dozoru","Orgán dozoru",lang)}</h2>

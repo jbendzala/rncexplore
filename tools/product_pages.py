@@ -127,7 +127,7 @@ def render(p, ALL, lang, reviews, base):
         <input id="pdQty" type="number" min="1" max="99" value="1"></label>
       <button class="btn lg" id="pdOrder">{T("Do košíka","Do košíku",lang)}</button>
     </div>
-    <p class="note">{T("Objednávka je nezáväzná. Ozveme sa vám s cenovou ponukou a termínom dodania.","Objednávka je nezávazná. Ozveme se vám s cenovou nabídkou a termínem dodání.",lang)}</p>
+    <p class="note">{T("Faktúru s QR kódom pošleme e-mailom hneď po prijatí objednávky. Dopravu doúčtujeme podľa hmotnosti zásielky.","Fakturu s QR kódem pošleme e-mailem hned po přijetí objednávky. Dopravu doúčtujeme podle hmotnosti zásilky.",lang)}</p>
   </div>
 </div></section>
 

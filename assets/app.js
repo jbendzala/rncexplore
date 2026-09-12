@@ -31,6 +31,8 @@
       found: function (n) { return n + " " + plural(n, ["produkt", "produkty", "produktov"]); },
       reset: "Zrušiť filtre", loadMore: "Zobraziť ďalšie",
       noneTitle: "Nič sme nenašli", noneText: "Skúste iné hľadané slovo alebo zrušte filtre.",
+      noneHelp: "Nenašli ste panel na svoje vozidlo? Napíšte nám — väčšinu tvarovaných panelov vieme vyrobiť na mieru.",
+      noneCta: "Kontaktujte nás",
       detail: "Detail", order: "Do košíka", askPrice: "Cena na vyžiadanie", from: "od",
       close: "Zavrieť", noImg: "Bez fotografie",
       specs: "Parametre", power: "Výkon", voltage: "Napätie", current: "Prúd",
@@ -69,6 +71,8 @@
       found: function (n) { return n + " " + plural(n, ["produkt", "produkty", "produktů"]); },
       reset: "Zrušit filtry", loadMore: "Zobrazit další",
       noneTitle: "Nic jsme nenašli", noneText: "Zkuste jiné hledané slovo nebo zrušte filtry.",
+      noneHelp: "Nenašli jste panel na své vozidlo? Napište nám — většinu tvarovaných panelů umíme vyrobit na míru.",
+      noneCta: "Kontaktujte nás",
       detail: "Detail", order: "Do košíku", askPrice: "Cena na vyžádání", from: "od",
       close: "Zavřít", noImg: "Bez fotografie",
       specs: "Parametry", power: "Výkon", voltage: "Napětí", current: "Proud",
@@ -221,8 +225,10 @@
 
     grid.innerHTML = slice.length ? slice.map(cardHTML).join("")
       : '<div class="empty" style="grid-column:1/-1"><h3>' + esc(T.noneTitle) + "</h3><p>" +
-        esc(T.noneText) + '</p><button class="btn ghost" id="reset2" style="margin-top:14px">' +
-        esc(T.reset) + "</button></div>";
+        esc(T.noneText) + "</p><p class=\"empty-help\">" + esc(T.noneHelp) + "</p>" +
+        '<div class="empty-acts"><a class="btn signal" href="kontakt.html#napiste-nam">' +
+        esc(T.noneCta) + '</a><button class="btn ghost" id="reset2">' +
+        esc(T.reset) + "</button></div></div>";
 
     el("count").textContent = T.found(list.length);
     el("more").innerHTML = list.length > S.shown
