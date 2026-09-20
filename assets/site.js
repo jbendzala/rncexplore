@@ -52,6 +52,26 @@
   });
   fill("[data-t-theme]", function (n) { n.title = T.theme; n.setAttribute("aria-label", T.theme); });
 
+  /* --- oznam o ukladaní v prehliadači ---
+     Nežiadame súhlas: košík a režim zobrazenia sú nevyhnutné na fungovanie
+     stránky, ktoré si návštevník vyžiadal. Lištu preto stačí raz zavrieť. --- */
+  var cbar = el("cookieBar");
+  if (cbar) {
+    var CKEY = "rnc_notice_v1", seen = null;
+    try { seen = localStorage.getItem(CKEY); } catch (e) { seen = "1"; }
+    if (!seen) {
+      cbar.hidden = false;
+      /* trieda až po vykreslení, nech lišta prichádza plynulo */
+      requestAnimationFrame(function () { cbar.classList.add("on"); });
+      var ok = el("cookieOk");
+      if (ok) ok.addEventListener("click", function () {
+        cbar.classList.remove("on");
+        try { localStorage.setItem(CKEY, "1"); } catch (e) {}
+        setTimeout(function () { cbar.hidden = true; }, 250);
+      });
+    }
+  }
+
   /* --- filter rubrík na blogu ---
      Odkaz typu blog.html?rubrika=technika otvorí prehľad rovno vo filtri. --- */
   var bCats = el("blogCats"), bPosts = el("blogPosts");

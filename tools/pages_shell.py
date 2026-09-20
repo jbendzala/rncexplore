@@ -135,6 +135,18 @@ def footer(lang, base, page=""):
     h_con  = "Kontakt"
     h_inf  = "Informácie" if sk else "Informace"
     terms  = "Obchodné podmienky" if sk else "Obchodní podmínky"
+    h_cook = "Ukladanie v prehliadači" if sk else "Ukládání v prohlížeči"
+    t_cook = ("Tento web nepoužíva analytické ani reklamné cookies. Do prehliadača "
+              "ukladáme len obsah košíka a voľbu svetlého alebo tmavého režimu — bez "
+              "toho by nákup nefungoval. V článkoch s videom sa načíta prehrávač "
+              "YouTube."
+              if sk else
+              "Tento web nepoužívá analytické ani reklamní cookies. Do prohlížeče "
+              "ukládáme pouze obsah košíku a volbu světlého nebo tmavého režimu — bez "
+              "toho by nákup nefungoval. V článcích s videem se načte přehrávač "
+              "YouTube.")
+    t_more = "Podrobnosti v obchodných podmienkach." if sk else "Podrobnosti v obchodních podmínkách."
+    t_ok   = "Rozumiem" if sk else "Rozumím"
     info   = ""
     return f"""
 <footer class="ftr">
@@ -159,6 +171,15 @@ def footer(lang, base, page=""):
   </div>
   <div class="wrap ftr-btm"><span class="js-rights"></span></div>
 </footer>
+
+<!-- Oznam o ukladaní v prehliadači. Nie je to súhlasová lišta — neukladáme nič,
+     čo by súhlas vyžadovalo. Zobrazí ho site.js, kým ho návštevník nezavrie. -->
+<div class="cbar" id="cookieBar" hidden role="region" aria-label="{h_cook}">
+  <div class="cbar-in">
+    <p>{t_cook} <a href="{page}podmienky.html">{t_more}</a></p>
+    <button class="btn sm" type="button" id="cookieOk">{t_ok}</button>
+  </div>
+</div>
 
 <script src="{base}config.js"></script>
 <script>window.LANG="{'sk' if sk else 'cs'}";</script>
