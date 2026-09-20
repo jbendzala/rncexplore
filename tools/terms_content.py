@@ -34,7 +34,7 @@ SECTIONS = [
   p("Týmito všeobecnými obchodnými podmienkami (ďalej aj ako „VOP“) sa riadia "
     "právne vzťahy medzi subjektom <strong class=\"js-company\"></strong>, "
     "<span class=\"js-address\"></span>, IČO: <span class=\"js-ico\"></span>, "
-    "DIČ: <span class=\"js-dic\"></span>, IČ DPH: " + TODO + ", zapísaná v Obchodnom "
+    "DIČ: <span class=\"js-dic\"></span>, zapísaná v Obchodnom "
     "registri " + TODO + ", e-mail <a class=\"js-mail\" href=\"#\"></a>, "
     "tel. č. <a class=\"js-phone\" href=\"#\"></a> (ďalej len „predávajúci“) a každou "
     "osobou, ktorá je kupujúcim tovaru ponúkaného predávajúcim prostredníctvom "
@@ -43,7 +43,7 @@ SECTIONS = [
     "Těmito všeobecnými obchodními podmínkami (dále také jako „VOP“) se řídí "
     "právní vztahy mezi subjektem <strong class=\"js-company\"></strong>, "
     "<span class=\"js-address\"></span>, IČO: <span class=\"js-ico\"></span>, "
-    "DIČ: <span class=\"js-dic\"></span>, IČ DPH: " + TODO + ", zapsaná v Obchodním "
+    "DIČ: <span class=\"js-dic\"></span>, zapsaná v Obchodním "
     "rejstříku " + TODO + ", e-mail <a class=\"js-mail\" href=\"#\"></a>, "
     "tel. č. <a class=\"js-phone\" href=\"#\"></a> (dále jen „prodávající“) a každou "
     "osobou, která je kupujícím zboží nabízeného prodávajícím prostřednictvím "
@@ -244,20 +244,24 @@ SECTIONS = [
  ]),
 
  (("8. Dodacie podmienky", "8. Dodací podmínky"), [
-  p("Tovar doručujeme kuriérskou spoločnosťou na adresu uvedenú v objednávke, "
-    "na území Slovenskej republiky a Českej republiky. Ďalšie dostupné spôsoby "
-    "doručenia a osobný odber: " + TODO + ".",
-    "Zboží doručujeme kurýrní společností na adresu uvedenou v objednávce, "
-    "na území Slovenské republiky a České republiky. Další dostupné způsoby "
-    "doručení a osobní odběr: " + TODO + "."),
-  p("Tovar expedujeme po pripísaní platby na náš účet. Obvyklá lehota "
-    "expedície skladového tovaru: " + TODO + ". Panely tvarované na konkrétne "
-    "vozidlo a tovar na mieru sa vyrábajú na objednávku, obvyklý termín dodania: "
-    + TODO + ".",
-    "Zboží expedujeme po připsání platby na náš účet. Obvyklá lhůta expedice "
-    "skladového zboží: " + TODO + ". Panely tvarované na konkrétní vozidlo "
-    "a zboží na míru se vyrábějí na objednávku, obvyklý termín dodání: "
-    + TODO + "."),
+  p("Tovar doručujeme výhradne kuriérskou spoločnosťou na adresu uvedenú "
+    "v objednávke, na území Slovenskej republiky a Českej republiky. Osobný odber "
+    "neponúkame.",
+    "Zboží doručujeme výhradně kurýrní společností na adresu uvedenou "
+    "v objednávce, na území Slovenské republiky a České republiky. Osobní odběr "
+    "nenabízíme."),
+  p("Tovar expedujeme po pripísaní platby na náš účet. Obvyklé termíny dodania:",
+    "Zboží expedujeme po připsání platby na náš účet. Obvyklé termíny dodání:"),
+  ul(("tovar dostupný v našom sklade v Nemecku — do 7 pracovných dní,",
+      "zboží dostupné v našem skladu v Německu — do 7 pracovních dnů,"),
+     ("tovar, ktorý nie je na sklade v Nemecku a expeduje sa od výrobcu — "
+      "do 14 pracovných dní,",
+      "zboží, které není skladem v Německu a expeduje se od výrobce — "
+      "do 14 pracovních dnů,"),
+     ("tovar vyrobený na mieru podľa rozmerov vozidla — termín dohodneme "
+      "individuálne pri potvrdení objednávky.",
+      "zboží vyrobené na míru podle rozměrů vozidla — termín dohodneme "
+      "individuálně při potvrzení objednávky.")),
   p("Ak tovar uvedený v objednávke nie je na sklade, kupujúceho o tom budeme "
     "bezodkladne informovať.",
     "Pokud zboží uvedené v objednávce není skladem, kupujícího o tom budeme "
@@ -281,22 +285,22 @@ SECTIONS = [
     "Prodávající si vyhrazuje právo na změnu ceny zboží; to se však "
     "nevztahuje na již potvrzené kupní smlouvy. Kupující nemá právo dodatečně "
     "se dožadovat jiné ceny, než ceny předem dohodnuté v potvrzené objednávce."),
-  p("Ceny uvedené pri produktoch platia za tovar a nezahŕňajú cenu dopravy. "
-    "Informácia o DPH: " + TODO + ".",
-    "Ceny uvedené u produktů platí za zboží a nezahrnují cenu dopravy. "
-    "Informace o DPH: " + TODO + "."),
+  p("Predávajúci nie je platiteľom dane z pridanej hodnoty. Ceny uvedené pri "
+    "produktoch sú konečné ceny za tovar a nezahŕňajú cenu dopravy.",
+    "Prodávající není plátcem daně z přidané hodnoty. Ceny uvedené u produktů "
+    "jsou konečné ceny za zboží a nezahrnují cenu dopravy."),
   p("Cena dopravy sa určuje podľa hmotnosti zásielky a miesta doručenia a je "
     "uvedená na faktúre, ktorú kupujúci dostane spolu s potvrdením objednávky. "
     "Cenník dopravy: " + TODO + ".",
     "Cena dopravy se určuje podle hmotnosti zásilky a místa doručení a je "
     "uvedena na faktuře, kterou kupující obdrží spolu s potvrzením objednávky. "
     "Ceník dopravy: " + TODO + "."),
-  p("Kupujúci môže realizovať platbu za objednaný tovar prevodom na účet "
-    "predávajúceho na základe faktúry s QR kódom, ktorú dostane e-mailom po "
-    "potvrdení objednávky. Ďalšie akceptované spôsoby platby: " + TODO + ".",
-    "Kupující může realizovat platbu za objednané zboží převodem na účet "
-    "prodávajícího na základě faktury s QR kódem, kterou obdrží e-mailem po "
-    "potvrzení objednávky. Další akceptované způsoby platby: " + TODO + "."),
+  p("Platba je možná výhradne vopred, prevodom na účet predávajúceho na základe "
+    "faktúry s QR kódom, ktorú kupujúci dostane e-mailom po potvrdení objednávky. "
+    "Dobierku ani platbu kartou neponúkame. Tovar expedujeme po pripísaní platby.",
+    "Platba je možná výhradně předem, převodem na účet prodávajícího na základě "
+    "faktury s QR kódem, kterou kupující obdrží e-mailem po potvrzení objednávky. "
+    "Dobírku ani platbu kartou nenabízíme. Zboží expedujeme po připsání platby."),
  ]),
 
  (("10. Záruka a reklamácie", "10. Záruka a reklamace"), [

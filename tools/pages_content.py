@@ -568,11 +568,22 @@ def faq(lang, base):
            "vyplníte doručovací a fakturační údaje a objednávku odešlete.</p>"
            "<p>Obratem vám pošleme potvrzení objednávky a fakturu s QR kódem. Po zaplacení "
            "zboží expedujeme a pošleme vám číslo zásilky.</p>", lang)),
-        (T("Je v cene aj doprava?", "Je v ceně i doprava?", lang),
-         T("<p>Uvedená cena je za tovar. Dopravu doúčtujeme podľa hmotnosti zásielky a miesta "
-           "doručenia a uvedieme ju na faktúre, ktorú vám pošleme po prijatí objednávky.</p>",
-           "<p>Uvedená cena je za zboží. Dopravu doúčtujeme podle hmotnosti zásilky a místa "
-           "doručení a uvedeme ji na faktuře, kterou vám pošleme po přijetí objednávky.</p>", lang)),
+        (T("Je v cene aj doprava a DPH?", "Je v ceně i doprava a DPH?", lang),
+         T("<p>Nie sme platiteľmi DPH, uvedená cena je teda konečná cena za tovar. "
+           "Dopravu doúčtujeme podľa hmotnosti zásielky a miesta doručenia a uvedieme "
+           "ju na faktúre, ktorú vám pošleme po prijatí objednávky.</p>",
+           "<p>Nejsme plátci DPH, uvedená cena je tedy konečná cena za zboží. "
+           "Dopravu doúčtujeme podle hmotnosti zásilky a místa doručení a uvedeme "
+           "ji na faktuře, kterou vám pošleme po přijetí objednávky.</p>", lang)),
+        (T("Za ako dlho tovar dorazí?", "Za jak dlouho zboží dorazí?", lang),
+         T("<p>Tovar zo skladu v Nemecku doručíme do 7 pracovných dní od pripísania "
+           "platby. Ak položka nie je v nemeckom sklade a expeduje sa od výrobcu, "
+           "počítajte do 14 pracovných dní. Panely vyrobené na mieru majú termín "
+           "individuálny — dohodneme ho pri potvrdení objednávky.</p>",
+           "<p>Zboží ze skladu v Německu doručíme do 7 pracovních dnů od připsání "
+           "platby. Pokud položka není v německém skladu a expeduje se od výrobce, "
+           "počítejte do 14 pracovních dnů. Panely vyrobené na míru mají termín "
+           "individuální — domluvíme jej při potvrzení objednávky.</p>", lang)),
         (T("Moje vozidlo nie je v katalógu. Čo teraz?",
            "Moje vozidlo není v katalogu. Co teď?", lang),
          T("<p>Väčšinu tvarovaných panelov vieme vyrobiť na mieru podľa rozmerov vášho vozidla. "
