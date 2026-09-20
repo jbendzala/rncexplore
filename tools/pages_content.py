@@ -2,6 +2,7 @@
 """Obsah jednotlivých stránok v slovenčine a češtine."""
 
 import blog_content as _blog
+import terms_content as tc
 
 # naplní build.py pred vykreslením stránok
 N_PRODUCTS = 0
@@ -682,41 +683,25 @@ def kontakt(lang, base):
 
 # ---------------------------------------------------------------- podmienky
 def podmienky(lang, base):
+    """Vykreslí VOP z tools/terms_content.py. Neznáme údaje sú žlté štítky."""
     d = todo(T("doplňte", "doplňte", lang))
+    out = []
+    for heads, blocks in tc.SECTIONS:
+        out.append("<h2>%s</h2>" % T(heads[0], heads[1], lang))
+        for kind, body in blocks:
+            if kind == "p":
+                out.append("<p>%s</p>" % T(body[0], body[1], lang))
+            else:
+                items = "".join("<li>%s</li>" % T(a, b, lang) for a, b in body)
+                out.append("<ul>%s</ul>" % items)
+    html = "".join(out).replace(tc.TODO, d)
+
+    eff = tc.EFFECTIVE if lang == "sk" else tc.EFFECTIVE_CS
     return f"""
-<section class="sec"><div class="wrap"><div class="prose">
-  <p class="lead">{T("Nasledujúce informácie sú rámcové. Pred zverejnením ich prosím doplňte a nechajte skontrolovať — obchodné podmienky sú právny dokument.","Následující informace jsou rámcové. Před zveřejněním je prosím doplňte a nechte zkontrolovat — obchodní podmínky jsou právní dokument.",lang)}</p>
-
-  <h2>{T("Predávajúci","Prodávající",lang)}</h2>
-  <p><strong class="js-company"></strong><br>
-     {T("Sídlo","Sídlo",lang)}: <span class="js-address"></span><br>
-     IČO: <span class="js-ico"></span> &nbsp; DIČ: <span class="js-dic"></span><br>
-     E-mail: <a class="js-mail" href="#"></a> &nbsp; {T("Telefón","Telefon",lang)}: <a class="js-phone" href="#"></a></p>
-
-  <h2>{T("Objednávka a uzavretie zmluvy","Objednávka a uzavření smlouvy",lang)}</h2>
-  <p>{T("Odoslaním objednávky z košíka podávate návrh na uzavretie kúpnej zmluvy a objednávka je spojená s povinnosťou platby. Objednávku vám potvrdíme e-mailom spolu s faktúrou — potvrdením je kúpna zmluva uzavretá.","Odesláním objednávky z košíku podáváte návrh na uzavření kupní smlouvy a objednávka je spojena s povinností platby. Objednávku vám potvrdíme e-mailem spolu s fakturou — potvrzením je kupní smlouva uzavřena.",lang)}</p>
-
-  <h2>{T("Ceny","Ceny",lang)}</h2>
-  <p>{T("Ceny uvedené pri produktoch platia za tovar. Cena dopravy sa pripočítava podľa hmotnosti zásielky a miesta doručenia a je uvedená na faktúre. Informácia o DPH:","Ceny uvedené u produktů platí za zboží. Cena dopravy se připočítává podle hmotnosti zásilky a místa doručení a je uvedena na faktuře. Informace o DPH:",lang)} {d}</p>
-
-  <h2>{T("Dodanie","Dodání",lang)}</h2>
-  <p>{T("Spôsob dopravy, cena a obvyklý termín dodania:","Způsob dopravy, cena a obvyklý termín dodání:",lang)} {d}</p>
-
-  <h2>{T("Záruka a reklamácie","Záruka a reklamace",lang)}</h2>
-  <p>{T("Dĺžka záruky a postup pri reklamácii:","Délka záruky a postup při reklamaci:",lang)} {d}</p>
-  <p>{T("Záruka sa nevzťahuje na mechanické poškodenie povrchu panela, napríklad škrabancom pri odstraňovaní ľadu alebo kefovou automyčkou.","Záruka se nevztahuje na mechanické poškození povrchu panelu, například škrábancem při odstraňování ledu nebo kartáčovou myčkou.",lang)}</p>
-
-  <h2>{T("Odstúpenie od zmluvy","Odstoupení od smlouvy",lang)}</h2>
-  <p>{T("Spotrebiteľ má pri nákupe na diaľku právo odstúpiť od zmluvy v zákonnej lehote. Podrobný postup:","Spotřebitel má při nákupu na dálku právo odstoupit od smlouvy v zákonné lhůtě. Podrobný postup:",lang)} {d}</p>
-  <p>{T("Pri paneloch vyrobených na mieru podľa rozmerov vášho vozidla sa právo na odstúpenie nemusí uplatniť — ide o tovar upravený na želanie zákazníka.","U panelů vyrobených na míru podle rozměrů vašeho vozidla se právo na odstoupení nemusí uplatnit — jde o zboží upravené na přání zákazníka.",lang)}</p>
-
-  <h2>{T("Ochrana osobných údajov","Ochrana osobních údajů",lang)}</h2>
-  <p>{T("Údaje z objednávkového a kontaktného formulára (meno, e-mail, telefón, adresa) použijeme výhradne na vybavenie objednávky alebo odpoveď na vašu otázku. Formuláre odosiela sprostredkovateľ formsubmit.co, ktorý správu doručí na našu e-mailovú adresu.","Údaje z objednávkového a kontaktního formuláře (jméno, e-mail, telefon, adresa) použijeme výhradně k vyřízení objednávky nebo odpovědi na váš dotaz. Formuláře odesílá zprostředkovatel formsubmit.co, který zprávu doručí na naši e-mailovou adresu.",lang)}</p>
-  <p>{T("Web nepoužíva analytické ani reklamné cookies. V prehliadači si ukladáme len obsah vášho košíka a voľbu svetlého alebo tmavého režimu — tieto údaje neopúšťajú vaše zariadenie.","Web nepoužívá analytické ani reklamní cookies. V prohlížeči si ukládáme pouze obsah vašeho košíku a volbu světlého nebo tmavého režimu — tato data neopouštějí vaše zařízení.",lang)}</p>
-  <p>{T("Prevádzkovateľ a kontakt pre uplatnenie práv:","Správce a kontakt pro uplatnění práv:",lang)} {d}</p>
-
-  <h2>{T("Orgán dozoru","Orgán dozoru",lang)}</h2>
-  <p>{d}</p>
+<section class="sec"><div class="wrap"><div class="prose terms">
+  <p class="lead">{T("Tieto všeobecné obchodné podmienky upravujú nákup v internetovom obchode www.rncexplore.com. Žltou farbou sú označené údaje, ktoré ešte dopĺňame.","Tyto všeobecné obchodní podmínky upravují nákup v internetovém obchodě www.rncexplore.com. Žlutou barvou jsou označené údaje, které ještě doplňujeme.",lang)}</p>
+  {html}
+  <p class="note">{T("Tieto všeobecné obchodné podmienky sú platné a účinné od","Tyto všeobecné obchodní podmínky jsou platné a účinné od",lang)} {eff}.</p>
 </div></div></section>
 """
 
