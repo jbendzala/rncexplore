@@ -48,7 +48,7 @@ def render(p, ALL, lang, reviews, base):
     imgs = p["img"] or []
     thumbs = "".join(
         f'<button type="button" data-src="{esc(u)}?width=1000" aria-current="{str(k==0).lower()}">'
-        f'<img loading="lazy" src="{esc(u)}?width=160" alt=""></button>'
+        f'<img loading="lazy" src="{esc(u)}?width=160" alt="{esc(name)} — {T("fotografia","fotografie",lang)} {k+1}"></button>'
         for k, u in enumerate(imgs[:8]))
     gallery = (f'<div class="pd-main"><img id="pdMain" src="{esc(imgs[0])}?width=1000" '
                f'alt="{esc(name)}"></div>'

@@ -3,6 +3,7 @@
 import os, sys, shutil, re
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import pages_shell as sh
+import seo
 import pages_content as c
 import blog_content as bl
 import product_pages as pp
@@ -97,7 +98,15 @@ def build():
         for slug, (fn, tsk, tcs, dsk, dcs, needs_catalog) in PAGES.items():
             title = (tsk if lang == "sk" else tcs)
             desc  = (dsk if lang == "sk" else dcs)
-            out = [sh.head(lang, abase, slug, title, desc)]
+            root = seo.SITE + ("/" if lang == "sk" else "/cz/")
+            here = root + ("" if slug == "index" else slug + ".html")
+            ld = [seo.organization(), seo.website()] if slug == "index" else [
+                seo.breadcrumbs([("Domov" if lang == "sk" else "Domů", root),
+                                 (title, here)])]
+            if slug == "faq":
+                ld.append(seo.faq_page(c.faq_pairs(lang)))
+            out = [sh.head(lang, abase, slug, title, desc, ld=ld,
+                           noindex=(slug == "kosik"))]
             out.append(sh.header(lang, abase, slug, pbase))
             if slug != "index":
                 out.append(page_head(lang, slug, HEADS[slug][0 if lang == "sk" else 1]))
@@ -123,7 +132,13 @@ def build():
             fn = post["slug"] + ".html"
             links = ((fn, "../cz/blog/" + fn) if lang == "sk"
                      else ("../../blog/" + fn, fn))
-            out = [sh.head(lang, b_abase, "blog/" + post["slug"], title, desc),
+            root = seo.SITE + ("/" if lang == "sk" else "/cz/")
+            here = root + "blog/" + post["slug"] + ".html"
+            ld = [seo.blog_post(post, lang, here),
+                  seo.breadcrumbs([("Domov" if lang == "sk" else "Domů", root),
+                                   ("Blog", root + "blog.html"), (title, here)])]
+            out = [sh.head(lang, b_abase, "blog/" + post["slug"], title, desc,
+                           image=post["hero"], ld=ld),
                    sh.header(lang, b_abase, "blog", b_pbase, links),
                    ('<section class="page-head"><div class="wrap">'
                     f'<p class="crumb"><a href="{b_pbase}index.html">'
@@ -149,7 +164,15 @@ def build():
             fn = prod["id"] + ".html"
             links = ((fn, "../cz/produkt/" + fn) if lang == "sk"
                      else ("../../produkt/" + fn, fn))
-            out = [sh.head(lang, p_abase, "produkt/" + prod["id"], nm, dsc),
+            root = seo.SITE + ("/" if lang == "sk" else "/cz/")
+            here = root + "produkt/" + prod["id"] + ".html"
+            ld = [seo.product(prod, "sk" if lang == "sk" else "cs", here),
+                  seo.breadcrumbs([
+                      ("Domov" if lang == "sk" else "Domů", root),
+                      ("Katalóg" if lang == "sk" else "Katalog", root + "produkty.html"),
+                      (nm, here)])]
+            out = [sh.head(lang, p_abase, "produkt/" + prod["id"], nm, dsc,
+                           image=(prod.get("img") or [None])[0], ld=ld),
                    sh.header(lang, p_abase, "produkty", p_pbase, links),
                    ('<section class="page-head"><div class="wrap">'
                     f'<p class="crumb"><a href="{p_pbase}index.html">'

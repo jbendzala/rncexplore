@@ -39,8 +39,37 @@ FAVICON = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox
            " stroke-linecap='round'/%3E%3Ccircle cx='16' cy='16' r='4.5' fill='%23141310'/%3E%3C/svg%3E")
 
 
-def head(lang, base, slug, title, desc):
-    other = "cz/" if lang == "sk" else "../"
+SITE = "https://www.rncexplore.com"
+OG_IMAGE = ("https://lensunsolar.com/cdn/shop/files/"
+            "lensunsolar-hood-solar-panel-2_1780x.jpg?width=1200")
+
+
+def head(lang, base, slug, title, desc, image=None, ld=None, noindex=False):
+    """image — náhľad pri zdieľaní odkazu, ld — pole so štruktúrovanými dátami."""
+    path = "" if slug == "index" else slug + ".html"
+    url = f"{SITE}/{'' if lang == 'sk' else 'cz/'}{path}"
+    img = image or OG_IMAGE
+    site_name = "RNC Explore"
+    locale = "sk_SK" if lang == "sk" else "cs_CZ"
+    robots = ('<meta name="robots" content="noindex,follow">\n' if noindex else "")
+    jsonld = ""
+    if ld:
+        import json as _json
+        jsonld = "".join(
+            '<script type="application/ld+json">%s</script>\n'
+            % _json.dumps(b, ensure_ascii=False, separators=(",", ":")) for b in ld)
+    social = f"""{robots}<meta property="og:type" content="website">
+<meta property="og:site_name" content="{site_name}">
+<meta property="og:locale" content="{locale}">
+<meta property="og:title" content="{title}">
+<meta property="og:description" content="{desc}">
+<meta property="og:url" content="{url}">
+<meta property="og:image" content="{img}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{title}">
+<meta name="twitter:description" content="{desc}">
+<meta name="twitter:image" content="{img}">
+{jsonld}"""
     return f"""<!doctype html>
 <html lang="{'sk' if lang=='sk' else 'cs'}" data-theme="">
 <head>
@@ -51,7 +80,8 @@ def head(lang, base, slug, title, desc):
 <link rel="canonical" href="https://www.rncexplore.com/{'' if lang=='sk' else 'cz/'}{'' if slug=='index' else slug+'.html'}">
 <link rel="alternate" hreflang="sk" href="https://www.rncexplore.com/{'' if slug=='index' else slug+'.html'}">
 <link rel="alternate" hreflang="cs" href="https://www.rncexplore.com/cz/{'' if slug=='index' else slug+'.html'}">
-<link rel="icon" href="{FAVICON}">
+<link rel="alternate" hreflang="x-default" href="https://www.rncexplore.com/{'' if slug=='index' else slug+'.html'}">
+{social}<link rel="icon" href="{FAVICON}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Barlow:wght@400;500;600&display=swap">

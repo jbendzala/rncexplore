@@ -513,8 +513,8 @@ def o_nas(lang, base):
 
 
 # ---------------------------------------------------------------- FAQ
-def faq(lang, base):
-    qa = [
+def faq_pairs(lang):
+    return [
         (T("Ako si vyberiem správny panel na moje auto?",
            "Jak si vyberu správný panel na moje auto?", lang),
          T("<p>V katalógu filtrujte podľa značky vozidla a potom nájdite svoj model "
@@ -595,6 +595,11 @@ def faq(lang, base):
            "<p>Většinu tvarovaných panelů umíme vyrobit na míru podle rozměrů vašeho vozidla. "
            "Napište nám značku, model, rok výroby a přiložte fotografie.</p>", lang)),
     ]
+
+
+
+def faq(lang, base):
+    qa = faq_pairs(lang)
     items = "".join(
         f'<div class="faq-i"><button class="faq-q" aria-expanded="false">{q}'
         f'<span class="pm" aria-hidden="true"></span></button>'

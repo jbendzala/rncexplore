@@ -1,4 +1,22 @@
 User-agent: *
 Allow: /
+Disallow: /kosik.html
+Disallow: /cz/kosik.html
+
+# Vyhľadávače aj jazykové modely majú prístup k celému katalógu.
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
 
 Sitemap: https://www.rncexplore.com/sitemap.xml
