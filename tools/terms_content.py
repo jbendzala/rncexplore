@@ -247,9 +247,11 @@ SECTIONS = [
 
  (("8. Dodacie podmienky", "8. Dodací podmínky"), [
   p("Tovar doručujeme kuriérskou spoločnosťou na adresu uvedenú v objednávke, "
-    "na území Slovenskej republiky a Českej republiky.",
+    "na území Slovenskej republiky a Českej republiky. Možný je aj osobný odber "
+    "na adrese sídla predávajúceho v Bytči po dohode termínu.",
     "Zboží doručujeme kurýrní společností na adresu uvedenou v objednávce, "
-    "na území Slovenské republiky a České republiky."),
+    "na území Slovenské republiky a České republiky. Možný je i osobní odběr "
+    "na adrese sídla prodávajícího v Bytči po domluvě termínu."),
   p("Tovar expedujeme po pripísaní platby na náš účet. Obvyklé termíny dodania:",
     "Zboží expedujeme po připsání platby na náš účet. Obvyklé termíny dodání:"),
   ul(("tovar dostupný v našom sklade v Nemecku — do 7 pracovných dní,",
@@ -286,25 +288,27 @@ SECTIONS = [
     "nevztahuje na již potvrzené kupní smlouvy. Kupující nemá právo dodatečně "
     "se dožadovat jiné ceny, než ceny předem dohodnuté v potvrzené objednávce."),
   p("Predávajúci je platiteľom dane z pridanej hodnoty. Všetky ceny uvedené pri "
-    "produktoch sú vrátane DPH v sadzbe 23 %. Cena dopravy sa k nim pripočítava "
-    "samostatne a kupujúci ju vidí v košíku pred odoslaním objednávky.",
+    "produktoch sú vrátane DPH v sadzbe 23 % a vrátane dopravy na adresu "
+    "kupujúceho. Cena, ktorú kupujúci vidí pri produkte, je konečná.",
     "Prodávající je plátcem daně z přidané hodnoty. Všechny ceny uvedené "
-    "u produktů jsou včetně DPH. Cena dopravy se k nim připočítává samostatně "
-    "a kupující ji vidí v košíku před odesláním objednávky."),
-  p("Doprava je paušálna za celú objednávku bez ohľadu na počet kusov:",
-    "Doprava je paušální za celou objednávku bez ohledu na počet kusů:"),
-  ul(("doručenie na adresu v Slovenskej republike — 34 € bez DPH, "
+    "u produktů jsou včetně DPH a včetně dopravy na adresu kupujícího. Cena, "
+    "kterou kupující vidí u produktu, je konečná."),
+  p("Doprava je už zahrnutá v cene každého produktu a účtuje sa za kus, pretože "
+    "každý panel sa prepravuje ako samostatná zásielka. V cene je zahrnuté:",
+    "Doprava je již zahrnuta v ceně každého produktu a účtuje se za kus, protože "
+    "každý panel se přepravuje jako samostatná zásilka. V ceně je zahrnuto:"),
+  ul(("doručenie na adresu v Slovenskej republike — 34 € bez DPH za kus, "
       "teda 41,82 € s DPH,",
-      "doručení na adresu ve Slovenské republice — 34 € bez DPH, "
+      "doručení na adresu ve Slovenské republice — 34 € bez DPH za kus, "
       "tedy 41,82 € s DPH,"),
-     ("doručenie na adresu v Českej republike — 822 Kč bez DPH, "
+     ("doručenie na adresu v Českej republike — 822 Kč bez DPH za kus, "
       "teda 1 011,06 Kč s DPH.",
-      "doručení na adresu v České republice — 822 Kč bez DPH, "
+      "doručení na adresu v České republice — 822 Kč bez DPH za kus, "
       "tedy 1 011,06 Kč s DPH.")),
-  p("Konečnú sumu vrátane dopravy kupujúci vidí v košíku pred odoslaním "
-    "objednávky a je uvedená aj na faktúre.",
-    "Konečnou částku včetně dopravy kupující vidí v košíku před odesláním "
-    "objednávky a je uvedena i na faktuře."),
+  p("Ak si kupujúci zvolí osobný odber, cena dopravy sa mu z každého kusu "
+    "odpočíta. Zľavu aj konečnú sumu vidí v košíku pred odoslaním objednávky.",
+    "Pokud si kupující zvolí osobní odběr, cena dopravy se mu z každého kusu "
+    "odečte. Slevu i konečnou částku vidí v košíku před odesláním objednávky."),
   p("Platba je možná výhradne vopred, prevodom na účet predávajúceho na základe "
     "faktúry s QR kódom, ktorú kupujúci dostane e-mailom po potvrdení objednávky. "
     "Dobierku ani platbu kartou neponúkame. Tovar expedujeme po pripísaní platby.",

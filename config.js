@@ -29,13 +29,18 @@ window.SITE_CONFIG = {
      spotrebiteľom vyžaduje zákon. 0.23 = 23 %.                           */
   vat: 0.23,
 
-  /* Doprava. Paušál za objednávku, uvedený BEZ DPH — s DPH ju dopočíta
-     košík sám podľa sadzby vyššie.                                       */
+  /* Doprava ZA KUS, bez DPH — každý panel ide ako samostatná zásielka.
+     DPH dopočíta web sám podľa sadzby vyššie.                            */
   shippingNet: { EUR: 34, CZK: 822 },
+
+  /* true  = doprava je už započítaná v cene produktu („doprava zdarma“),
+             košík neúčtuje nič navyše. Tak to má aj konkurencia.
+     false = ceny sú bez dopravy a košík ju pripočíta samostatne.          */
+  shippingInPrice: true,
 
   /* Ponúkame osobný odber v Bytči? true = v košíku pribudne možnosť
      odberu za 0 €.                                                       */
-  pickup: false,
+  pickup: true,
 
   /* Zaokrúhlenie zobrazenej ceny: "9"  -> 249 € končí na 9 (249, 259…)
                                    "0"  -> zaokrúhli na celé

@@ -48,7 +48,7 @@
       mailHint: "Ak sa e-mailový klient neotvorí, použite tlačidlo „Skopírovať údaje“ a pošlite nám ich na ",
       sentOk: "Otvorili sme váš e-mailový klient. Objednávka bude odoslaná až po jej potvrdení v e-maile.",
       subject: "Objednávka z katalógu", theme: "Svetlý / tmavý režim",
-      priceNote: "Ceny sú vrátane DPH. Doprava je paušál 41,82 € s DPH za objednávku.",
+      priceNote: "Cena je vrátane DPH aj dopravy na Slovensko.",
       contact: "Kontakt", info: "Informácie",
       infoText: "Katalóg slúži na prezeranie sortimentu. Objednávky vybavujeme individuálne e-mailom.",
       rights: "Všetky práva vyhradené.",
@@ -88,7 +88,7 @@
       mailHint: "Pokud se e-mailový klient neotevře, použijte tlačítko „Zkopírovat údaje“ a pošlete nám je na ",
       sentOk: "Otevřeli jsme váš e-mailový klient. Objednávka bude odeslána až po jejím potvrzení v e-mailu.",
       subject: "Objednávka z katalogu", theme: "Světlý / tmavý režim",
-      priceNote: "Ceny jsou včetně DPH. Doprava je paušál 1 011,06 Kč s DPH za objednávku.",
+      priceNote: "Cena je včetně DPH i dopravy do Česka.",
       contact: "Kontakt", info: "Informace",
       infoText: "Katalog slouží k prohlížení sortimentu. Objednávky vyřizujeme individuálně e-mailem.",
       rights: "Všechna práva vyhrazena.",
@@ -100,9 +100,16 @@
   function plural(n, f) { return n === 1 ? f[0] : (n >= 2 && n <= 4 ? f[1] : f[2]); }
 
   /* ---------- ceny ---------- */
+  /* Doprava sa účtuje za kus, preto ju vieme započítať priamo do ceny
+     produktu — dva panely reálne znamenajú dve zásielky. */
+  function shipNet() {
+    return (CFG.shippingNet && CFG.shippingNet[CUR]) || 0;
+  }
   function convert(usd) {
     var rate = (CFG.rates && CFG.rates[CUR]) || 1;
-    var v = usd * (CFG.markup || 1) * rate * (1 + (CFG.vat || 0));
+    var base = usd * (CFG.markup || 1) * rate;
+    if (CFG.shippingInPrice) base += shipNet();
+    var v = base * (1 + (CFG.vat || 0));
     if (CFG.rounding === "9") {
       v = Math.max(0, Math.round(v));
       /* zakončenie na 9 má zmysel až pri vyšších sumách */

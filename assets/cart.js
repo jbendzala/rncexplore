@@ -17,7 +17,8 @@
           qty: "Počet", unit: "Cena za kus", sum: "Spolu", remove: "Odstrániť",
           total: "Celkom s DPH", goods: "Tovar", shipping: "Doprava",
           dlvCourier: "Doručenie kuriérom", dlvPickup: "Osobný odber v Bytči",
-          vatNote: "Všetky ceny sú vrátane DPH. Doprava je paušál za objednávku, nie za kus.",
+          shipFree: "v cene", pickupOff: "Zľava za osobný odber",
+          vatNote: "Všetky ceny sú vrátane DPH aj dopravy. Každý panel sa posiela ako samostatná zásielka.",
           contact: "Doručovacie a fakturačné údaje",
           order: "Objednávka zaväzujúca k platbe",
           sent: "Objednávka odoslaná. Obratom vám pošleme faktúru s QR kódom na zaplatenie.",
@@ -35,7 +36,8 @@
           qty: "Počet", unit: "Cena za kus", sum: "Celkem", remove: "Odstranit",
           total: "Celkem s DPH", goods: "Zboží", shipping: "Doprava",
           dlvCourier: "Doručení kurýrem", dlvPickup: "Osobní odběr v Bytči",
-          vatNote: "Všechny ceny jsou včetně DPH. Doprava je paušál za objednávku, ne za kus.",
+          shipFree: "v ceně", pickupOff: "Sleva za osobní odběr",
+          vatNote: "Všechny ceny jsou včetně DPH i dopravy. Každý panel se posílá jako samostatná zásilka.",
           contact: "Doručovací a fakturační údaje",
           order: "Objednávka zavazující k platbě",
           sent: "Objednávka odeslána. Obratem vám pošleme fakturu s QR kódem k zaplacení.",
@@ -54,9 +56,16 @@
   function deliveryEmail() { return CFG.deliverTo || CFG.orderEmail; }
 
   /* ---------- ceny ---------- */
+  /* Doprava sa účtuje za kus, preto ju vieme započítať priamo do ceny
+     produktu — dva panely reálne znamenajú dve zásielky. */
+  function shipNet() {
+    return (CFG.shippingNet && CFG.shippingNet[CUR]) || 0;
+  }
   function convert(usd) {
     var rate = (CFG.rates && CFG.rates[CUR]) || 1;
-    var v = usd * (CFG.markup || 1) * rate * (1 + (CFG.vat || 0));
+    var base = usd * (CFG.markup || 1) * rate;
+    if (CFG.shippingInPrice) base += shipNet();
+    var v = base * (1 + (CFG.vat || 0));
     if (CFG.rounding === "9") { v = Math.max(0, Math.round(v)); if (v >= 100) v = Math.floor(v / 10) * 10 + 9; }
     else if (CFG.rounding === "0") { v = Math.round(v); }
     return v;
@@ -117,15 +126,21 @@
      s DPH, aby súčet zodpovedal tomu, čo zákazník naozaj zaplatí. */
   var pickup = false;                 /* zvolil zákazník osobný odber? */
 
+  /* Doprava s DPH za jeden kus. */
   function shipCost() {
-    var net = (CFG.shippingNet && CFG.shippingNet[CUR]) || 0;
-    return Math.round(net * (1 + (CFG.vat || 0)) * 100) / 100;
+    return Math.round(shipNet() * (1 + (CFG.vat || 0)) * 100) / 100;
   }
 
-  function shipping() {
-    if (pickup) return 0;
-    var net = (CFG.shippingNet && CFG.shippingNet[CUR]) || 0;
-    return Math.round(net * (1 + (CFG.vat || 0)) * 100) / 100;
+  function pieces(c) {
+    return c.reduce(function (s, i) { return s + i.qty; }, 0);
+  }
+
+  /* Koľko doprava pridá k súčtu. Keď je už v cene produktu, nepridá nič —
+     a pri osobnom odbere ju naopak odrátame, lebo ju zákazník nevyužije. */
+  function shipping(c) {
+    var per = shipCost() * pieces(c);
+    if (CFG.shippingInPrice) return pickup ? -per : 0;
+    return pickup ? 0 : per;
   }
 
   function totals(c) {
@@ -163,17 +178,25 @@
       "</th><th>" + esc(T.sum) + "</th><th></th></tr></thead><tbody>" + rows + "</tbody></table></div>" +
       (CFG.pickup
         ? '<div class="cart-ship"><label><input type="radio" name="dlv" value="courier"' +
-          (pickup ? "" : " checked") + "><span>" + esc(T.dlvCourier) + " — " +
-          esc(fmt(shipCost())) + "</span></label>" +
+          (pickup ? "" : " checked") + "><span>" + esc(T.dlvCourier) +
+          (CFG.shippingInPrice ? "" : " — " + esc(fmt(shipCost() * pieces(c)))) +
+          "</span></label>" +
           '<label><input type="radio" name="dlv" value="pickup"' +
-          (pickup ? " checked" : "") + "><span>" + esc(T.dlvPickup) + " — " +
-          esc(fmt(0)) + "</span></label></div>"
+          (pickup ? " checked" : "") + "><span>" + esc(T.dlvPickup) +
+          "</span></label></div>"
         : "") +
       '<div class="cart-sums">' +
         "<div><span>" + esc(T.goods) + "</span><span>" + esc(fmt(totals(c))) + "</span></div>" +
-        "<div><span>" + esc(T.shipping) + "</span><span>" + esc(fmt(shipping())) + "</span></div>" +
+        (CFG.shippingInPrice
+          ? (pickup
+              ? "<div><span>" + esc(T.pickupOff) + "</span><span>" +
+                esc(fmt(shipping(c))) + "</span></div>"
+              : "<div><span>" + esc(T.shipping) + "</span><span>" +
+                esc(T.shipFree) + "</span></div>")
+          : "<div><span>" + esc(T.shipping) + "</span><span>" +
+            esc(fmt(shipping(c))) + "</span></div>") +
         '<div class="cart-sum"><span>' + esc(T.total) + "</span><b>" +
-          esc(fmt(totals(c) + shipping())) + "</b></div>" +
+          esc(fmt(totals(c) + shipping(c))) + "</b></div>" +
       "</div>" +
       '<p class="note">' + esc(T.vatNote) + "</p>";
 
@@ -220,8 +243,10 @@
     });
     out.push(line,
       L.goods + ": " + fmt(totals(c)),
-      L.ship + ": " + fmt(shipping()) + (pickup ? " (" + T.dlvPickup + ")" : ""),
-      L.tot + ": " + fmt(totals(c) + shipping()), "",
+      L.ship + ": " + (CFG.shippingInPrice && !pickup
+        ? T.shipFree
+        : fmt(shipping(c)) + (pickup ? " (" + T.dlvPickup + ")" : "")),
+      L.tot + ": " + fmt(totals(c) + shipping(c)), "",
       L.z, line,
       L.nm + ": " + g("cName"), L.em + ": " + g("cEmail"), L.ph + ": " + g("cPhone"));
     if (g("cCompany")) out.push(L.co + ": " + g("cCompany"));
@@ -229,7 +254,7 @@
     if (g("cNote")) out.push("", L.no, line, g("cNote"));
     out.push("", line, L.src + ": " + location.origin + location.pathname);
     return { subject: L.pay + " — " + c.length + "× " +
-             (LANG === "cs" ? "položka" : "položka") + ", " + fmt(totals(c) + shipping()),
+             (LANG === "cs" ? "položka" : "položka") + ", " + fmt(totals(c) + shipping(c)),
              body: out.join("\n") };
   }
 
