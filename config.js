@@ -6,11 +6,12 @@ window.SITE_CONFIG = {
   /* --- 1. VAŠA FIRMA / VAŠE FIRMA ---------------------------------------
      Nahraďte zástupné hodnoty svojimi údajmi.
      Replace these placeholders with your own details.                     */
-  company: "Fabrika SAIL s.r.o.",
+  company: "Safiri s.r.o.",
   street: "Pšurnovice 221",
   city: "014 01 Bytča",
-  ico: "56774907",
-  dic: "2122424018",
+  ico: "55635113",
+  dic: "2122040844",
+  icDph: "SK2122040844",          // sme platiteľ DPH
   hours: "9:00 – 18:00",
   orderEmail: "objednavky@rncexplore.com", // sem chodia objednávky / sem chodí objednávky
   phone: "+421 905 698 410",
@@ -23,6 +24,18 @@ window.SITE_CONFIG = {
      Kurzy si podľa potreby aktualizujte.                                   */
   markup: 1.0,
   rates: { EUR: 0.92, CZK: 23.0 },
+
+  /* Sadzba DPH. Ceny na webe sa zobrazujú s DPH, ako to pri predaji
+     spotrebiteľom vyžaduje zákon. 0.23 = 23 %.                           */
+  vat: 0.23,
+
+  /* Doprava. Paušál za objednávku, uvedený BEZ DPH — s DPH ju dopočíta
+     košík sám podľa sadzby vyššie.                                       */
+  shippingNet: { EUR: 34, CZK: 822 },
+
+  /* Ponúkame osobný odber v Bytči? true = v košíku pribudne možnosť
+     odberu za 0 €.                                                       */
+  pickup: false,
 
   /* Zaokrúhlenie zobrazenej ceny: "9"  -> 249 € končí na 9 (249, 259…)
                                    "0"  -> zaokrúhli na celé

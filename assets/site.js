@@ -45,6 +45,7 @@
   });
   fill(".js-ico", function (n) { n.textContent = CFG.ico || ""; });
   fill(".js-dic", function (n) { n.textContent = CFG.dic || ""; });
+  fill(".js-icdph", function (n) { n.textContent = CFG.icDph || ""; });
   fill(".js-hours", function (n) { n.textContent = CFG.hours || ""; });
   fill(".js-year", function (n) { n.textContent = new Date().getFullYear(); });
   fill(".js-rights", function (n) {

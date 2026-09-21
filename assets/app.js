@@ -48,7 +48,7 @@
       mailHint: "Ak sa e-mailový klient neotvorí, použite tlačidlo „Skopírovať údaje“ a pošlite nám ich na ",
       sentOk: "Otvorili sme váš e-mailový klient. Objednávka bude odoslaná až po jej potvrdení v e-maile.",
       subject: "Objednávka z katalógu", theme: "Svetlý / tmavý režim",
-      priceNote: "Nie sme platiteľmi DPH — uvedená cena je konečná. Doprava sa účtuje osobitne.",
+      priceNote: "Ceny sú vrátane DPH. Doprava je paušál 41,82 € s DPH za objednávku.",
       contact: "Kontakt", info: "Informácie",
       infoText: "Katalóg slúži na prezeranie sortimentu. Objednávky vybavujeme individuálne e-mailom.",
       rights: "Všetky práva vyhradené.",
@@ -88,7 +88,7 @@
       mailHint: "Pokud se e-mailový klient neotevře, použijte tlačítko „Zkopírovat údaje“ a pošlete nám je na ",
       sentOk: "Otevřeli jsme váš e-mailový klient. Objednávka bude odeslána až po jejím potvrzení v e-mailu.",
       subject: "Objednávka z katalogu", theme: "Světlý / tmavý režim",
-      priceNote: "Nejsme plátci DPH — uvedená cena je konečná. Doprava se účtuje zvlášť.",
+      priceNote: "Ceny jsou včetně DPH. Doprava je paušál 1 011,06 Kč s DPH za objednávku.",
       contact: "Kontakt", info: "Informace",
       infoText: "Katalog slouží k prohlížení sortimentu. Objednávky vyřizujeme individuálně e-mailem.",
       rights: "Všechna práva vyhrazena.",
@@ -102,7 +102,7 @@
   /* ---------- ceny ---------- */
   function convert(usd) {
     var rate = (CFG.rates && CFG.rates[CUR]) || 1;
-    var v = usd * (CFG.markup || 1) * rate;
+    var v = usd * (CFG.markup || 1) * rate * (1 + (CFG.vat || 0));
     if (CFG.rounding === "9") {
       v = Math.max(0, Math.round(v));
       /* zakončenie na 9 má zmysel až pri vyšších sumách */
@@ -115,7 +115,9 @@
   function money(usd) { return fmt(convert(usd)); }
   /* naformátuje už prepočítanú sumu (aby 2 × 369 € bolo presne 738 €) */
   function fmt(v) {
-    var dec = v < 20 ? 2 : 0;
+    /* celé sumy bez halierov, nezaokrúhlené (doprava, súčet) s nimi —
+       aby sa zobrazená suma presne rovnala tej na faktúre */
+    var dec = (v < 20 || Math.abs(v - Math.round(v)) > 0.005) ? 2 : 0;
     try {
       return new Intl.NumberFormat(LANG === "cs" ? "cs-CZ" : "sk-SK",
         { style: "currency", currency: CUR, minimumFractionDigits: dec, maximumFractionDigits: dec }).format(v);

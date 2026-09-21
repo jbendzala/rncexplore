@@ -569,12 +569,16 @@ def faq(lang, base):
            "<p>Obratem vám pošleme potvrzení objednávky a fakturu s QR kódem. Po zaplacení "
            "zboží expedujeme a pošleme vám číslo zásilky.</p>", lang)),
         (T("Je v cene aj doprava a DPH?", "Je v ceně i doprava a DPH?", lang),
-         T("<p>Nie sme platiteľmi DPH, uvedená cena je teda konečná cena za tovar. "
-           "Dopravu doúčtujeme podľa hmotnosti zásielky a miesta doručenia a uvedieme "
-           "ju na faktúre, ktorú vám pošleme po prijatí objednávky.</p>",
-           "<p>Nejsme plátci DPH, uvedená cena je tedy konečná cena za zboží. "
-           "Dopravu doúčtujeme podle hmotnosti zásilky a místa doručení a uvedeme "
-           "ji na faktuře, kterou vám pošleme po přijetí objednávky.</p>", lang)),
+         T("<p>Všetky ceny pri produktoch sú vrátane DPH. Doprava sa pripočítava "
+           "samostatne a je paušálna za celú objednávku — 41,82 € s DPH na Slovensko, "
+           "1 011,06 Kč s DPH do Česka. Nezáleží na počte kusov.</p>"
+           "<p>Konečnú sumu vrátane dopravy vidíte v košíku ešte pred odoslaním "
+           "objednávky.</p>",
+           "<p>Všechny ceny u produktů jsou včetně DPH. Doprava se připočítává "
+           "samostatně a je paušální za celou objednávku — 1 011,06 Kč s DPH do "
+           "Česka, 41,82 € s DPH na Slovensko. Nezáleží na počtu kusů.</p>"
+           "<p>Konečnou částku včetně dopravy vidíte v košíku ještě před odesláním "
+           "objednávky.</p>", lang)),
         (T("Za ako dlho tovar dorazí?", "Za jak dlouho zboží dorazí?", lang),
          T("<p>Tovar zo skladu v Nemecku doručíme do 7 pracovných dní od pripísania "
            "platby. Ak položka nie je v nemeckom sklade a expeduje sa od výrobcu, "

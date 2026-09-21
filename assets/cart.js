@@ -15,7 +15,9 @@
           emptyNote: "Vyberte produkty v katalógu a pridajte ich do košíka.",
           toCatalog: "Prejsť do katalógu", item: "Položka", variant: "Prevedenie",
           qty: "Počet", unit: "Cena za kus", sum: "Spolu", remove: "Odstrániť",
-          total: "Celkom", vatNote: "Nie sme platiteľmi DPH — uvedená cena je konečná. Dopravu doúčtujeme podľa hmotnosti zásielky a uvedieme ju na faktúre.",
+          total: "Celkom s DPH", goods: "Tovar", shipping: "Doprava",
+          dlvCourier: "Doručenie kuriérom", dlvPickup: "Osobný odber v Bytči",
+          vatNote: "Všetky ceny sú vrátane DPH. Doprava je paušál za objednávku, nie za kus.",
           contact: "Doručovacie a fakturačné údaje",
           order: "Objednávka zaväzujúca k platbe",
           sent: "Objednávka odoslaná. Obratom vám pošleme faktúru s QR kódom na zaplatenie.",
@@ -31,7 +33,9 @@
           emptyNote: "Vyberte produkty v katalogu a přidejte je do košíku.",
           toCatalog: "Přejít do katalogu", item: "Položka", variant: "Provedení",
           qty: "Počet", unit: "Cena za kus", sum: "Celkem", remove: "Odstranit",
-          total: "Celkem", vatNote: "Nejsme plátci DPH — uvedená cena je konečná. Dopravu doúčtujeme podle hmotnosti zásilky a uvedeme ji na faktuře.",
+          total: "Celkem s DPH", goods: "Zboží", shipping: "Doprava",
+          dlvCourier: "Doručení kurýrem", dlvPickup: "Osobní odběr v Bytči",
+          vatNote: "Všechny ceny jsou včetně DPH. Doprava je paušál za objednávku, ne za kus.",
           contact: "Doručovací a fakturační údaje",
           order: "Objednávka zavazující k platbě",
           sent: "Objednávka odeslána. Obratem vám pošleme fakturu s QR kódem k zaplacení.",
@@ -52,13 +56,15 @@
   /* ---------- ceny ---------- */
   function convert(usd) {
     var rate = (CFG.rates && CFG.rates[CUR]) || 1;
-    var v = usd * (CFG.markup || 1) * rate;
+    var v = usd * (CFG.markup || 1) * rate * (1 + (CFG.vat || 0));
     if (CFG.rounding === "9") { v = Math.max(0, Math.round(v)); if (v >= 100) v = Math.floor(v / 10) * 10 + 9; }
     else if (CFG.rounding === "0") { v = Math.round(v); }
     return v;
   }
   function fmt(v) {
-    var dec = v < 20 ? 2 : 0;
+    /* celé sumy bez halierov, nezaokrúhlené (doprava, súčet) s nimi —
+       aby sa zobrazená suma presne rovnala tej na faktúre */
+    var dec = (v < 20 || Math.abs(v - Math.round(v)) > 0.005) ? 2 : 0;
     try {
       return new Intl.NumberFormat(LANG === "cs" ? "cs-CZ" : "sk-SK",
         { style: "currency", currency: CUR, minimumFractionDigits: dec, maximumFractionDigits: dec }).format(v);
@@ -107,6 +113,21 @@
   }
 
   /* ---------- stránka košíka ---------- */
+  /* Doprava je paušál za objednávku, nie za kus. Do košíka ju pripočítame
+     s DPH, aby súčet zodpovedal tomu, čo zákazník naozaj zaplatí. */
+  var pickup = false;                 /* zvolil zákazník osobný odber? */
+
+  function shipCost() {
+    var net = (CFG.shippingNet && CFG.shippingNet[CUR]) || 0;
+    return Math.round(net * (1 + (CFG.vat || 0)) * 100) / 100;
+  }
+
+  function shipping() {
+    if (pickup) return 0;
+    var net = (CFG.shippingNet && CFG.shippingNet[CUR]) || 0;
+    return Math.round(net * (1 + (CFG.vat || 0)) * 100) / 100;
+  }
+
   function totals(c) {
     return c.reduce(function (s, i) { return s + convert(i.usd) * i.qty; }, 0);
   }
@@ -140,8 +161,25 @@
       '<div class="table-wrap"><table class="cart-t"><thead><tr>' +
       "<th>" + esc(T.item) + "</th><th>" + esc(T.qty) + "</th><th>" + esc(T.unit) +
       "</th><th>" + esc(T.sum) + "</th><th></th></tr></thead><tbody>" + rows + "</tbody></table></div>" +
-      '<div class="cart-sum"><span>' + esc(T.total) + "</span><b>" + esc(fmt(totals(c))) + "</b></div>" +
+      (CFG.pickup
+        ? '<div class="cart-ship"><label><input type="radio" name="dlv" value="courier"' +
+          (pickup ? "" : " checked") + "><span>" + esc(T.dlvCourier) + " — " +
+          esc(fmt(shipCost())) + "</span></label>" +
+          '<label><input type="radio" name="dlv" value="pickup"' +
+          (pickup ? " checked" : "") + "><span>" + esc(T.dlvPickup) + " — " +
+          esc(fmt(0)) + "</span></label></div>"
+        : "") +
+      '<div class="cart-sums">' +
+        "<div><span>" + esc(T.goods) + "</span><span>" + esc(fmt(totals(c))) + "</span></div>" +
+        "<div><span>" + esc(T.shipping) + "</span><span>" + esc(fmt(shipping())) + "</span></div>" +
+        '<div class="cart-sum"><span>' + esc(T.total) + "</span><b>" +
+          esc(fmt(totals(c) + shipping())) + "</b></div>" +
+      "</div>" +
       '<p class="note">' + esc(T.vatNote) + "</p>";
+
+    box.querySelectorAll("input[name=dlv]").forEach(function (r) {
+      r.onchange = function () { pickup = r.value === "pickup"; renderCart(); };
+    });
 
     box.querySelectorAll("[data-d]").forEach(function (b) {
       b.onclick = function () {
@@ -164,10 +202,12 @@
     var g = function (id) { var n = el(id); return n ? (n.value || "").trim() : ""; };
     var L = LANG === "cs"
       ? { o: "OBJEDNÁVKA", z: "ZÁKAZNÍK", ad: "DORUČOVACÍ ADRESA", no: "POZNÁMKA",
-          tot: "CELKEM", nm: "Jméno", em: "E-mail", ph: "Telefon", co: "Firma / IČO",
+          tot: "CELKEM S DPH", goods: "Zboží", ship: "Doprava",
+          nm: "Jméno", em: "E-mail", ph: "Telefon", co: "Firma / IČO",
           src: "Odesláno z", pay: "Objednávka zavazující k platbě" }
       : { o: "OBJEDNÁVKA", z: "ZÁKAZNÍK", ad: "DORUČOVACIA ADRESA", no: "POZNÁMKA",
-          tot: "SPOLU", nm: "Meno", em: "E-mail", ph: "Telefón", co: "Firma / IČO",
+          tot: "SPOLU S DPH", goods: "Tovar", ship: "Doprava",
+          nm: "Meno", em: "E-mail", ph: "Telefón", co: "Firma / IČO",
           src: "Odoslané z", pay: "Objednávka zaväzujúca k platbe" };
     var line = "──────────────────────────────";
     var out = [L.pay, "", L.o, line];
@@ -178,7 +218,10 @@
       out.push("   " + T.qty + ": " + i.qty + "   " + T.unit + ": " + fmt(convert(i.usd)) +
                "   " + T.sum + ": " + fmt(convert(i.usd) * i.qty));
     });
-    out.push(line, L.tot + ": " + fmt(totals(c)), "",
+    out.push(line,
+      L.goods + ": " + fmt(totals(c)),
+      L.ship + ": " + fmt(shipping()) + (pickup ? " (" + T.dlvPickup + ")" : ""),
+      L.tot + ": " + fmt(totals(c) + shipping()), "",
       L.z, line,
       L.nm + ": " + g("cName"), L.em + ": " + g("cEmail"), L.ph + ": " + g("cPhone"));
     if (g("cCompany")) out.push(L.co + ": " + g("cCompany"));
@@ -186,7 +229,7 @@
     if (g("cNote")) out.push("", L.no, line, g("cNote"));
     out.push("", line, L.src + ": " + location.origin + location.pathname);
     return { subject: L.pay + " — " + c.length + "× " +
-             (LANG === "cs" ? "položka" : "položka") + ", " + fmt(totals(c)),
+             (LANG === "cs" ? "položka" : "položka") + ", " + fmt(totals(c) + shipping()),
              body: out.join("\n") };
   }
 

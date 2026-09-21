@@ -34,8 +34,9 @@ SECTIONS = [
   p("Týmito všeobecnými obchodnými podmienkami (ďalej aj ako „VOP“) sa riadia "
     "právne vzťahy medzi subjektom <strong class=\"js-company\"></strong>, "
     "<span class=\"js-address\"></span>, IČO: <span class=\"js-ico\"></span>, "
-    "DIČ: <span class=\"js-dic\"></span>, zapísaná v Obchodnom registri "
-    "Okresného súdu Žilina, oddiel: Sro, vložka č. 86839/L, e-mail <a class=\"js-mail\" href=\"#\"></a>, "
+    "DIČ: <span class=\"js-dic\"></span>, IČ DPH: <span class=\"js-icdph\"></span>, "
+    "zapísaná v Obchodnom registri Okresného súdu Žilina, oddiel: Sro, "
+    "vložka č. 84177/L, e-mail <a class=\"js-mail\" href=\"#\"></a>, "
     "tel. č. <a class=\"js-phone\" href=\"#\"></a> (ďalej len „predávajúci“) a každou "
     "osobou, ktorá je kupujúcim tovaru ponúkaného predávajúcim prostredníctvom "
     "internetového obchodu https://www.rncexplore.com/, ktoré vznikajú pri kúpe "
@@ -43,8 +44,9 @@ SECTIONS = [
     "Těmito všeobecnými obchodními podmínkami (dále také jako „VOP“) se řídí "
     "právní vztahy mezi subjektem <strong class=\"js-company\"></strong>, "
     "<span class=\"js-address\"></span>, IČO: <span class=\"js-ico\"></span>, "
-    "DIČ: <span class=\"js-dic\"></span>, zapsaná v Obchodním rejstříku "
-    "Okresního soudu Žilina, oddíl: Sro, vložka č. 86839/L, e-mail <a class=\"js-mail\" href=\"#\"></a>, "
+    "DIČ: <span class=\"js-dic\"></span>, IČ DPH: <span class=\"js-icdph\"></span>, "
+    "zapsaná v Obchodním rejstříku Okresního soudu Žilina, oddíl: Sro, "
+    "vložka č. 84177/L, e-mail <a class=\"js-mail\" href=\"#\"></a>, "
     "tel. č. <a class=\"js-phone\" href=\"#\"></a> (dále jen „prodávající“) a každou "
     "osobou, která je kupujícím zboží nabízeného prodávajícím prostřednictvím "
     "internetového obchodu https://www.rncexplore.com/, které vznikají při koupi "
@@ -244,12 +246,10 @@ SECTIONS = [
  ]),
 
  (("8. Dodacie podmienky", "8. Dodací podmínky"), [
-  p("Tovar doručujeme výhradne kuriérskou spoločnosťou na adresu uvedenú "
-    "v objednávke, na území Slovenskej republiky a Českej republiky. Osobný odber "
-    "neponúkame.",
-    "Zboží doručujeme výhradně kurýrní společností na adresu uvedenou "
-    "v objednávce, na území Slovenské republiky a České republiky. Osobní odběr "
-    "nenabízíme."),
+  p("Tovar doručujeme kuriérskou spoločnosťou na adresu uvedenú v objednávke, "
+    "na území Slovenskej republiky a Českej republiky.",
+    "Zboží doručujeme kurýrní společností na adresu uvedenou v objednávce, "
+    "na území Slovenské republiky a České republiky."),
   p("Tovar expedujeme po pripísaní platby na náš účet. Obvyklé termíny dodania:",
     "Zboží expedujeme po připsání platby na náš účet. Obvyklé termíny dodání:"),
   ul(("tovar dostupný v našom sklade v Nemecku — do 7 pracovných dní,",
@@ -285,16 +285,26 @@ SECTIONS = [
     "Prodávající si vyhrazuje právo na změnu ceny zboží; to se však "
     "nevztahuje na již potvrzené kupní smlouvy. Kupující nemá právo dodatečně "
     "se dožadovat jiné ceny, než ceny předem dohodnuté v potvrzené objednávce."),
-  p("Predávajúci nie je platiteľom dane z pridanej hodnoty. Ceny uvedené pri "
-    "produktoch sú konečné ceny za tovar a nezahŕňajú cenu dopravy.",
-    "Prodávající není plátcem daně z přidané hodnoty. Ceny uvedené u produktů "
-    "jsou konečné ceny za zboží a nezahrnují cenu dopravy."),
-  p("Cena dopravy sa určuje podľa hmotnosti zásielky a miesta doručenia a je "
-    "uvedená na faktúre, ktorú kupujúci dostane spolu s potvrdením objednávky. "
-    "Cenník dopravy: " + TODO + ".",
-    "Cena dopravy se určuje podle hmotnosti zásilky a místa doručení a je "
-    "uvedena na faktuře, kterou kupující obdrží spolu s potvrzením objednávky. "
-    "Ceník dopravy: " + TODO + "."),
+  p("Predávajúci je platiteľom dane z pridanej hodnoty. Všetky ceny uvedené pri "
+    "produktoch sú vrátane DPH v sadzbe 23 %. Cena dopravy sa k nim pripočítava "
+    "samostatne a kupujúci ju vidí v košíku pred odoslaním objednávky.",
+    "Prodávající je plátcem daně z přidané hodnoty. Všechny ceny uvedené "
+    "u produktů jsou včetně DPH. Cena dopravy se k nim připočítává samostatně "
+    "a kupující ji vidí v košíku před odesláním objednávky."),
+  p("Doprava je paušálna za celú objednávku bez ohľadu na počet kusov:",
+    "Doprava je paušální za celou objednávku bez ohledu na počet kusů:"),
+  ul(("doručenie na adresu v Slovenskej republike — 34 € bez DPH, "
+      "teda 41,82 € s DPH,",
+      "doručení na adresu ve Slovenské republice — 34 € bez DPH, "
+      "tedy 41,82 € s DPH,"),
+     ("doručenie na adresu v Českej republike — 822 Kč bez DPH, "
+      "teda 1 011,06 Kč s DPH.",
+      "doručení na adresu v České republice — 822 Kč bez DPH, "
+      "tedy 1 011,06 Kč s DPH.")),
+  p("Konečnú sumu vrátane dopravy kupujúci vidí v košíku pred odoslaním "
+    "objednávky a je uvedená aj na faktúre.",
+    "Konečnou částku včetně dopravy kupující vidí v košíku před odesláním "
+    "objednávky a je uvedena i na faktuře."),
   p("Platba je možná výhradne vopred, prevodom na účet predávajúceho na základe "
     "faktúry s QR kódom, ktorú kupujúci dostane e-mailom po potvrdení objednávky. "
     "Dobierku ani platbu kartou neponúkame. Tovar expedujeme po pripísaní platby.",
