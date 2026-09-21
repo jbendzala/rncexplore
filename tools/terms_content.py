@@ -305,10 +305,12 @@ SECTIONS = [
       "teda 1 011,06 Kč s DPH.",
       "doručení na adresu v České republice — 822 Kč bez DPH za kus, "
       "tedy 1 011,06 Kč s DPH.")),
-  p("Ak si kupujúci zvolí osobný odber, cena dopravy sa mu z každého kusu "
-    "odpočíta. Zľavu aj konečnú sumu vidí v košíku pred odoslaním objednávky.",
-    "Pokud si kupující zvolí osobní odběr, cena dopravy se mu z každého kusu "
-    "odečte. Slevu i konečnou částku vidí v košíku před odesláním objednávky."),
+  p("Cena je rovnaká aj pri osobnom odbere. Tovar prichádza zo skladu "
+    "v Nemecku, takže prepravu k nám hradíme bez ohľadu na to, či si ju "
+    "kupujúci vyzdvihne osobne, alebo mu ju doručí kuriér.",
+    "Cena je stejná i při osobním odběru. Zboží přichází ze skladu "
+    "v Německu, takže přepravu k nám hradíme bez ohledu na to, zda si ji "
+    "kupující vyzvedne osobně, nebo mu ji doručí kurýr."),
   p("Platba je možná výhradne vopred, prevodom na účet predávajúceho na základe "
     "faktúry s QR kódom, ktorú kupujúci dostane e-mailom po potvrdení objednávky. "
     "Dobierku ani platbu kartou neponúkame. Tovar expedujeme po pripísaní platby.",

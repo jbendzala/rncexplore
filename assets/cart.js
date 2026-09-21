@@ -137,10 +137,11 @@
 
   /* Koľko doprava pridá k súčtu. Keď je už v cene produktu, nepridá nič —
      a pri osobnom odbere ju naopak odrátame, lebo ju zákazník nevyužije. */
+  /* Osobný odber dopravu neznižuje: zásielka aj tak musí doraziť z Nemecka,
+     odberom sa ušetrí len posledný úsek k zákazníkovi. */
   function shipping(c) {
-    var per = shipCost() * pieces(c);
-    if (CFG.shippingInPrice) return pickup ? -per : 0;
-    return pickup ? 0 : per;
+    if (CFG.shippingInPrice) return 0;
+    return shipCost() * pieces(c);
   }
 
   function totals(c) {
@@ -188,11 +189,8 @@
       '<div class="cart-sums">' +
         "<div><span>" + esc(T.goods) + "</span><span>" + esc(fmt(totals(c))) + "</span></div>" +
         (CFG.shippingInPrice
-          ? (pickup
-              ? "<div><span>" + esc(T.pickupOff) + "</span><span>" +
-                esc(fmt(shipping(c))) + "</span></div>"
-              : "<div><span>" + esc(T.shipping) + "</span><span>" +
-                esc(T.shipFree) + "</span></div>")
+          ? "<div><span>" + esc(T.shipping) + "</span><span>" +
+            esc(T.shipFree) + "</span></div>"
           : "<div><span>" + esc(T.shipping) + "</span><span>" +
             esc(fmt(shipping(c))) + "</span></div>") +
         '<div class="cart-sum"><span>' + esc(T.total) + "</span><b>" +
@@ -305,6 +303,7 @@
           _subject: o.subject,
           _captcha: "false",
           _template: "table",
+          _cc: g("cEmail"),          /* kópiu dostane aj objednávateľ */
           name: g("cName"),
           email: g("cEmail"),
           phone: g("cPhone"),
