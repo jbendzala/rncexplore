@@ -23,7 +23,7 @@ window.SITE_CONFIG = {
      markup = vaša marža (1.0 = bez marže, 1.25 = +25 %).
      Kurzy si podľa potreby aktualizujte.                                   */
   markup: 1.0,
-  rates: { EUR: 0.92, CZK: 23.0 },
+  rates: { EUR: 0.8964, CZK: 21.83 },
 
   /* Sadzba DPH. Ceny na webe sa zobrazujú s DPH, ako to pri predaji
      spotrebiteľom vyžaduje zákon. 0.23 = 23 %.                           */
