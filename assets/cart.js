@@ -256,16 +256,17 @@
              body: out.join("\n") };
   }
 
+  var NEED = ["cName", "cEmail", "cPhone", "cStreet", "cCity", "cZip", "cCountry"];
+
+  function fieldNodes() {
+    return NEED.map(el).filter(Boolean);
+  }
+
   function valid() {
-    var need = ["cName", "cEmail", "cPhone", "cStreet", "cCity", "cZip"];
-    var ok = true;
-    need.forEach(function (id) {
-      var n = el(id); if (!n) return;
-      var bad = !n.value.trim();
-      n.classList.toggle("bad", bad);
-      if (bad) ok = false;
-    });
-    return ok;
+    if (!window.RNCValid) {           /* keby site.js nedobehol */
+      return fieldNodes().every(function (n) { return (n.value || "").trim(); });
+    }
+    return window.RNCValid.run(fieldNodes());
   }
 
   function mailtoFallback(o) {
@@ -331,6 +332,10 @@
     if (box) { box.className = ok ? "msg ok" : "msg"; box.textContent = msg; }
   }
 
+  function armLive() {
+    if (window.RNCValid) window.RNCValid.live(fieldNodes());
+  }
+
   function submit(e) {
     e.preventDefault();
     if (!read().length) return;
@@ -363,6 +368,7 @@
   function start() {
     badge();
     renderCart();
+    armLive();
     var f = el("cartForm");
     if (f) {
       f.addEventListener("submit", submit);

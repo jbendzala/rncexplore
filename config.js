@@ -14,6 +14,7 @@ window.SITE_CONFIG = {
   icDph: "SK2122040844",          // sme platiteľ DPH
   hours: "9:00 – 18:00",
   orderEmail: "objednavky@rncexplore.com", // sem chodia objednávky / sem chodí objednávky
+  infoEmail: "info@rncexplore.com",     // všeobecné otázky a poradenstvo
   phone: "+421 905 698 410",
   web: "www.rncexplore.com",
 

@@ -37,6 +37,11 @@
     n.textContent = CFG.orderEmail || "";
     if (n.tagName === "A") n.href = "mailto:" + (CFG.orderEmail || "");
   });
+  fill(".js-info", function (n) {
+    var a = CFG.infoEmail || CFG.orderEmail || "";
+    n.textContent = a;
+    if (n.tagName === "A") n.href = "mailto:" + a;
+  });
   fill(".js-web", function (n) { n.textContent = CFG.web || ""; });
   fill(".js-street", function (n) { n.textContent = CFG.street || ""; });
   fill(".js-city", function (n) { n.textContent = CFG.city || ""; });
@@ -49,9 +54,87 @@
   fill(".js-hours", function (n) { n.textContent = CFG.hours || ""; });
   fill(".js-year", function (n) { n.textContent = new Date().getFullYear(); });
   fill(".js-rights", function (n) {
-    n.textContent = "© " + new Date().getFullYear() + " " + (CFG.company || "") + ". " + T.rights;
+    /* názov firmy končí bodkou v „s.r.o.“, druhú už nepridávame */
+    var co = (CFG.company || "").replace(/\.$/, "");
+    n.textContent = "© " + new Date().getFullYear() + " " + co + ". " + T.rights;
   });
   fill("[data-t-theme]", function (n) { n.title = T.theme; n.setAttribute("aria-label", T.theme); });
+
+  /* ==========================================================================
+     Spoločná kontrola formulárov. Používa ju košík, dopytové formuláre aj
+     objednávkové okno, aby sa pravidlá aj hlášky nepísali trikrát.
+     Druh kontroly sa odvodí z typu poľa (email, tel), alebo sa dá určiť
+     atribútom data-check.
+     ========================================================================== */
+  var VT = {
+    sk: { req: "Toto pole je povinné.",
+          email: "Zadajte e-mail v tvare meno@domena.sk.",
+          phone: "Zadajte telefónne číslo, aspoň 9 číslic.",
+          zip: "PSČ má päť číslic, napríklad 014 01.",
+          short: "Zadajte aspoň dva znaky." },
+    cs: { req: "Toto pole je povinné.",
+          email: "Zadejte e-mail ve tvaru jmeno@domena.cz.",
+          phone: "Zadejte telefonní číslo, alespoň 9 číslic.",
+          zip: "PSČ má pět číslic, například 014 01.",
+          short: "Zadejte alespoň dva znaky." }
+  }[LANG];
+
+  function digits(v) { return (v || "").replace(/\D/g, ""); }
+
+  function checkOne(node) {
+    var v = (node.value || "").trim();
+    var kind = node.getAttribute("data-check") ||
+               (node.type === "email" ? "email" : node.type === "tel" ? "phone" : "");
+    if (!v) return node.required ? VT.req : "";
+    if (kind === "email" && !/^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/.test(v)) return VT.email;
+    if (kind === "phone" && digits(v).length < 9) return VT.phone;
+    if (kind === "zip" && digits(v).length !== 5) return VT.zip;
+    if (kind === "name" && v.length < 2) return VT.short;
+    return "";
+  }
+
+  /* Hlášku vypíšeme pod pole a zviažeme ju s ním pre čítačky obrazovky. */
+  function mark(node, msg) {
+    var box = node.closest("label") || node.parentNode;
+    var e = box.querySelector(".err");
+    node.classList.toggle("bad", !!msg);
+    node.setAttribute("aria-invalid", msg ? "true" : "false");
+    if (!msg) { if (e) e.remove(); node.removeAttribute("aria-describedby"); return; }
+    if (!e) {
+      e = document.createElement("span");
+      e.className = "err";
+      e.id = (node.id || "f" + Math.random().toString(36).slice(2)) + "-err";
+      box.appendChild(e);
+    }
+    e.textContent = msg;
+    node.setAttribute("aria-describedby", e.id);
+  }
+
+  window.RNCValid = {
+    /* nodes — polia na kontrolu. Vráti true, keď je všetko v poriadku,
+       inak označí chyby a presunie kurzor na prvé chybné pole. */
+    run: function (nodes) {
+      var first = null;
+      nodes.forEach(function (n) {
+        if (!n) return;
+        var msg = checkOne(n);
+        mark(n, msg);
+        if (msg && !first) first = n;
+      });
+      if (first) first.focus();
+      return !first;
+    },
+    /* kontrola počas písania odstráni hlášku hneď, ako je pole v poriadku */
+    live: function (nodes) {
+      nodes.forEach(function (n) {
+        if (!n || n.dataset.liveOn) return;
+        n.dataset.liveOn = "1";
+        var h = function () { if (n.classList.contains("bad")) mark(n, checkOne(n)); };
+        n.addEventListener("input", h);
+        n.addEventListener("blur", function () { if ((n.value || "").trim()) mark(n, checkOne(n)); });
+      });
+    }
+  };
 
   /* --- oznam o ukladaní v prehliadači ---
      Nežiadame súhlas: košík a režim zobrazenia sú nevyhnutné na fungovanie

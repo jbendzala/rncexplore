@@ -31,14 +31,12 @@
   }
 
   function valid(form) {
-    var ok = true;
-    fields(form).forEach(function (n) {
-      if (!n.required) return;
-      var bad = !(n.value || "").trim();
-      n.classList.toggle("bad", bad);
-      if (bad) ok = false;
-    });
-    return ok;
+    if (!window.RNCValid) {
+      return fields(form).every(function (n) {
+        return !n.required || (n.value || "").trim();
+      });
+    }
+    return window.RNCValid.run(fields(form));
   }
 
   function build(form) {
@@ -101,6 +99,7 @@
   }
 
   function init(form) {
+    if (window.RNCValid) window.RNCValid.live(fields(form));
     var box = form.querySelector(".msg");
     var btn = form.querySelector("button[type=submit]");
     var label = btn ? btn.textContent : "";

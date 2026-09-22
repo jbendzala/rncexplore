@@ -33,7 +33,7 @@
       noneTitle: "Nič sme nenašli", noneText: "Skúste iné hľadané slovo alebo zrušte filtre.",
       noneHelp: "Nenašli ste panel na svoje vozidlo? Napíšte nám — väčšinu tvarovaných panelov vieme vyrobiť na mieru.",
       noneCta: "Kontaktujte nás",
-      detail: "Detail", order: "Do košíka", askPrice: "Cena na vyžiadanie", from: "od",
+      detail: "Detail", order: "Do košíka", choose: "Vybrať prevedenie", askPrice: "Cena na vyžiadanie", from: "od",
       close: "Zavrieť", noImg: "Bez fotografie",
       specs: "Parametre", power: "Výkon", voltage: "Napätie", current: "Prúd",
       weight: "Hmotnosť", code: "Kód produktu", category: "Kategória", brand: "Značka",
@@ -73,7 +73,7 @@
       noneTitle: "Nic jsme nenašli", noneText: "Zkuste jiné hledané slovo nebo zrušte filtry.",
       noneHelp: "Nenašli jste panel na své vozidlo? Napište nám — většinu tvarovaných panelů umíme vyrobit na míru.",
       noneCta: "Kontaktujte nás",
-      detail: "Detail", order: "Do košíku", askPrice: "Cena na vyžádání", from: "od",
+      detail: "Detail", order: "Do košíku", choose: "Vybrat provedení", askPrice: "Cena na vyžádání", from: "od",
       close: "Zavřít", noImg: "Bez fotografie",
       specs: "Parametry", power: "Výkon", voltage: "Napětí", current: "Proud",
       weight: "Hmotnost", code: "Kód produktu", category: "Kategorie", brand: "Značka",
@@ -211,7 +211,12 @@
         (specs.length ? '<div class="specs">' + specs.map(function (s) {
           return '<span class="spec">' + esc(s) + "</span>"; }).join("") + "</div>" : "") +
         '<div class="card-f">' + priceHTML(p) +
-          '<button class="btn" data-act="order">' + esc(T.order) + "</button>" +
+          /* Pri produkte s viacerými prevedeniami vedie tlačidlo na detail.
+             Karta ukazuje cenu najlacnejšieho prevedenia, priame vloženie by
+             do košíka dalo iné — zákazník si musí prevedenie zvoliť sám. */
+          ((p.var && p.var.length > 1)
+            ? '<a class="btn" href="' + esc(href) + '">' + esc(T.choose) + "</a>"
+            : '<button class="btn" data-act="order">' + esc(T.order) + "</button>") +
         "</div>" +
       "</div></article>";
   }
@@ -674,10 +679,10 @@
     if (el("tiles")) renderTilesInto(el("tiles"), false);
 
     el("chips").innerHTML = '<button class="chip" data-cat="" aria-pressed="true">' +
-      esc(T.allCats) + "<b>" + META.count + "</b></button>" +
+      esc(T.allCats) + "</button>" +
       META.cats.map(function (c) {
         return '<button class="chip" data-cat="' + esc(c.k) + '" aria-pressed="false">' +
-          esc(c[LANG]) + "<b>" + c.n + "</b></button>"; }).join("");
+          esc(c[LANG]) + "</button>"; }).join("");
 
     el("brand").innerHTML = '<option value="">' + esc(T.allBrands) + "</option>" +
       META.brands.map(function (b) {

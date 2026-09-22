@@ -377,7 +377,7 @@ def na_mieru(lang, base):
     return f"""
 <section class="sec"><div class="wrap">
   <div class="prose">
-    <p class="lead">{T("Vaše vozidlo nie je v katalógu? Väčšinu tvarovaných panelov vieme vyrobiť na mieru — podľa rozmerov konkrétnej kapoty, strechy, krytu korby alebo strešného stanu.","Vaše vozidlo není v katalogu? Většinu tvarovaných panelů umíme vyrobit na míru — podle rozměrů konkrétní kapoty, střechy, krytu korby nebo střešního stanu.",lang)}</p>
+    <p class="lead">{T("Väčšinu tvarovaných panelov vieme vyrobiť na mieru — podľa rozmerov konkrétnej kapoty, strechy, krytu korby alebo strešného stanu.","Vaše vozidlo není v katalogu? Většinu tvarovaných panelů umíme vyrobit na míru — podle rozměrů konkrétní kapoty, střechy, krytu korby nebo střešního stanu.",lang)}</p>
     <p>{T("Na mieru riešime aj netypické inštalácie: nadstavby úžitkových vozidiel, prívesy, lodné nadstavby alebo zostavy s viacerými panelmi a spoločným regulátorom.","Na míru řešíme i netypické instalace: nástavby užitkových vozidel, přívěsy, lodní nástavby nebo sestavy s více panely a společným regulátorem.",lang)}</p>
   </div>
 </div></section>
@@ -439,7 +439,7 @@ def montaz(lang, base):
            "I částečné zastínění výrazně sníží výkon celého panelu. "
            "Vyhněte se místům pod střešním nosičem nebo anténou.", lang)),
         (T("Automyčka a škrabky", "Myčka a škrabky", lang),
-         T("Kefová automyčka a škrabka na ľad môžu povrch panela poškodiť. "
+         T("Kefová autoumyváreň a škrabka na ľad môžu povrch panela poškodiť. "
            "Umývajte radšej ručne mäkkou hubkou.",
            "Kartáčová myčka a škrabka na led mohou povrch panelu poškodit. "
            "Myjte raději ručně měkkou houbou.", lang)),
@@ -484,8 +484,6 @@ def montaz(lang, base):
 def o_nas(lang, base):
     return f"""
 <section class="sec"><div class="wrap"><div class="prose">
-  <p class="lead">{T("Dodávame solárne panely a príslušenstvo pre vozidlá, karavany a outdoor na slovenskom a českom trhu.","Dodáváme solární panely a příslušenství pro vozidla, karavany a outdoor na slovenském a českém trhu.",lang)}</p>
-
   <h2>{T("Čím sa zaoberáme","Čím se zabýváme",lang)}</h2>
   <p>{T("Špecializujeme sa na solárne panely tvarované na konkrétne modely vozidiel — na kapotu, strechu, kryt korby aj strešný stan. Okrem panelov dodávame regulátory nabíjania, meniče napätia a montážne príslušenstvo.","Specializujeme se na solární panely tvarované na konkrétní modely vozidel — na kapotu, střechu, kryt korby i střešní stan. Kromě panelů dodáváme regulátory nabíjení, měniče napětí a montážní příslušenství.",lang)}</p>
   <p>{T(f"Katalóg obsahuje {N_PRODUCTS} produktov pre {N_BRANDS} značiek vozidiel. Ak vaše vozidlo v katalógu nenájdete, panel vieme vyrobiť na mieru.",f"Katalog obsahuje {N_PRODUCTS} produktů pro {N_BRANDS} značek vozidel. Pokud své vozidlo v katalogu nenajdete, panel umíme vyrobit na míru.",lang)}</p>
@@ -505,7 +503,7 @@ def o_nas(lang, base):
 <section class="cta"><div class="wrap cta-in">
   <div>
     <h2>{T("Poradíme s výberom","Poradíme s výběrem",lang)}</h2>
-    <p>{T("Napíšte nám značku a model vozidla.","Napište nám značku a model vozidla.",lang)}</p>
+    <p>{T("Napíšte nám značku a model vozidla na ","Napište nám značku a model vozidla na ",lang)}<a class="js-info" href="#"></a>.</p>
   </div>
   <a class="btn signal lg" href="{base}produkty.html">{T("Prejsť do katalógu","Přejít do katalogu",lang)}</a>
 </div></section>
@@ -554,7 +552,7 @@ def faq_pairs(lang):
            "vyřešit stávající průchodkou.</p>", lang)),
         (T("Vydrží panel umývanie a zimu?", "Vydrží panel mytí a zimu?", lang),
          T("<p>Panely sú určené na trvalé vonkajšie použitie a znesú dážď, prach aj mráz. "
-           "Vyhnite sa však kefovej automyčke a škrabaniu ľadu z povrchu panela — mechanické "
+           "Vyhnite sa však kefovej autoumyvárni a škrabaniu ľadu z povrchu panela — mechanické "
            "poškodenie povrchu je najčastejšia príčina reklamácií.</p>",
            "<p>Panely jsou určené pro trvalé venkovní použití a snesou déšť, prach i mráz. "
            "Vyhněte se však kartáčové myčce a škrabání ledu z povrchu panelu — mechanické "
@@ -572,20 +570,18 @@ def faq_pairs(lang):
          T("<p>Áno. Cena, ktorú vidíte pri produkte, je konečná — obsahuje DPH "
            "aj dopravu na vašu adresu. V košíku sa už nič nepripočítava.</p>"
            "<p>Doprava je započítaná za kus, pretože každý panel ide ako "
-           "samostatná zásielka. Cena je rovnaká aj pri osobnom odbere — tovar "
-           "k nám prichádza zo skladu v Nemecku tak či tak.</p>",
+           "samostatná zásielka. Cena je rovnaká aj pri osobnom odbere.</p>",
            "<p>Ano. Cena, kterou vidíte u produktu, je konečná — obsahuje DPH "
            "i dopravu na vaši adresu. V košíku se už nic nepřipočítává.</p>"
            "<p>Doprava je započítaná za kus, protože každý panel jde jako "
-           "samostatná zásilka. Cena je stejná i při osobním odběru — zboží "
-           "k nám přichází ze skladu v Německu tak jako tak.</p>", lang)),
+           "samostatná zásilka. Cena je stejná i při osobním odběru.</p>", lang)),
         (T("Za ako dlho tovar dorazí?", "Za jak dlouho zboží dorazí?", lang),
-         T("<p>Tovar zo skladu v Nemecku doručíme do 7 pracovných dní od pripísania "
-           "platby. Ak položka nie je v nemeckom sklade a expeduje sa od výrobcu, "
+         T("<p>Tovar doručíme do 7 pracovných dní od pripísania "
+           "platby. Ak položka nie je v sklade a expeduje sa od výrobcu, "
            "počítajte do 14 pracovných dní. Panely vyrobené na mieru majú termín "
            "individuálny — dohodneme ho pri potvrdení objednávky.</p>",
-           "<p>Zboží ze skladu v Německu doručíme do 7 pracovních dnů od připsání "
-           "platby. Pokud položka není v německém skladu a expeduje se od výrobce, "
+           "<p>Zboží doručíme do 7 pracovních dnů od připsání "
+           "platby. Pokud položka není skladem a expeduje se od výrobce, "
            "počítejte do 14 pracovních dnů. Panely vyrobené na míru mají termín "
            "individuální — domluvíme jej při potvrzení objednávky.</p>", lang)),
         (T("Moje vozidlo nie je v katalógu. Čo teraz?",
@@ -736,7 +732,10 @@ def _field(fid, label, required, lang):
         control = '<textarea id="%s"></textarea>' % fid
     else:
         typ = "email" if fid == "cEmail" else ("tel" if fid == "cPhone" else "text")
-        control = '<input id="%s" type="%s" placeholder=" ">' % (fid, typ)
+        chk = ' data-check="zip"' if fid == "cZip" else (
+              ' data-check="name"' if fid == "cName" else "")
+        rq = " required" if required else ""
+        control = '<input id="%s" type="%s"%s%s placeholder=" ">' % (fid, typ, chk, rq)
     return "<label%s><span>%s%s</span>%s</label>" % (cls, label, star, control)
 
 

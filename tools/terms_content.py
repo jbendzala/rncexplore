@@ -254,11 +254,11 @@ SECTIONS = [
     "na adrese sídla prodávajícího v Bytči po domluvě termínu."),
   p("Tovar expedujeme po pripísaní platby na náš účet. Obvyklé termíny dodania:",
     "Zboží expedujeme po připsání platby na náš účet. Obvyklé termíny dodání:"),
-  ul(("tovar dostupný v našom sklade v Nemecku — do 7 pracovných dní,",
-      "zboží dostupné v našem skladu v Německu — do 7 pracovních dnů,"),
-     ("tovar, ktorý nie je na sklade v Nemecku a expeduje sa od výrobcu — "
+  ul(("tovar dostupný na sklade — do 7 pracovných dní,",
+      "zboží dostupné skladem — do 7 pracovních dnů,"),
+     ("tovar, ktorý nie je na sklade a expeduje sa od výrobcu — "
       "do 14 pracovných dní,",
-      "zboží, které není skladem v Německu a expeduje se od výrobce — "
+      "zboží, které není skladem a expeduje se od výrobce — "
       "do 14 pracovních dnů,"),
      ("tovar vyrobený na mieru podľa rozmerov vozidla — termín dohodneme "
       "individuálne pri potvrdení objednávky.",
@@ -305,12 +305,12 @@ SECTIONS = [
       "teda 1 011,06 Kč s DPH.",
       "doručení na adresu v České republice — 822 Kč bez DPH za kus, "
       "tedy 1 011,06 Kč s DPH.")),
-  p("Cena je rovnaká aj pri osobnom odbere. Tovar prichádza zo skladu "
-    "v Nemecku, takže prepravu k nám hradíme bez ohľadu na to, či si ju "
-    "kupujúci vyzdvihne osobne, alebo mu ju doručí kuriér.",
-    "Cena je stejná i při osobním odběru. Zboží přichází ze skladu "
-    "v Německu, takže přepravu k nám hradíme bez ohledu na to, zda si ji "
-    "kupující vyzvedne osobně, nebo mu ji doručí kurýr."),
+  p("Cena je rovnaká aj pri osobnom odbere. Prepravu tovaru k nám hradíme "
+    "bez ohľadu na to, či si ho kupujúci vyzdvihne osobne, alebo mu ho "
+    "doručí kuriér.",
+    "Cena je stejná i při osobním odběru. Přepravu zboží k nám hradíme "
+    "bez ohledu na to, zda si je kupující vyzvedne osobně, nebo mu je "
+    "doručí kurýr."),
   p("Platba je možná výhradne vopred, prevodom na účet predávajúceho na základe "
     "faktúry s QR kódom, ktorú kupujúci dostane e-mailom po potvrdení objednávky. "
     "Dobierku ani platbu kartou neponúkame. Tovar expedujeme po pripísaní platby.",

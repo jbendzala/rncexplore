@@ -19,6 +19,18 @@ def catalog_counts():
     return meta["count"], len(meta["brands"])
 
 N_PRODUCTS, N_BRANDS = catalog_counts()
+
+def live_cats():
+    """Kategórie, v ktorých naozaj niečo je — ostatné do menu nedávame."""
+    try:
+        src = open(os.path.join(ROOT, "data", "products.js"), encoding="utf-8").read()
+        meta = _json.loads(re.search(r"window\.CATALOG_META=(\{.*?\});", src, re.S).group(1))
+        return {c["k"] for c in meta["cats"] if c.get("n")}
+    except Exception:
+        return set()
+
+
+sh.LIVE_CATS = live_cats()
 c.N_PRODUCTS, c.N_BRANDS = N_PRODUCTS, N_BRANDS
 
 # slug -> (builder, SK titulok, CZ titulok, SK popis, CZ popis, potrebuje katalóg?)
@@ -111,8 +123,6 @@ def build():
             if slug != "index":
                 out.append(page_head(lang, slug, HEADS[slug][0 if lang == "sk" else 1]))
             out.append(fn(lang, pbase))
-            if needs_catalog:
-                out.append(c.MODALS % {"close": "Zavrieť" if lang == "sk" else "Zavřít"})
             out.append(sh.footer(lang, abase, pbase))
             if needs_catalog:
                 out.append(sh.catalog_scripts(abase))
@@ -182,7 +192,6 @@ def build():
                     '</div></section>\n'),
                    pp.render(prod, ALLP, "sk" if lang == "sk" else "cs",
                              bl_reviews, p_pbase),
-                   c.MODALS % {"close": "Zavrieť" if lang == "sk" else "Zavřít"},
                    sh.footer(lang, p_abase, p_pbase),
                    sh.catalog_scripts_light(p_abase),
                    sh.close()]

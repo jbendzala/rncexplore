@@ -15,6 +15,8 @@ NAV = [
 ]
 
 # kategórie do rozbaľovacieho menu pod "Produkty"
+LIVE_CATS = set()      # naplní build.py podľa katalógu
+
 SUBCATS = [
     ("hood",       "Panely na kapotu",     "Panely na kapotu"),
     ("flexible",   "Flexibilné panely",    "Flexibilní panely"),
@@ -99,9 +101,10 @@ def header(lang, base, slug, page="", langlinks=None):
         href = page + ("index.html" if s == "index" else s + ".html")
         cur = ' aria-current="page"' if s == slug else ""
         if s == "produkty":
+            # prázdne kategórie do menu nepatria — viedli by na prázdny výpis
             subs = "".join(
                 f'<li><a href="{page}produkty.html?cat={k}">{(a if lang=="sk" else b)}</a></li>'
-                for k, a, b in SUBCATS)
+                for k, a, b in SUBCATS if k in LIVE_CATS)
             items.append(
                 f'<li class="has-sub"><button type="button" aria-expanded="false">{label}'
                 f'<svg class="caret" viewBox="0 0 12 12" fill="none" stroke="currentColor" '
