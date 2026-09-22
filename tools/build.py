@@ -46,7 +46,7 @@ PAGES = {
    f"{N_PRODUCTS} solárních panelů pro {N_BRANDS} značek vozidel. Filtrujte podle kategorie, značky a výkonu.", True),
  "velkoobchod": (c.velkoobchod,
    "Veľkoobchod a partnerský predaj", "Velkoobchod a partnerský prodej",
-   "Veľkoobchodné dodávky solárnych panelov pre predajcov, stavitelov obytných vozidiel a autoservisy.",
+   "Veľkoobchodné dodávky solárnych panelov pre predajcov, staviteľov obytných vozidiel a autoservisy.",
    "Velkoobchodní dodávky solárních panelů pro prodejce, stavitele obytných vozidel a autoservisy.", False),
  "na-mieru": (c.na_mieru,
    "Solárne panely na mieru", "Solární panely na míru",
