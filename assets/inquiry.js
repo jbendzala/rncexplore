@@ -24,7 +24,13 @@
           src: "Odesláno z" }
   }[LANG];
 
-  function deliveryEmail() { return CFG.deliverTo || CFG.orderEmail; }
+  /* Formulár si cieľovú schránku určí atribútom data-to:
+     "info" = všeobecné otázky, inak objednávky. */
+  function deliveryEmail(form) {
+    if (form && form.getAttribute("data-to") === "info")
+      return CFG.infoEmail || CFG.orderEmail;
+    return CFG.deliverTo || CFG.orderEmail;
+  }
 
   function fields(form) {
     return Array.prototype.slice.call(form.querySelectorAll("[data-label]"));
@@ -75,24 +81,34 @@
         var v = (n.value || "").trim();
         if (v) payload[n.getAttribute("data-label")] = v;
       });
-      return fetch("https://formsubmit.co/ajax/" + encodeURIComponent(deliveryEmail()), {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify(payload)
-      }).then(function (r) { return r.json(); })
-        .then(function (j) {
-          if (j && (j.success === true || String(j.success) === "true")) return;
-          var msg = (j && j.message) || "";
-          var e = new Error(msg || "formsubmit");
-          e.activation = /activat/i.test(msg);
-          throw e;
-        });
+      var post = function (to) {
+        return fetch("https://formsubmit.co/ajax/" + encodeURIComponent(to), {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify(payload)
+        }).then(function (r) { return r.json(); })
+          .then(function (j) {
+            if (j && (j.success === true || String(j.success) === "true")) return;
+            var msg = (j && j.message) || "";
+            var e = new Error(msg || "formsubmit");
+            e.activation = /activat/i.test(msg);
+            throw e;
+          });
+      };
+      var want = deliveryEmail(form);
+      var backup = CFG.deliverTo || CFG.orderEmail;
+      /* Kým nová adresa nie je u formulárovej služby potvrdená, správu
+         radšej pošleme na overenú schránku, než by sme ju stratili. */
+      return post(want).catch(function (err) {
+        if (err && err.activation && backup && backup !== want) return post(backup);
+        throw err;
+      });
     }
     return Promise.reject(new Error("mailto"));
   }
 
-  function mailtoFallback(o) {
-    var href = "mailto:" + encodeURIComponent(CFG.orderEmail) +
+  function mailtoFallback(o, form) {
+    var href = "mailto:" + encodeURIComponent(deliveryEmail(form)) +
       "?subject=" + encodeURIComponent(o.subject) + "&body=" + encodeURIComponent(o.body);
     if (href.length > 1900) href = href.slice(0, 1900);
     window.location.href = href;
@@ -119,7 +135,7 @@
         say(T.sent, true);
       }).catch(function (err) {
         say(err && err.activation ? T.needsActivation : T.mailFallback, false);
-        mailtoFallback(o);
+        mailtoFallback(o, form);
       }).then(function () {
         if (btn) { btn.disabled = false; btn.textContent = label; }
       });

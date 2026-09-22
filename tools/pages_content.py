@@ -226,7 +226,7 @@ MODALS = """
 
 
 # ---------------------------------------------------------------- dopytový formulár
-def inquiry_form(lang, subject, fields, button, note=""):
+def inquiry_form(lang, subject, fields, button, note="", to="order"):
     """Formulár, ktorý odošle assets/inquiry.js. `fields` sú n-tice
     (id, popis, typ, povinné, celá šírka, voľby-pre-select)."""
     rows = []
@@ -251,10 +251,10 @@ def inquiry_form(lang, subject, fields, button, note=""):
             control = '<input %s type="%s" placeholder=" ">' % (attrs, typ)
         rows.append("<label%s><span>%s%s</span>%s</label>" % (cls, label, star, control))
     nt = '<p class="f-note">%s</p>' % note if note else ""
-    return ('<form class="cart-form inq-form" novalidate data-subject="%s">'
+    return ('<form class="cart-form inq-form" novalidate data-subject="%s" data-to="%s">'
             '<div class="fields">%s</div>%s<div class="msg"></div>'
             '<div class="f-actions"><button class="btn signal lg" type="submit">%s</button></div>'
-            "</form>") % (subject, "".join(rows), nt, button)
+            "</form>") % (subject, to, "".join(rows), nt, button)
 
 
 # ---------------------------------------------------------------- veľkoobchod
@@ -326,6 +326,7 @@ def velkoobchod(lang, base):
         T("Odoslať žiadosť o cenník", "Odeslat žádost o ceník", lang),
         T("Údaje použijeme len na vybavenie vašej žiadosti.",
           "Údaje použijeme jen k vyřízení vaší žádosti.", lang),
+        to="info",
     )
 
     return f"""
@@ -654,6 +655,7 @@ def kontakt(lang, base):
         T("Odoslať správu", "Odeslat zprávu", lang),
         T("Údaje použijeme len na odpoveď na vašu otázku.",
           "Údaje použijeme jen k odpovědi na váš dotaz.", lang),
+        to="info",
     )
 
     return f"""
