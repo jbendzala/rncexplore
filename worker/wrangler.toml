@@ -1,0 +1,15 @@
+name = "rncexplore-mail"
+main = "index.js"
+compatibility_date = "2025-01-01"
+
+# Adresy, z ktorých Worker prijíma formuláre. Čokoľvek iné odmietne,
+# takže cudzia stránka cez náš Worker poštu neodošle.
+[vars]
+ALLOWED_ORIGINS = "https://www.rncexplore.com,https://rncexplore.com"
+FROM_NAME = "Safiri s.r.o."
+FROM_EMAIL = "objednavky@rncexplore.com"
+ORDER_EMAIL = "objednavky@rncexplore.com"
+INFO_EMAIL = "info@rncexplore.com"
+
+# Prístupový kľúč k Brevu sem NEPATRÍ. Nastavuje sa mimo súboru:
+#   wrangler secret put BREVO_API_KEY

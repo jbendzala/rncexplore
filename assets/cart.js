@@ -287,7 +287,31 @@
      Stránka nemá server, preto sa volá priamo z prehliadača. */
   function send(o) {
     var how = (CFG.orderSend || "mailto").toLowerCase();
-    var g = function (id) { var n = el(id); return n ? (n.value || "").trim() : ""; };
+    var g = function (id) {
+      var n = el(id);
+      if (!n) return "";
+      if (n.tagName === "SELECT" && n.selectedIndex >= 0)
+        return n.options[n.selectedIndex].textContent.trim();
+      return (n.value || "").trim();
+    };
+
+    /* Vlastný odosielač: e-mail odchádza z našej domény, kľúč drží Worker. */
+    if (how === "api" && CFG.apiUrl) {
+      return fetch(CFG.apiUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          kind: "order",
+          lang: LANG,
+          subject: o.subject,
+          body: o.body,
+          name: g("cName"),
+          email: g("cEmail"),
+          website: g("cWebsite")   /* pasca na roboty, človek ju nevyplní */
+        })
+      }).then(function (r) { return r.json().catch(function () { return {}; }); })
+        .then(function (j) { if (!j || j.ok !== true) throw new Error("api"); });
+    }
     if (how === "web3forms" && CFG.formKey) {
       return fetch("https://api.web3forms.com/submit", {
         method: "POST",

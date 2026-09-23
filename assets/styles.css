@@ -280,6 +280,8 @@ label input:invalid:not(:placeholder-shown){border-color:var(--danger)}
 textarea{resize:vertical;min-height:80px}
 .req{color:var(--danger);font-style:normal}
 /* úvodný odsek sekcie a poznámka pod formulárom */
+/* pasca na roboty — mimo obrazovky, nie display:none, aby ju roboty videli */
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 /* chybová hláška pod poľom formulára */
 .err{display:block;margin-top:5px;font-size:12.5px;color:var(--danger);font-weight:500}
 label input.bad,label select.bad,label textarea.bad{border-color:var(--danger)}
@@ -487,8 +489,11 @@ a.tile:hover{text-decoration:none}
   text-transform:uppercase;letter-spacing:.09em;color:var(--ink-2)}
 .data tbody tr:hover{background:var(--paper-2)}
 
-/* ---------- responzívna navigácia ---------- */
-@media (max-width:1080px){
+/* ---------- responzívna navigácia ----------
+   Vodorovné menu aj s košíkom, prepínačom režimu a jazykmi potrebuje
+   asi 1270 px. Pod tým sa prepína na hamburger — inak by hlavička
+   pretiekla a stránka by sa dala posúvať do strán. */
+@media (max-width:1279px){
   .burger{display:grid}
   .nav{position:fixed;inset:0 0 0 auto;width:min(88vw,340px);background:var(--paper);
     border-left:1px solid var(--line);flex-direction:column;align-items:stretch;gap:0;

@@ -10,6 +10,28 @@ Miesta označené TODO sú údaje, ktoré poznať nemôžeme a musí ich doplni�
 majiteľ. Vykreslia sa ako žltý štítok, aby ich nebolo možné prehliadnuť.
 """
 
+import os as _os
+import re as _re
+
+
+def _processor():
+    """Kto podľa config.js formuláre naozaj odosiela — to patrí do zásad."""
+    try:
+        cfg = open(_os.path.join(_os.path.dirname(_os.path.dirname(
+            _os.path.abspath(__file__))), "config.js"), encoding="utf-8").read()
+        how = _re.search(r'orderSend:\s*"([a-z]+)"', cfg)
+        how = how.group(1) if how else ""
+    except Exception:
+        how = ""
+    if how == "api":
+        return ("Brevo (Sendinblue, Francúzsko)", "Brevo (Sendinblue, Francie)")
+    if how == "web3forms":
+        return ("web3forms.com", "web3forms.com")
+    return ("formsubmit.co", "formsubmit.co")
+
+
+PROC_SK, PROC_CS = _processor()
+
 TODO = "\x00TODO\x00"          # nahradí sa žltým štítkom pri vykreslení
 
 EFFECTIVE = "20. 09. 2026"
@@ -412,11 +434,11 @@ SECTIONS = [
     "adresa, případně firemní údaje) zpracováváme za účelem uzavření a plnění "
     "kupní smlouvy a ke splnění zákonných povinností, zejména účetních "
     "a daňových. Údaje uchováváme po dobu vyžadovanou právními předpisy."),
-  p("Formuláre na tomto webe odosiela sprostredkovateľ formsubmit.co, ktorý "
+  p("Formuláre na tomto webe odosiela sprostredkovateľ " + PROC_SK + ", ktorý "
     "správu doručí na našu e-mailovú adresu. Údaje neposkytujeme ďalším "
     "príjemcom okrem dopravcu, ktorý zásielku doručuje, a našej účtovnej "
     "kancelárie.",
-    "Formuláře na tomto webu odesílá zpracovatel formsubmit.co, který zprávu "
+    "Formuláře na tomto webu odesílá zpracovatel " + PROC_CS + ", který zprávu "
     "doručí na naši e-mailovou adresu. Údaje neposkytujeme dalším příjemcům "
     "kromě dopravce, který zásilku doručuje, a naší účetní kanceláře."),
   p("Dotknutá osoba má právo na prístup k údajom, ich opravu, vymazanie, "

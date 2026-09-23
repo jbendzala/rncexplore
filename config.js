@@ -69,11 +69,19 @@ window.SITE_CONFIG = {
      "web3forms"  — na web3forms.com zadáte e-mail, obratom vám pošlú
                     prístupový kľúč. Vložte ho nižšie do formKey.
      "mailto"     — otvorí e-mailového klienta zákazníka (bez služby).
+     "api"        — vlastný odosielač cez Cloudflare Worker a Brevo.
+                    E-mail odchádza priamo z objednavky@rncexplore.com,
+                    je podpísaný DKIM a neputuje do spamu. Adresu Workera
+                    vložte nižšie do apiUrl.
 
      Ak odoslanie zlyhá, formulár sa vždy prepne na "mailto",
      aby objednávka nezostala visieť.                                     */
   orderSend: "formsubmit",
   formKey: "",
+
+  /* Adresa Workera pre orderSend: "api". Po nasadení ju vypíše wrangler,
+     napríklad "https://rncexplore-mail.vase-meno.workers.dev".           */
+  apiUrl: "",
 
   /* Kam objednávku reálne doručiť. Nechajte prázdne = doručí sa na
      orderEmail. Vyplňte len vtedy, keď schránka orderEmail ešte

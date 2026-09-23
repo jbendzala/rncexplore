@@ -252,6 +252,9 @@ def inquiry_form(lang, subject, fields, button, note="", to="order"):
         rows.append("<label%s><span>%s%s</span>%s</label>" % (cls, label, star, control))
     nt = '<p class="f-note">%s</p>' % note if note else ""
     return ('<form class="cart-form inq-form" novalidate data-subject="%s" data-to="%s">'
+            '<div class="hp" aria-hidden="true">'
+            '<label>Web<input type="text" name="website" tabindex="-1" autocomplete="off"></label>'
+            "</div>"
             '<div class="fields">%s</div>%s<div class="msg"></div>'
             '<div class="f-actions"><button class="btn signal lg" type="submit">%s</button></div>'
             "</form>") % (subject, to, "".join(rows), nt, button)
@@ -805,6 +808,9 @@ def kosik(lang, base):
 
   <form class="cart-form" id="cartForm" novalidate>
     <h2 id="cartContactH"></h2>
+    <div class="hp" aria-hidden="true">
+      <label>Web<input type="text" id="cWebsite" name="website" tabindex="-1" autocomplete="off"></label>
+    </div>
     <div class="fields">%s</div>
     <div class="msg" id="cartMsg"></div>
     <p class="note" id="cartTerms"></p>

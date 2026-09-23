@@ -74,6 +74,23 @@
       }).then(function (r) { return r.json(); })
         .then(function (j) { if (!j || j.success !== true) throw new Error("web3forms"); });
     }
+    if (how === "api" && CFG.apiUrl) {
+      return fetch(CFG.apiUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          kind: "inquiry",
+          lang: LANG,
+          subject: o.subject,
+          body: o.body,
+          name: pick(form, "name"),
+          email: pick(form, "email"),
+          website: (form.querySelector("[name=website]") || {}).value || ""
+        })
+      }).then(function (r) { return r.json().catch(function () { return {}; }); })
+        .then(function (j) { if (!j || j.ok !== true) throw new Error("api"); });
+    }
+
     if (how === "formsubmit") {
       var payload = { _subject: o.subject, _captcha: "false", _template: "table",
                       email: pick(form, "email"), message: o.body };
