@@ -128,7 +128,7 @@ def header(lang, base, slug, page="", langlinks=None):
     menu = "Menu"
     return f"""<div class="util"><div class="util-in">
   <span>{util}</span><span class="sp"></span>
-  <a class="js-phone" href="#"></a><a class="js-mail" href="#"></a>
+  <a class="js-phone" href="#"></a><a class="js-info" href="#"></a>
 </div></div>
 
 <header class="hdr"><div class="wrap hdr-in">
@@ -188,7 +188,7 @@ def footer(lang, base, page=""):
       <h4>{h_con}</h4>
       <p><strong class="js-company"></strong></p>
       <ul>
-        <li><a class="js-mail" href="#"></a></li>
+        <li><a class="js-info" href="#"></a></li>
         <li><a class="js-phone" href="#"></a></li>
         <li class="js-web"></li>
       </ul>

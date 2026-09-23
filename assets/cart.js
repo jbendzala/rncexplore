@@ -26,7 +26,7 @@
           mailFallback: "Objednávku sa nepodarilo odoslať automaticky, preto sme otvorili váš e-mailový klient. Správu už len odošlite.",
           needsActivation: "Formulár ešte nie je aktivovaný. V schránke, kam sa objednávky doručujú, nájdete e-mail od formsubmit.co — kliknite v ňom na Activate Form. Objednávka sa zatiaľ odosiela e-mailovým klientom.",
           thanks: "Ďakujeme za objednávku",
-          thanksNote: "Kópiu sme poslali aj na váš e-mail. Faktúru s QR kódom vám pošleme obratom.",
+          thanksNote: "Potvrdenie objednávky a faktúru s QR kódom vám pošleme e-mailom z adresy objednavky@rncexplore.com.",
           hint: "Ak sa e-mailový klient neotvorí, skopírujte objednávku a pošlite nám ju na ",
           terms: "Odoslaním objednávky potvrdzujete, že ste sa oboznámili s obchodnými podmienkami a že objednávka je spojená s povinnosťou platby.",
           need: "Vyplňte prosím povinné údaje označené hviezdičkou." },
@@ -45,7 +45,7 @@
           mailFallback: "Objednávku se nepodařilo odeslat automaticky, proto jsme otevřeli váš e-mailový klient. Zprávu už jen odešlete.",
           needsActivation: "Formulář ještě není aktivovaný. Ve schránce, kam se objednávky doručují, najdete e-mail od formsubmit.co — klikněte v něm na Activate Form. Objednávka se zatím odesílá e-mailovým klientem.",
           thanks: "Děkujeme za objednávku",
-          thanksNote: "Kopii jsme poslali i na váš e-mail. Fakturu s QR kódem vám pošleme obratem.",
+          thanksNote: "Potvrzení objednávky a fakturu s QR kódem vám pošleme e-mailem z adresy objednavky@rncexplore.com.",
           hint: "Pokud se e-mailový klient neotevře, zkopírujte objednávku a pošlete nám ji na ",
           terms: "Odesláním objednávky potvrzujete, že jste se seznámili s obchodními podmínkami a že objednávka je spojena s povinností platby.",
           need: "Vyplňte prosím povinné údaje označené hvězdičkou." }
@@ -220,7 +220,14 @@
   /* ---------- objednávka e-mailom ---------- */
   function buildOrder() {
     var c = read();
-    var g = function (id) { var n = el(id); return n ? (n.value || "").trim() : ""; };
+    var g = function (id) {
+      var n = el(id);
+      if (!n) return "";
+      /* pri výbere nás zaujíma text voľby, nie jej kód */
+      if (n.tagName === "SELECT" && n.selectedIndex >= 0)
+        return n.options[n.selectedIndex].textContent.trim();
+      return (n.value || "").trim();
+    };
     var L = LANG === "cs"
       ? { o: "OBJEDNÁVKA", z: "ZÁKAZNÍK", ad: "DORUČOVACÍ ADRESA", no: "POZNÁMKA",
           tot: "CELKEM S DPH", goods: "Zboží", ship: "Doprava",
@@ -304,7 +311,6 @@
           _subject: o.subject,
           _captcha: "false",
           _template: "table",
-          _cc: g("cEmail"),          /* kópiu dostane aj objednávateľ */
           name: g("cName"),
           email: g("cEmail"),
           phone: g("cPhone"),

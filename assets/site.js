@@ -69,12 +69,12 @@
   var VT = {
     sk: { req: "Toto pole je povinné.",
           email: "Zadajte e-mail v tvare meno@domena.sk.",
-          phone: "Zadajte telefónne číslo, aspoň 9 číslic.",
+          phone: "Zadajte telefónne číslo vo formáte +421 XXX XXX XXX.",
           zip: "PSČ má päť číslic, napríklad 014 01.",
           short: "Zadajte aspoň dva znaky." },
     cs: { req: "Toto pole je povinné.",
           email: "Zadejte e-mail ve tvaru jmeno@domena.cz.",
-          phone: "Zadejte telefonní číslo, alespoň 9 číslic.",
+          phone: "Zadejte telefonní číslo ve formátu +420 XXX XXX XXX.",
           zip: "PSČ má pět číslic, například 014 01.",
           short: "Zadejte alespoň dva znaky." }
   }[LANG];

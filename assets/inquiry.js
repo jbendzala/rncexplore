@@ -78,7 +78,9 @@
       var payload = { _subject: o.subject, _captcha: "false", _template: "table",
                       email: pick(form, "email"), message: o.body };
       fields(form).forEach(function (n) {
-        var v = (n.value || "").trim();
+        var v = (n.tagName === "SELECT" && n.selectedIndex >= 0)
+          ? n.options[n.selectedIndex].textContent.trim()
+          : (n.value || "").trim();
         if (v) payload[n.getAttribute("data-label")] = v;
       });
       var post = function (to) {

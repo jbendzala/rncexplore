@@ -344,7 +344,7 @@ def velkoobchod(lang, base):
 
 <section class="sec"><div class="wrap">
   <h2>{T("Máte záujem o veľkoobchod?","Máte zájem o velkoobchod?",lang)}</h2>
-  <p class="sec-note">{T("Vyplňte formulár a pošleme vám cenník aj podmienky. Alebo nám napíšte priamo na ","Vyplňte formulář a pošleme vám ceník i podmínky. Nebo nám napište přímo na ",lang)}<a class="js-mail" href="#"></a>.</p>
+  <p class="sec-note">{T("Vyplňte formulár a pošleme vám cenník aj podmienky. Alebo nám napíšte priamo na ","Vyplňte formulář a pošleme vám ceník i podmínky. Nebo nám napište přímo na ",lang)}<a class="js-info" href="#"></a>.</p>
   {form}
 </div></section>
 """
@@ -665,7 +665,7 @@ def kontakt(lang, base):
     <div class="box">
       <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg></div>
       <strong>{T("E-mail","E-mail",lang)}</strong>
-      <p><a class="js-mail" href="#"></a></p>
+      <p><a class="js-info" href="#"></a></p>
     </div>
     <div class="box">
       <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M5 4h4l2 5-3 2a12 12 0 005 5l2-3 5 2v4a1 1 0 01-1 1A16 16 0 014 5a1 1 0 011-1z"/></svg></div>
@@ -724,6 +724,42 @@ def podmienky(lang, base):
 """
 
 
+# Európske krajiny pre výber v objednávke. Prvé dve sú naše hlavné trhy,
+# zvyšok abecedne. Doručujeme do nich kuriérom.
+COUNTRIES = [
+    ("SK", "Slovensko", "Slovensko"),
+    ("CZ", "Česko", "Česko"),
+    ("AT", "Rakúsko", "Rakousko"),
+    ("BE", "Belgicko", "Belgie"),
+    ("BG", "Bulharsko", "Bulharsko"),
+    ("HR", "Chorvátsko", "Chorvatsko"),
+    ("CY", "Cyprus", "Kypr"),
+    ("DK", "Dánsko", "Dánsko"),
+    ("EE", "Estónsko", "Estonsko"),
+    ("FI", "Fínsko", "Finsko"),
+    ("FR", "Francúzsko", "Francie"),
+    ("GR", "Grécko", "Řecko"),
+    ("NL", "Holandsko", "Nizozemsko"),
+    ("IE", "Írsko", "Irsko"),
+    ("LT", "Litva", "Litva"),
+    ("LV", "Lotyšsko", "Lotyšsko"),
+    ("LU", "Luxembursko", "Lucembursko"),
+    ("HU", "Maďarsko", "Maďarsko"),
+    ("MT", "Malta", "Malta"),
+    ("DE", "Nemecko", "Německo"),
+    ("NO", "Nórsko", "Norsko"),
+    ("PL", "Poľsko", "Polsko"),
+    ("PT", "Portugalsko", "Portugalsko"),
+    ("AT2", "", ""),          # medzera sa odfiltruje
+    ("RO", "Rumunsko", "Rumunsko"),
+    ("SI", "Slovinsko", "Slovinsko"),
+    ("ES", "Španielsko", "Španělsko"),
+    ("SE", "Švédsko", "Švédsko"),
+    ("CH", "Švajčiarsko", "Švýcarsko"),
+    ("IT", "Taliansko", "Itálie"),
+]
+
+
 # ---------------------------------------------------------------- košík
 FULL_FIELDS = ("cStreet", "cCountry", "cNote")
 
@@ -732,6 +768,13 @@ def _field(fid, label, required, lang):
     star = ' <em class="req">*</em>' if required else ""
     if fid == "cNote":
         control = '<textarea id="%s"></textarea>' % fid
+    elif fid == "cCountry":
+        pre = "SK" if lang == "sk" else "CZ"
+        opts = "".join(
+            '<option value="%s"%s>%s</option>'
+            % (c, " selected" if c == pre else "", (a if lang == "sk" else b))
+            for c, a, b in COUNTRIES if a)
+        control = '<select id="%s" required>%s</select>' % (fid, opts)
     else:
         typ = "email" if fid == "cEmail" else ("tel" if fid == "cPhone" else "text")
         chk = ' data-check="zip"' if fid == "cZip" else (
@@ -750,7 +793,7 @@ def kosik(lang, base):
         ("cStreet",  T("Ulica a číslo", "Ulice a číslo", lang), True),
         ("cCity",    T("Mesto", "Město", lang), True),
         ("cZip",     T("PSČ", "PSČ", lang), True),
-        ("cCountry", T("Krajina", "Země", lang), False),
+        ("cCountry", T("Krajina", "Země", lang), True),
         ("cNote",    T("Poznámka", "Poznámka", lang), False),
     ]
     fields = "".join(_field(i, l, r, lang) for i, l, r in rows)
