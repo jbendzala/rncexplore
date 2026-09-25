@@ -83,12 +83,12 @@ window.SITE_CONFIG = {
 
      Ak odoslanie zlyhá, formulár sa vždy prepne na "mailto",
      aby objednávka nezostala visieť.                                     */
-  orderSend: "formsubmit",
+  orderSend: "api",
   formKey: "",
 
   /* Adresa Workera pre orderSend: "api". Po nasadení ju vypíše wrangler,
      napríklad "https://rncexplore-mail.vase-meno.workers.dev".           */
-  apiUrl: "",
+  apiUrl: "https://rncexplore-mail.j-bendzala-j.workers.dev",
 
   /* Kam objednávku reálne doručiť. Nechajte prázdne = doručí sa na
      orderEmail. Vyplňte len vtedy, keď schránka orderEmail ešte
