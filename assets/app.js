@@ -347,7 +347,8 @@
       return '<option value="' + i + '">' + esc(label) + "</option>";
     }).join("");
     el("ofVariantWrap").style.display = vs.length > 1 ? "" : "none";
-    el("ofMsgBox").innerHTML = esc(T.mailHint) + '<a href="mailto:' + esc(CFG.orderEmail) + '">' +
+    el("ofMsgBox").innerHTML = esc(T.mailHint) +
+      '<a class="ico-mail" href="mailto:' + esc(CFG.orderEmail) + '">' +
       esc(CFG.orderEmail) + "</a>";
     el("ofMsgBox").className = "msg";
     show("orderOv");

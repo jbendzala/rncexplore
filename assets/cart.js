@@ -402,7 +402,8 @@
     if (f) {
       f.addEventListener("submit", submit);
       var h = el("cartHint");
-      if (h) h.innerHTML = esc(T.hint) + '<a href="mailto:' + esc(CFG.orderEmail) + '">' +
+      if (h) h.innerHTML = esc(T.hint) +
+        '<a class="ico-mail" href="mailto:' + esc(CFG.orderEmail) + '">' +
         esc(CFG.orderEmail) + "</a>";
       var tt = el("cartTerms"); if (tt) tt.textContent = T.terms;
       var ob = el("cartOrder"); if (ob) ob.textContent = T.order;
