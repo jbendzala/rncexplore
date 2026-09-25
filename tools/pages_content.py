@@ -571,14 +571,14 @@ def faq_pairs(lang):
            "<p>Obratem vám pošleme potvrzení objednávky a fakturu s QR kódem. Po zaplacení "
            "zboží expedujeme a pošleme vám číslo zásilky.</p>", lang)),
         (T("Je v cene aj doprava a DPH?", "Je v ceně i doprava a DPH?", lang),
-         T("<p>Áno. Cena, ktorú vidíte pri produkte, je konečná — obsahuje DPH "
-           "aj dopravu na vašu adresu. V košíku sa už nič nepripočítava.</p>"
-           "<p>Doprava je započítaná za kus, pretože každý panel ide ako "
-           "samostatná zásielka. Cena je rovnaká aj pri osobnom odbere.</p>",
-           "<p>Ano. Cena, kterou vidíte u produktu, je konečná — obsahuje DPH "
-           "i dopravu na vaši adresu. V košíku se už nic nepřipočítává.</p>"
-           "<p>Doprava je započítaná za kus, protože každý panel jde jako "
-           "samostatná zásilka. Cena je stejná i při osobním odběru.</p>", lang)),
+         T("<p>DPH áno — ceny pri produktoch sú vrátane 23 % DPH. Doprava v nich "
+           "zahrnutá nie je, pripočíta sa v košíku.</p>"
+           "<p>Doručenie kuriérom stojí 20 € s DPH za celú objednávku bez ohľadu "
+           "na počet kusov. Osobný odber v Bytči je bez príplatku.</p>",
+           "<p>DPH ano — ceny u produktů jsou včetně 23 % DPH. Doprava v nich "
+           "zahrnuta není, připočítá se v košíku.</p>"
+           "<p>Doručení kurýrem stojí 500 Kč s DPH za celou objednávku bez ohledu "
+           "na počet kusů. Osobní odběr v Bytči je bez příplatku.</p>", lang)),
         (T("Za ako dlho tovar dorazí?", "Za jak dlouho zboží dorazí?", lang),
          T("<p>Tovar doručíme do 7 pracovných dní od pripísania "
            "platby. Ak položka nie je v sklade a expeduje sa od výrobcu, "
@@ -633,9 +633,9 @@ def kontakt(lang, base):
            "V košíku vyplníte doručovací a fakturační údaje. Objednávku potvrdíme e-mailem.", lang)),
         (T("Zaplatíte cez QR kód", "Zaplatíte přes QR kód", lang),
          T("Pošleme vám faktúru s QR kódom — stačí ju načítať v mobilnej banke. "
-           "Na faktúre je aj cena dopravy podľa hmotnosti zásielky.",
+           "Suma na faktúre je rovnaká ako v košíku, vrátane dopravy.",
            "Pošleme vám fakturu s QR kódem — stačí ji načíst v mobilním bankovnictví. "
-           "Na faktuře je i cena dopravy podle hmotnosti zásilky.", lang)),
+           "Částka na faktuře je stejná jako v košíku, včetně dopravy.", lang)),
         (T("Tovar expedujeme", "Zboží expedujeme", lang),
          T("Po pripísaní platby zásielku odosielame a pošleme vám číslo na sledovanie.",
            "Po připsání platby zásilku odesíláme a pošleme vám číslo pro sledování.", lang)),

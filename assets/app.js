@@ -48,7 +48,7 @@
       mailHint: "Ak sa e-mailový klient neotvorí, použite tlačidlo „Skopírovať údaje“ a pošlite nám ich na ",
       sentOk: "Otvorili sme váš e-mailový klient. Objednávka bude odoslaná až po jej potvrdení v e-maile.",
       subject: "Objednávka z katalógu", theme: "Svetlý / tmavý režim",
-      priceNote: "Cena je vrátane DPH aj dopravy na Slovensko.",
+      priceNote: "Cena je vrátane 23 % DPH, bez dopravy. Doručenie 20 €, osobný odber bez príplatku.",
       contact: "Kontakt", info: "Informácie",
       infoText: "Katalóg slúži na prezeranie sortimentu. Objednávky vybavujeme individuálne e-mailom.",
       rights: "Všetky práva vyhradené.",
@@ -88,7 +88,7 @@
       mailHint: "Pokud se e-mailový klient neotevře, použijte tlačítko „Zkopírovat údaje“ a pošlete nám je na ",
       sentOk: "Otevřeli jsme váš e-mailový klient. Objednávka bude odeslána až po jejím potvrzení v e-mailu.",
       subject: "Objednávka z katalogu", theme: "Světlý / tmavý režim",
-      priceNote: "Cena je včetně DPH i dopravy do Česka.",
+      priceNote: "Cena je včetně 23 % DPH, bez dopravy. Doručení 500 Kč, osobní odběr bez příplatku.",
       contact: "Kontakt", info: "Informace",
       infoText: "Katalog slouží k prohlížení sortimentu. Objednávky vyřizujeme individuálně e-mailem.",
       rights: "Všechna práva vyhrazena.",
@@ -100,16 +100,20 @@
   function plural(n, f) { return n === 1 ? f[0] : (n >= 2 && n <= 4 ? f[1] : f[2]); }
 
   /* ---------- ceny ---------- */
-  /* Doprava sa účtuje za kus, preto ju vieme započítať priamo do ceny
-     produktu — dva panely reálne znamenajú dve zásielky. */
+  /* Doprava do ceny produktu nevstupuje, účtuje sa raz za objednávku až
+     v košíku. Prepínač shippingInPrice zostáva, keby sa to malo zmeniť. */
   function shipNet() {
-    return (CFG.shippingNet && CFG.shippingNet[CUR]) || 0;
+    return (CFG.shippingGross && CFG.shippingGross[CUR]) || 0;
   }
   function convert(usd) {
     var rate = (CFG.rates && CFG.rates[CUR]) || 1;
     var base = usd * (CFG.markup || 1) * rate;
     if (CFG.shippingInPrice) base += shipNet();
     var v = base * (1 + (CFG.vat || 0));
+    if (CFG.rounding === "half") {
+      /* nadol na celé a +0,50; v korunách sa halierniky nepoužívajú */
+      return Math.floor(v) + (CUR === "CZK" ? 0 : 0.5);
+    }
     if (CFG.rounding === "9") {
       v = Math.max(0, Math.round(v));
       /* zakončenie na 9 má zmysel až pri vyšších sumách */

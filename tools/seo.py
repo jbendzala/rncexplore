@@ -35,13 +35,14 @@ def _cfg():
 
     m = re.search(r"rates:\s*\{\s*EUR:\s*([\d.]+)\s*,\s*CZK:\s*([\d.]+)", s)
     rates = {"EUR": float(m.group(1)), "CZK": float(m.group(2))} if m else {"EUR": 1, "CZK": 1}
-    m = re.search(r"shippingNet:\s*\{\s*EUR:\s*([\d.]+)\s*,\s*CZK:\s*([\d.]+)", s)
+    m = re.search(r"shippingGross:\s*\{\s*EUR:\s*([\d.]+)\s*,\s*CZK:\s*([\d.]+)", s)
     ship = {"EUR": float(m.group(1)), "CZK": float(m.group(2))} if m else {"EUR": 0, "CZK": 0}
     return {
         "company": txt("company"), "street": txt("street"), "city": txt("city"),
         "ico": txt("ico"), "phone": txt("phone"), "mail": txt("orderEmail"),
         "markup": num("markup", 1.0), "vat": num("vat", 0.0),
         "rates": rates, "ship": ship, "shipInPrice": flag("shippingInPrice"),
+        "rounding": txt("rounding"),
     }
 
 
@@ -50,14 +51,37 @@ CFG = _cfg()
 
 def price(usd, cur):
     """Rovnaký vzorec ako convert() v assets/app.js."""
+    import math
     v = usd * CFG["markup"] * CFG["rates"][cur]
     if CFG["shipInPrice"]:
         v += CFG["ship"][cur]
     v = v * (1 + CFG["vat"])
+    if CFG["rounding"] == "half":
+        return math.floor(v) + (0 if cur == "CZK" else 0.5)
     v = max(0, round(v))
-    if v >= 100:
+    if CFG["rounding"] == "9" and v >= 100:
         v = (v // 10) * 10 + 9
     return v
+
+
+def _shipping(lang, cur):
+    """Doprava nie je v cene, tak ju uvedieme zvlášť — inak by vyhľadávač
+    ukazoval cenu, ktorú zákazník v košíku nezaplatí."""
+    return {
+        "@type": "OfferShippingDetails",
+        "shippingRate": {"@type": "MonetaryAmount",
+                         "value": 0 if CFG["shipInPrice"] else CFG["ship"][cur],
+                         "currency": cur},
+        "shippingDestination": {"@type": "DefinedRegion",
+                                "addressCountry": "SK" if lang == "sk" else "CZ"},
+        "deliveryTime": {"@type": "ShippingDeliveryTime",
+                         "handlingTime": {"@type": "QuantitativeValue",
+                                          "minValue": 1, "maxValue": 2,
+                                          "unitCode": "DAY"},
+                         "transitTime": {"@type": "QuantitativeValue",
+                                         "minValue": 2, "maxValue": 5,
+                                         "unitCode": "DAY"}},
+    }
 
 
 def _address():
@@ -110,6 +134,7 @@ def product(p, lang, url):
             "itemCondition": "https://schema.org/NewCondition",
             "url": url,
             "seller": {"@id": SITE + "/#organizacia"},
+            "shippingDetails": _shipping(lang, cur),
         })
     out = {
         "@context": "https://schema.org", "@type": "Product",

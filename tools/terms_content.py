@@ -310,29 +310,23 @@ SECTIONS = [
     "nevztahuje na již potvrzené kupní smlouvy. Kupující nemá právo dodatečně "
     "se dožadovat jiné ceny, než ceny předem dohodnuté v potvrzené objednávce."),
   p("Predávajúci je platiteľom dane z pridanej hodnoty. Všetky ceny uvedené pri "
-    "produktoch sú vrátane DPH v sadzbe 23 % a vrátane dopravy na adresu "
-    "kupujúceho. Cena, ktorú kupujúci vidí pri produkte, je konečná.",
+    "produktoch sú vrátane DPH v sadzbe 23 %. Cena dopravy v nich zahrnutá nie "
+    "je, pripočíta sa v košíku podľa zvoleného spôsobu doručenia.",
     "Prodávající je plátcem daně z přidané hodnoty. Všechny ceny uvedené "
-    "u produktů jsou včetně DPH a včetně dopravy na adresu kupujícího. Cena, "
-    "kterou kupující vidí u produktu, je konečná."),
-  p("Doprava je už zahrnutá v cene každého produktu a účtuje sa za kus, pretože "
-    "každý panel sa prepravuje ako samostatná zásielka. V cene je zahrnuté:",
-    "Doprava je již zahrnuta v ceně každého produktu a účtuje se za kus, protože "
-    "každý panel se přepravuje jako samostatná zásilka. V ceně je zahrnuto:"),
-  ul(("doručenie na adresu v Slovenskej republike — 34 € bez DPH za kus, "
-      "teda 41,82 € s DPH,",
-      "doručení na adresu ve Slovenské republice — 34 € bez DPH za kus, "
-      "tedy 41,82 € s DPH,"),
-     ("doručenie na adresu v Českej republike — 822 Kč bez DPH za kus, "
-      "teda 1 011,06 Kč s DPH.",
-      "doručení na adresu v České republice — 822 Kč bez DPH za kus, "
-      "tedy 1 011,06 Kč s DPH.")),
-  p("Cena je rovnaká aj pri osobnom odbere. Prepravu tovaru k nám hradíme "
-    "bez ohľadu na to, či si ho kupujúci vyzdvihne osobne, alebo mu ho "
-    "doručí kuriér.",
-    "Cena je stejná i při osobním odběru. Přepravu zboží k nám hradíme "
-    "bez ohledu na to, zda si je kupující vyzvedne osobně, nebo mu je "
-    "doručí kurýr."),
+    "u produktů jsou včetně DPH. Cena dopravy v nich zahrnuta není, připočítá "
+    "se v košíku podle zvoleného způsobu doručení."),
+  p("Doprava sa účtuje jednou sumou za celú objednávku, nie za kus — na počte "
+    "položiek nezáleží. Ceny sú uvedené s DPH:",
+    "Doprava se účtuje jednou částkou za celou objednávku, nikoli za kus — na "
+    "počtu položek nezáleží. Ceny jsou uvedeny s DPH:"),
+  ul(("doručenie kuriérom na adresu kupujúceho — 20 € (500 Kč),",
+      "doručení kurýrem na adresu kupujícího — 20 € (500 Kč),"),
+     ("osobný odber na adrese predávajúceho v Bytči — bez príplatku.",
+      "osobní odběr na adrese prodávajícího v Bytči — bez příplatku.")),
+  p("Osobný odber je potrebné dohodnúť vopred telefonicky alebo e-mailom. "
+    "Predávajúci kupujúceho vyrozumie, keď je tovar pripravený na vyzdvihnutie.",
+    "Osobní odběr je nutné dohodnout předem telefonicky nebo e-mailem. "
+    "Prodávající kupujícího vyrozumí, až je zboží připraveno k vyzvednutí."),
   p("Platba je možná výhradne vopred, prevodom na účet predávajúceho na základe "
     "faktúry s QR kódom, ktorú kupujúci dostane e-mailom po potvrdení objednávky. "
     "Dobierku ani platbu kartou neponúkame. Tovar expedujeme po pripísaní platby.",

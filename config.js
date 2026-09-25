@@ -24,29 +24,36 @@ window.SITE_CONFIG = {
      markup = vaša marža (1.0 = bez marže, 1.25 = +25 %).
      Kurzy si podľa potreby aktualizujte.                                   */
   markup: 1.0,
-  rates: { EUR: 0.8964, CZK: 21.83 },
+
+  /* Násobiteľ dolárovej ceny Lensunu na maloobchodnú cenu BEZ DPH.
+     EUR je zámerne 1.0 — dolárovú cenu berieme jedna k jednej ako eurá,
+     nie je to kurz a neaktualizuje sa. CZK je prepočet tej eurovej ceny
+     na koruny, ten sa aktualizuje podľa ECB.                             */
+  rates: { EUR: 1.0, CZK: 25.131 },
 
   /* Sadzba DPH. Ceny na webe sa zobrazujú s DPH, ako to pri predaji
      spotrebiteľom vyžaduje zákon. 0.23 = 23 %.                           */
   vat: 0.23,
 
-  /* Doprava ZA KUS, bez DPH — každý panel ide ako samostatná zásielka.
-     DPH dopočíta web sám podľa sadzby vyššie.                            */
-  shippingNet: { EUR: 34, CZK: 822 },
+  /* Doprava S DPH, paušál za celú objednávku. Účtuje sa až v košíku pri
+     výbere spôsobu doručenia, do ceny produktu sa nezapočítava.           */
+  shippingGross: { EUR: 20, CZK: 500 },
 
-  /* true  = doprava je už započítaná v cene produktu („doprava zdarma“),
-             košík neúčtuje nič navyše. Tak to má aj konkurencia.
+  /* true  = doprava je už v cene produktu, košík neúčtuje nič navyše.
      false = ceny sú bez dopravy a košík ju pripočíta samostatne.          */
-  shippingInPrice: true,
+  shippingInPrice: false,
 
   /* Ponúkame osobný odber v Bytči? true = v košíku pribudne možnosť
      odberu za 0 €.                                                       */
   pickup: true,
 
-  /* Zaokrúhlenie zobrazenej ceny: "9"  -> 249 € končí na 9 (249, 259…)
-                                   "0"  -> zaokrúhli na celé
-                                   null -> presne prepočítané             */
-  rounding: "9",
+  /* Zaokrúhlenie ceny s DPH:
+       "half" -> nadol na celé a +0,50 (619,92 -> 619,50; 619,01 -> 619,50).
+                 V korunách len nadol na celé, halierniky sa nepoužívajú.
+       "9"    -> 249 € končí na 9 (249, 259…)
+       "0"    -> na celé
+       null   -> presne prepočítané                                       */
+  rounding: "half",
 
   /* Zobraziť pôvodnú prečiarknutú cenu, ak ju výrobca uvádza?
      Necháme vypnuté. Lensun uvádza „pôvodnú" cenu pri úplne každom

@@ -17,8 +17,8 @@
           qty: "Počet", unit: "Cena za kus", sum: "Spolu", remove: "Odstrániť",
           total: "Celkom s DPH", goods: "Tovar", shipping: "Doprava",
           dlvCourier: "Doručenie kuriérom", dlvPickup: "Osobný odber v Bytči",
-          shipFree: "v cene", pickupOff: "Zľava za osobný odber",
-          vatNote: "Všetky ceny sú vrátane DPH aj dopravy. Každý panel sa posiela ako samostatná zásielka.",
+          shipFree: "v cene", free: "bez príplatku",
+          vatNote: "Ceny tovaru sú vrátane 23 % DPH. Doprava je jednou sumou za celú objednávku, osobný odber bez príplatku.",
           contact: "Doručovacie a fakturačné údaje",
           order: "Objednávka zaväzujúca k platbe",
           sent: "Objednávka odoslaná. Obratom vám pošleme faktúru s QR kódom na zaplatenie.",
@@ -36,8 +36,8 @@
           qty: "Počet", unit: "Cena za kus", sum: "Celkem", remove: "Odstranit",
           total: "Celkem s DPH", goods: "Zboží", shipping: "Doprava",
           dlvCourier: "Doručení kurýrem", dlvPickup: "Osobní odběr v Bytči",
-          shipFree: "v ceně", pickupOff: "Sleva za osobní odběr",
-          vatNote: "Všechny ceny jsou včetně DPH i dopravy. Každý panel se posílá jako samostatná zásilka.",
+          shipFree: "v ceně", free: "bez příplatku",
+          vatNote: "Ceny zboží jsou včetně 23 % DPH. Doprava je jednou částkou za celou objednávku, osobní odběr bez příplatku.",
           contact: "Doručovací a fakturační údaje",
           order: "Objednávka zavazující k platbě",
           sent: "Objednávka odeslána. Obratem vám pošleme fakturu s QR kódem k zaplacení.",
@@ -56,16 +56,20 @@
   function deliveryEmail() { return CFG.deliverTo || CFG.orderEmail; }
 
   /* ---------- ceny ---------- */
-  /* Doprava sa účtuje za kus, preto ju vieme započítať priamo do ceny
-     produktu — dva panely reálne znamenajú dve zásielky. */
+  /* Doprava do ceny produktu nevstupuje, účtuje sa raz za objednávku až
+     v košíku. Prepínač shippingInPrice zostáva, keby sa to malo zmeniť. */
   function shipNet() {
-    return (CFG.shippingNet && CFG.shippingNet[CUR]) || 0;
+    return (CFG.shippingGross && CFG.shippingGross[CUR]) || 0;
   }
   function convert(usd) {
     var rate = (CFG.rates && CFG.rates[CUR]) || 1;
     var base = usd * (CFG.markup || 1) * rate;
     if (CFG.shippingInPrice) base += shipNet();
     var v = base * (1 + (CFG.vat || 0));
+    if (CFG.rounding === "half") {
+      /* nadol na celé a +0,50; v korunách sa halierniky nepoužívajú */
+      return Math.floor(v) + (CUR === "CZK" ? 0 : 0.5);
+    }
     if (CFG.rounding === "9") { v = Math.max(0, Math.round(v)); if (v >= 100) v = Math.floor(v / 10) * 10 + 9; }
     else if (CFG.rounding === "0") { v = Math.round(v); }
     return v;
@@ -126,22 +130,16 @@
      s DPH, aby súčet zodpovedal tomu, čo zákazník naozaj zaplatí. */
   var pickup = false;                 /* zvolil zákazník osobný odber? */
 
-  /* Doprava s DPH za jeden kus. */
+  /* Paušál za doručenie, suma je už s DPH — jeden balík alebo desať,
+     platí sa raz. */
   function shipCost() {
-    return Math.round(shipNet() * (1 + (CFG.vat || 0)) * 100) / 100;
+    return (CFG.shippingGross && CFG.shippingGross[CUR]) || 0;
   }
 
-  function pieces(c) {
-    return c.reduce(function (s, i) { return s + i.qty; }, 0);
-  }
-
-  /* Koľko doprava pridá k súčtu. Keď je už v cene produktu, nepridá nič —
-     a pri osobnom odbere ju naopak odrátame, lebo ju zákazník nevyužije. */
-  /* Osobný odber dopravu neznižuje: zásielka aj tak musí doraziť z Nemecka,
-     odberom sa ušetrí len posledný úsek k zákazníkovi. */
+  /* Osobný odber je bez príplatku, zákazník si tovar vyzdvihne sám. */
   function shipping(c) {
     if (CFG.shippingInPrice) return 0;
-    return shipCost() * pieces(c);
+    return pickup ? 0 : shipCost();
   }
 
   function totals(c) {
@@ -180,10 +178,11 @@
       (CFG.pickup
         ? '<div class="cart-ship"><label><input type="radio" name="dlv" value="courier"' +
           (pickup ? "" : " checked") + "><span>" + esc(T.dlvCourier) +
-          (CFG.shippingInPrice ? "" : " — " + esc(fmt(shipCost() * pieces(c)))) +
+          (CFG.shippingInPrice ? "" : " — " + esc(fmt(shipCost()))) +
           "</span></label>" +
           '<label><input type="radio" name="dlv" value="pickup"' +
           (pickup ? " checked" : "") + "><span>" + esc(T.dlvPickup) +
+          (CFG.shippingInPrice ? "" : " — " + esc(T.free)) +
           "</span></label></div>"
         : "") +
       '<div class="cart-sums">' +
@@ -192,7 +191,7 @@
           ? "<div><span>" + esc(T.shipping) + "</span><span>" +
             esc(T.shipFree) + "</span></div>"
           : "<div><span>" + esc(T.shipping) + "</span><span>" +
-            esc(fmt(shipping(c))) + "</span></div>") +
+            esc(pickup ? T.free : fmt(shipCost())) + "</span></div>") +
         '<div class="cart-sum"><span>' + esc(T.total) + "</span><b>" +
           esc(fmt(totals(c) + shipping(c))) + "</b></div>" +
       "</div>" +
@@ -248,9 +247,9 @@
     });
     out.push(line,
       L.goods + ": " + fmt(totals(c)),
-      L.ship + ": " + (CFG.shippingInPrice && !pickup
+      L.ship + ": " + (CFG.shippingInPrice
         ? T.shipFree
-        : fmt(shipping(c)) + (pickup ? " (" + T.dlvPickup + ")" : "")),
+        : pickup ? T.free + " (" + T.dlvPickup + ")" : fmt(shipCost())),
       L.tot + ": " + fmt(totals(c) + shipping(c)), "",
       L.z, line,
       L.nm + ": " + g("cName"), L.em + ": " + g("cEmail"), L.ph + ": " + g("cPhone"));
