@@ -13,6 +13,69 @@
    Nastavenie je vo wrangler.toml, tajomstvá cez `wrangler secret put`.
    ========================================================================== */
 
+import { DurableObject } from "cloudflare:workers";
+
+/* Strop na odosielanie. Nativný rate-limit binding Cloudflare na tomto
+   účte nič nevynucoval (38 žiadostí za sebou prešlo), preto počítame sami.
+   Durable Object je na to určený: pre daný kľúč beží vždy jedna instancia,
+   takže počítadlo nemá ako pretiecť dvoma cestami naraz.
+
+   Dva stropy, každý na iné riziko:
+     * na IP    — cudzí skript neposiela dávky,
+     * na deň   — aj keby striedal IP, denná kvóta Breva prežije.            */
+export class Throttle extends DurableObject {
+  /** Kĺzavé okno pre jednu IP. */
+  async hit(windowMs, max) {
+    const now = Date.now();
+    const hits = ((await this.ctx.storage.get("hits")) || [])
+      .filter((t) => now - t < windowMs);
+    if (hits.length >= max) return false;
+    hits.push(now);
+    await this.ctx.storage.put("hits", hits);
+    return true;
+  }
+
+  /** Počet odoslaní za dnešný deň, spoločný pre celý web. */
+  async day(max) {
+    const today = new Date().toISOString().slice(0, 10);
+    const rec = (await this.ctx.storage.get("day")) || { d: "", n: 0 };
+    if (rec.d !== today) { rec.d = today; rec.n = 0; }
+    if (rec.n >= max) return false;
+    rec.n += 1;
+    await this.ctx.storage.put("day", rec);
+    return true;
+  }
+}
+
+const PER_IP = { window: 60000, max: 5 };
+const PER_DAY = 200;      /* Brevo dáva 300/deň, nechávame si rezervu */
+
+/* Keď počítadlo zlyhá, radšej pustíme — objednávka je cennejšia než
+   dokonalý strop. */
+
+/** Strop na IP. Kontroluje sa hneď, ešte pred čítaním tela žiadosti. */
+async function ipAllowed(env, ip) {
+  if (!env.THROTTLE) return true;
+  try {
+    const o = env.THROTTLE.get(env.THROTTLE.idFromName("ip:" + ip));
+    return await o.hit(PER_IP.window, PER_IP.max);
+  } catch (e) {
+    return true;
+  }
+}
+
+/** Denný strop. Zvyšuje sa až tesne pred odoslaním — inak by nám roboty
+    zachytené na pasci vyčerpali kvótu, hoci sa za ne nič neposiela. */
+async function dayAllowed(env) {
+  if (!env.THROTTLE) return true;
+  try {
+    const o = env.THROTTLE.get(env.THROTTLE.idFromName("global"));
+    return await o.day(PER_DAY);
+  } catch (e) {
+    return true;
+  }
+}
+
 const CORS = (origin) => ({
   "Access-Control-Allow-Origin": origin,
   "Access-Control-Allow-Methods": "POST, OPTIONS",
@@ -54,10 +117,22 @@ async function brevo(env, payload) {
   return r.json();
 }
 
-/* Potvrdenie pre zákazníka. Zámerne jednoduché — faktúru posielame zvlášť. */
-function confirmBody(lang, name, orderText) {
+/* Potvrdenie pre zákazníka. Zámerne jednoduché — faktúru posielame zvlášť.
+   Dopyt nie je objednávka, preto má vlastné znenie: nič sme neprijali na
+   zaplatenie a faktúra nepríde. */
+function confirmBody(kind, lang, name, orderText) {
   const sk = lang !== "cs";
   const hi = sk ? `Dobrý deň, ${name},` : `Dobrý den, ${name},`;
+  const bye = "Safiri s.r.o. · www.rncexplore.com";
+
+  if (kind === "inquiry") {
+    const got = sk
+      ? "ďakujeme za správu. Prijali sme ju a ozveme sa vám najneskôr nasledujúci pracovný deň."
+      : "děkujeme za zprávu. Přijali jsme ji a ozveme se vám nejpozději následující pracovní den.";
+    const rec = sk ? "Kópia vašej správy" : "Kopie vaší zprávy";
+    return `${hi}\n\n${got}\n\n${rec}\n${orderText}\n\n${bye}`;
+  }
+
   const got = sk
     ? "ďakujeme za objednávku. Prijali sme ju a obratom vám pošleme faktúru s QR kódom na zaplatenie."
     : "děkujeme za objednávku. Přijali jsme ji a obratem vám pošleme fakturu s QR kódem k zaplacení.";
@@ -65,7 +140,6 @@ function confirmBody(lang, name, orderText) {
     ? "Tovar expedujeme po pripísaní platby."
     : "Zboží expedujeme po připsání platby.";
   const rec = sk ? "Rekapitulácia objednávky" : "Rekapitulace objednávky";
-  const bye = sk ? "Safiri s.r.o. · www.rncexplore.com" : "Safiri s.r.o. · www.rncexplore.com";
   return `${hi}\n\n${got}\n${ship}\n\n${rec}\n${orderText}\n\n${bye}`;
 }
 
@@ -86,6 +160,13 @@ export default {
       return json({ ok: false, error: "origin" }, 403, cors);
     }
 
+    /* Zoznam adries nestačí: Origin si klient vypíše aký chce. Strop na
+       IP drží prípadné zneužitie v mieri a chráni denný limit Breva. */
+    const ip = request.headers.get("CF-Connecting-IP") || "neznama";
+    if (!(await ipAllowed(env, ip))) {
+      return json({ ok: false, error: "rate" }, 429, cors);
+    }
+
     let d;
     try {
       d = await request.json();
@@ -102,11 +183,15 @@ export default {
     const email = clean(d.email, 160);
     const lang = d.lang === "cs" ? "cs" : "sk";
     const subject = clean(d.subject, 200) || "Správa z webu";
-    const body = String(d.body == null ? "" : d.body).slice(0, 20000);
+    const body = String(d.body == null ? "" : d.body).slice(0, 8000);
     const kind = d.kind === "inquiry" ? "inquiry" : "order";
 
     if (!name || !validEmail(email) || !body.trim()) {
       return json({ ok: false, error: "fields" }, 400, cors);
+    }
+
+    if (!(await dayAllowed(env))) {
+      return json({ ok: false, error: "rate" }, 429, cors);
     }
 
     const from = { name: env.FROM_NAME || "Safiri s.r.o.", email: env.FROM_EMAIL };
@@ -130,9 +215,11 @@ export default {
           sender: from,
           to: [{ email, name }],
           replyTo: { email: to },
-          subject: (lang === "cs" ? "Potvrzení objednávky — " : "Potvrdenie objednávky — ")
+          subject: (kind === "inquiry"
+            ? (lang === "cs" ? "Přijali jsme vaši zprávu — " : "Prijali sme vašu správu — ")
+            : (lang === "cs" ? "Potvrzení objednávky — " : "Potvrdenie objednávky — "))
             + (env.FROM_NAME || "Safiri s.r.o."),
-          textContent: confirmBody(lang, name, body),
+          textContent: confirmBody(kind, lang, name, body),
         });
       } catch (e) {
         copy = false;

@@ -13,3 +13,13 @@ INFO_EMAIL = "info@rncexplore.com"
 
 # Prístupový kľúč k Brevu sem NEPATRÍ. Nastavuje sa mimo súboru:
 #   wrangler secret put BREVO_API_KEY
+
+# Počítadlo odoslaných správ. Origin v hlavičke si klient vypíše aký chce,
+# takže bez stropu by cudzí skript posielal poštu z našej domény komukoľvek.
+[[durable_objects.bindings]]
+name = "THROTTLE"
+class_name = "Throttle"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Throttle"]
