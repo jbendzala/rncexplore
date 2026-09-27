@@ -287,6 +287,8 @@ textarea{resize:vertical;min-height:80px}
 label input.bad,label select.bad,label textarea.bad{border-color:var(--danger)}
 label input.bad:focus,label textarea.bad:focus{outline-color:var(--danger)}
 /* súhrn košíka: tovar, doprava, celkom */
+/* cesta preč z košíka, keď v ňom tovar je */
+.cart-back{margin-top:18px}
 .cart-sums{margin-top:18px;border-top:1px solid var(--line-2);padding-top:14px}
 .cart-sums>div{display:flex;justify-content:space-between;gap:20px;padding:5px 0;font-size:14.5px}
 .cart-sums>div span:first-child{color:var(--ink-2)}
@@ -697,6 +699,9 @@ a.tile:hover{text-decoration:none}
 .pd-qty input{width:88px;padding:12px 13px;border:1px solid var(--line-2);
   background:var(--paper);font-size:15px;text-align:center}
 .pd-actions .btn{flex:1 1 200px;padding:14px 22px;font-size:14px}
+/* cesta preč z karty produktu — späť do katalógu alebo do košíka */
+.pd-nav{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 16px}
+.pd-nav .btn{flex:1 1 170px;text-align:center}
 
 .pack{list-style:none;padding:0;margin:0 0 18px}
 .pack li{padding:9px 0 9px 22px;border-bottom:1px solid var(--line);position:relative;

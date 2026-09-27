@@ -13,7 +13,8 @@
   var T = {
     sk: { added: "Pridané do košíka", cart: "Košík", empty: "Košík je prázdny",
           emptyNote: "Vyberte produkty v katalógu a pridajte ich do košíka.",
-          toCatalog: "Prejsť do katalógu", item: "Položka", variant: "Prevedenie",
+          toCatalog: "Prejsť do katalógu", keepShopping: "Pokračovať v nákupe",
+          item: "Položka", variant: "Prevedenie",
           qty: "Počet", unit: "Cena za kus", sum: "Spolu", remove: "Odstrániť",
           total: "Celkom s DPH", goods: "Tovar", shipping: "Doprava",
           dlvCourier: "Doručenie kuriérom", dlvPickup: "Osobný odber v Bytči",
@@ -32,7 +33,8 @@
           need: "Vyplňte prosím povinné údaje označené hviezdičkou." },
     cs: { added: "Přidáno do košíku", cart: "Košík", empty: "Košík je prázdný",
           emptyNote: "Vyberte produkty v katalogu a přidejte je do košíku.",
-          toCatalog: "Přejít do katalogu", item: "Položka", variant: "Provedení",
+          toCatalog: "Přejít do katalogu", keepShopping: "Pokračovat v nákupu",
+          item: "Položka", variant: "Provedení",
           qty: "Počet", unit: "Cena za kus", sum: "Celkem", remove: "Odstranit",
           total: "Celkem s DPH", goods: "Zboží", shipping: "Doprava",
           dlvCourier: "Doručení kurýrem", dlvPickup: "Osobní odběr v Bytči",
@@ -195,7 +197,9 @@
         '<div class="cart-sum"><span>' + esc(T.total) + "</span><b>" +
           esc(fmt(totals(c) + shipping(c))) + "</b></div>" +
       "</div>" +
-      '<p class="note">' + esc(T.vatNote) + "</p>";
+      '<p class="note">' + esc(T.vatNote) + "</p>" +
+      '<p class="cart-back"><a class="btn ghost" href="produkty.html">' +
+        esc(T.keepShopping) + "</a></p>";
 
     box.querySelectorAll("input[name=dlv]").forEach(function (r) {
       r.onchange = function () { pickup = r.value === "pickup"; renderCart(); };
@@ -412,6 +416,21 @@
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
   else start();
+
+  /* Prehliadač si pri kroku späť stránku obnoví z pamäte takú, aká bola —
+     vrátane odznaku s počtom kusov, ktorý medzitým prestal platiť. Preto ho
+     pri každom zobrazení prepočítame nanovo. */
+  window.addEventListener("pageshow", function (e) {
+    badge();
+    if (e.persisted) renderCart();
+  });
+
+  /* Košík v druhej karte prehliadača mení ten istý localStorage. */
+  window.addEventListener("storage", function (e) {
+    if (e.key && e.key !== KEY) return;
+    badge();
+    renderCart();
+  });
 
   window.RNCCart = { add: add, count: count, render: renderCart };
 })();

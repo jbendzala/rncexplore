@@ -451,6 +451,13 @@
              sk: p.n.sk, cs: p.n.cs, vsk: v.sk, vcs: v.cs,
              usd: v.p, sku: v.sku || p.sku || "", img: (p.img && p.img[0]) || "" };
   }
+  function showCartLink() {
+    var tc = el("pdToCart");
+    if (tc) tc.hidden = !(window.RNCCart && window.RNCCart.count() > 0);
+  }
+  /* po kroku späť prehliadač stránku obnoví z pamäte, skript sa nespustí */
+  window.addEventListener("pageshow", showCartLink);
+
   function addToCart(p, vi, qty) {
     if (window.RNCCart) window.RNCCart.add(cartItem(p, vi || 0, qty || 1));
   }
@@ -636,7 +643,11 @@
     if (ob) ob.addEventListener("click", function () {
       var q = el("pdQty");
       addToCart(p, sel, Math.max(1, parseInt(q && q.value, 10) || 1));
+      showCartLink();
     });
+    /* cesta do košíka má zmysel, len keď v ňom niečo je — aj keď to tam
+       zákazník vložil predtým a na kartu sa vrátil */
+    showCartLink();
 
     /* podobné produkty */
     var rel = el("related");
