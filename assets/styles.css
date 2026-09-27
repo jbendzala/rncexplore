@@ -56,6 +56,11 @@
 
 *,*::before,*::after{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
+/* Prehliadač skrýva prvok s atribútom hidden len dovtedy, kým mu to
+   neprebije vlastný display v týchto štýloch — a autorský štýl prebíja
+   ten jeho vždy. Preto to hovoríme natvrdo raz pre celý web; inak by sa
+   skript márne pokúšal niečo skryť a prvok by zostal vidieť. */
+[hidden]{display:none!important}
 body{
   margin:0; background:var(--bone); color:var(--ink);
   font:400 16px/1.6 var(--f-body); overflow-wrap:break-word;
@@ -395,6 +400,8 @@ label input.bad:focus,label textarea.bad:focus{outline-color:var(--danger)}
 .crumb{font-size:12.5px;color:var(--band-ink-3)}
 .crumb a{color:var(--band-ink-2)}
 .crumb a:hover{color:var(--signal);text-decoration:none}
+.crumb-back .arr{margin-right:.4em}
+.crumb-back:hover .arr{margin-right:.55em;margin-left:-.15em;transition:margin .15s ease}
 
 /* ---------- obsahové sekcie ---------- */
 .sec{padding:62px 0}

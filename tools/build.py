@@ -94,8 +94,17 @@ def page_head(lang, slug, title):
     sk = lang == "sk"
     home = "Domov" if sk else "Domů"
     desc = PAGES[slug][3 if sk else 4]
+    # V košíku zákazník uviazne najľahšie — odtiaľ vedie šípka rovno domov
+    # a cesta späť do katalógu. Šípku číta len oko, čítačke stačí text.
+    if slug == "kosik":
+        cat = "Katalóg" if sk else "Katalog"
+        crumb = (f'<a class="crumb-back" href="index.html">'
+                 f'<span class="arr" aria-hidden="true">&#8592;</span>{home}</a>'
+                 f' / <a href="produkty.html">{cat}</a> / {title}')
+    else:
+        crumb = f'<a href="index.html">{home}</a> / {title}'
     return (f'<section class="page-head"><div class="wrap">'
-            f'<p class="crumb"><a href="index.html">{home}</a> / {title}</p>'
+            f'<p class="crumb">{crumb}</p>'
             f'<h1>{title}</h1><p>{desc}</p></div></section>\n')
 
 def build():

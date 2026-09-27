@@ -451,12 +451,15 @@
              sk: p.n.sk, cs: p.n.cs, vsk: v.sk, vcs: v.cs,
              usd: v.p, sku: v.sku || p.sku || "", img: (p.img && p.img[0]) || "" };
   }
-  function showCartLink() {
-    var tc = el("pdToCart");
-    if (tc) tc.hidden = !(window.RNCCart && window.RNCCart.count() > 0);
+  /* Po vložení do košíka nahradíme tlačidlo Do košíka dvojicou odkazov —
+     ďalej do košíka, alebo späť do katalógu. Keď si zákazník potom zvolí
+     iné prevedenie alebo iný počet, chce zjavne pridávať ďalej, tak sa
+     tlačidlo vráti. */
+  function swapActions(added) {
+    var a = el("pdActions"), n = el("pdNav");
+    if (a) a.hidden = !!added;
+    if (n) n.hidden = !added;
   }
-  /* po kroku späť prehliadač stránku obnoví z pamäte, skript sa nespustí */
-  window.addEventListener("pageshow", showCartLink);
 
   function addToCart(p, vi, qty) {
     if (window.RNCCart) window.RNCCart.add(cartItem(p, vi || 0, qty || 1));
@@ -624,6 +627,7 @@
       sw.addEventListener("click", function (e) {
         var b = e.target.closest(".swatch"); if (!b) return;
         sel = parseInt(b.dataset.i, 10) || 0; paint();
+        swapActions(false);
       });
     }
     paint();
@@ -643,11 +647,10 @@
     if (ob) ob.addEventListener("click", function () {
       var q = el("pdQty");
       addToCart(p, sel, Math.max(1, parseInt(q && q.value, 10) || 1));
-      showCartLink();
+      swapActions(true);
     });
-    /* cesta do košíka má zmysel, len keď v ňom niečo je — aj keď to tam
-       zákazník vložil predtým a na kartu sa vrátil */
-    showCartLink();
+    var qi = el("pdQty");
+    if (qi) qi.addEventListener("input", function () { swapActions(false); });
 
     /* podobné produkty */
     var rel = el("related");

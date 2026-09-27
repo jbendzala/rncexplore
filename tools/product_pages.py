@@ -122,14 +122,14 @@ def render(p, ALL, lang, reviews, base):
     <h1>{esc(name)}</h1>
     <div id="pdPrice" class="pd-price"></div>
     <div id="pdSwatch" class="swatches"></div>
-    <div class="pd-actions">
+    <div class="pd-actions" id="pdActions">
       <label class="pd-qty"><span>{T("Počet","Počet",lang)}</span>
         <input id="pdQty" type="number" min="1" max="99" value="1"></label>
       <button class="btn lg" id="pdOrder">{T("Do košíka","Do košíku",lang)}</button>
     </div>
-    <p class="pd-nav">
-      <a class="btn ghost" href="../produkty.html">{T("Pokračovať v nákupe","Pokračovat v nákupu",lang)}</a>
-      <a class="btn ghost pd-tocart" id="pdToCart" href="../kosik.html" hidden>{T("Prejsť do košíka","Přejít do košíku",lang)}</a>
+    <p class="pd-nav" id="pdNav" hidden>
+      <a class="btn lg" href="../kosik.html">{T("Prejsť do košíka","Přejít do košíku",lang)}</a>
+      <a class="btn ghost lg" href="../produkty.html">{T("Pokračovať v nákupe","Pokračovat v nákupu",lang)}</a>
     </p>
     <p class="note">{T("Faktúru s QR kódom pošleme e-mailom hneď po prijatí objednávky. Doprava je 20 € s DPH za celú objednávku, osobný odber v Bytči bez príplatku.","Fakturu s QR kódem pošleme e-mailem hned po přijetí objednávky. Doprava je 500 Kč s DPH za celou objednávku, osobní odběr v Bytči bez příplatku.",lang)}</p>
   </div>
