@@ -69,13 +69,13 @@
   var VT = {
     sk: { req: "Toto pole je povinné.",
           email: "Zadajte e-mail v tvare meno@domena.sk.",
-          phone: "Zadajte telefónne číslo, napríklad +421 905 698 410 alebo 0905 698 410.",
+          phone: "Zadajte číslo s predvoľbou, napríklad +421 905 698 410.",
           zip: "PSČ má päť číslic, napríklad 014 01.",
           zipFo: "Zadajte poštové smerovacie číslo.",
           short: "Zadajte aspoň dva znaky." },
     cs: { req: "Toto pole je povinné.",
           email: "Zadejte e-mail ve tvaru jmeno@domena.cz.",
-          phone: "Zadejte telefonní číslo, například +420 601 123 456 nebo 0601 123 456.",
+          phone: "Zadejte číslo s předvolbou, například +420 601 123 456.",
           zip: "PSČ má pět číslic, například 014 01.",
           zipFo: "Zadejte poštovní směrovací číslo.",
           short: "Zadejte alespoň dva znaky." }
@@ -83,17 +83,13 @@
 
   function digits(v) { return (v || "").replace(/\D/g, ""); }
 
-  /* Telefón. Doručujeme do 29 krajín, takže cudzie predvoľby musia prejsť;
-     domáce číslo s nulou na začiatku je rovnako platné ako medzinárodný
-     tvar. Odmietame len to, čo číslom nie je — samotných deväť číslic bez
-     predvoľby aj nuly dosiaľ prešlo, hoci sa z nich nedá zavolať. */
+  /* Telefón žiadame vždy s medzinárodnou predvoľbou — +421, +420 aj
+     akúkoľvek cudziu, doručujeme do 29 krajín. Domáci tvar 0905… ani
+     české číslo bez predvoľby neprijímame: z objednávky sa musí dať
+     zavolať bez hádania, odkiaľ číslo je. Najviac číslic má podľa
+     normy E.164 pätnásť. */
   function phoneOk(v) {
-    var t = (v || "").replace(/[\s().\/-]/g, "");
-    if (/^(?:\+|00)\d{8,15}$/.test(t)) return true;   /* +421 905 698 410 */
-    if (/^0\d{9}$/.test(t)) return true;              /* 0905 698 410     */
-    /* Česko medzimestskú nulu nepoužíva, píše sa rovno 601 123 456.
-       Jednotka na začiatku pridelená nie je, tou sa číslo nezačína. */
-    return /^[2-9]\d{8}$/.test(t);
+    return /^\+\d{8,15}$/.test((v || "").replace(/[\s().\/-]/g, ""));
   }
 
   /* PSČ. Päť číslic platí doma; v Holandsku je „1234 AB“ a v Írsku

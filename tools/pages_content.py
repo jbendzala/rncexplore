@@ -791,7 +791,9 @@ def kosik(lang, base):
     rows = [
         ("cName",    T("Meno a priezvisko", "Jméno a příjmení", lang), True),
         ("cEmail",   "E-mail", True),
-        ("cPhone",   T("Telefón", "Telefon", lang), True),
+        # predvoľbu žiadame vždy, nech to zákazník vie skôr, než na to naďabí
+        ("cPhone",   T("Telefón s predvoľbou (+421…)",
+                       "Telefon s předvolbou (+420…)", lang), True),
         ("cCompany", T("Firma / IČO", "Firma / IČO", lang), False),
         ("cStreet",  T("Ulica a číslo", "Ulice a číslo", lang), True),
         ("cCity",    T("Mesto", "Město", lang), True),
