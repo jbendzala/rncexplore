@@ -104,6 +104,25 @@ h1,h2,h3,h4{margin:0;font-family:var(--f-display);line-height:1.08;
 /* na tmavých pruhoch (pätička) sa použije svetlá varianta */
 .ftr .brand-logo{background-color:var(--band-ink)}
 .hdr-sp{flex:1}
+
+/* ---------- hľadanie v hlavičke ----------
+   Je poslednou položkou navigácie, takže na veľkej obrazovke stojí medzi
+   Kontaktom a košíkom a na malej sa samo presunie do vysúvacieho menu.
+   Odosiela sa ako bežný formulár na produkty.html?q=… — katalóg si dopyt
+   z adresy prečíta, takže netreba na každú stránku ťahať dáta katalógu. */
+.nav-q{flex:0 0 auto;margin-left:6px}
+.nav-q form{position:relative;display:flex;align-items:center}
+.nav-q svg{position:absolute;left:11px;width:15px;height:15px;
+  color:var(--ink-3);pointer-events:none}
+.nav-q input{width:150px;padding:8px 12px 8px 33px;border:1px solid var(--line-2);
+  border-radius:99px;background:var(--paper-2);color:var(--ink);
+  font-family:inherit;font-size:13.5px;outline:none;-webkit-appearance:none;
+  transition:border-color .14s,background .14s}
+.nav-q input::placeholder{color:var(--ink-3)}
+.nav-q input:focus{border-color:var(--ink);background:var(--paper)}
+/* krížik, ktorý si Safari a Chrome kreslia samy, by tu vytŕčal */
+.nav-q input::-webkit-search-decoration,
+.nav-q input::-webkit-search-cancel-button{-webkit-appearance:none}
 .search{position:relative;flex:1 1 300px;max-width:460px}
 .search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);
   width:16px;height:16px;color:var(--ink-3)}
@@ -371,7 +390,7 @@ label input.bad:focus,label textarea.bad:focus{outline-color:var(--danger)}
 .nav{display:flex;align-items:center;gap:2px;list-style:none;margin:0;padding:0}
 .nav > li{position:relative}
 .nav > li > a,.nav > li > button{display:flex;align-items:center;gap:6px;
-  padding:9px 13px;font-family:var(--f-display);font-size:13px;font-weight:600;
+  padding:9px 9px;font-family:var(--f-display);font-size:12.5px;font-weight:600;
   letter-spacing:.01em;color:var(--ink-2);background:none;border:none;cursor:pointer;
   white-space:nowrap;text-transform:uppercase}
 .nav > li > a:hover,.nav > li > button:hover{color:var(--ink);text-decoration:none}
@@ -502,7 +521,9 @@ a.tile:hover{text-decoration:none}
    Vodorovné menu aj s košíkom, prepínačom režimu a jazykmi potrebuje
    asi 1270 px. Pod tým sa prepína na hamburger — inak by hlavička
    pretiekla a stránka by sa dala posúvať do strán. */
-@media (max-width:1279px){
+/* Hranica je daná tým, od akej šírky sa vodorovné menu aj s hľadaním
+   zmestí do hlavičky bez pretečenia — odmerané na 1360 px. */
+@media (max-width:1359px){
   .burger{display:grid}
   .nav{position:fixed;inset:0 0 0 auto;width:min(88vw,340px);background:var(--paper);
     border-left:1px solid var(--line);flex-direction:column;align-items:stretch;gap:0;
@@ -514,6 +535,10 @@ a.tile:hover{text-decoration:none}
   .nav > li > a[aria-current="page"]{box-shadow:inset 3px 0 0 var(--signal)}
   .sub{position:static;border:none;box-shadow:none;padding:0 0 10px 12px;min-width:0}
   .sub a{padding:9px 6px}
+  /* vo vysúvacom menu patrí hľadanie navrch, nie za posledný odkaz */
+  .nav-q{order:-1;margin:0 0 16px}
+  .nav-q input{width:100%;font-size:15px;padding:12px 14px 12px 38px}
+  .nav-q svg{left:13px;width:16px;height:16px}
 }
 @media (max-width:900px){
   .page-head{padding:34px 0 30px}

@@ -160,6 +160,15 @@
     }
   };
 
+  /* Po odoslaní hľadania z hlavičky zostane pole prázdne, hoci katalóg už
+     filtruje — doplníme doň, čo zákazník hľadal, nech vidí, kde je. */
+  (function () {
+    var m = /[?&]q=([^&]*)/.exec(location.search);
+    if (!m) return;
+    var q = decodeURIComponent(m[1].replace(/\+/g, " "));
+    fill(".nav-q input", function (n) { n.value = q; });
+  }());
+
   /* --- oznam o ukladaní v prehliadači ---
      Nežiadame súhlas: košík a režim zobrazenia sú nevyhnutné na fungovanie
      stránky, ktoré si návštevník vyžiadal. Lištu preto stačí raz zavrieť. --- */

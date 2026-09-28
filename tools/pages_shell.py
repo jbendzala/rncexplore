@@ -112,6 +112,15 @@ def header(lang, base, slug, page="", langlinks=None):
                 f'<ul class="sub"><li><a href="{page}produkty.html"><strong>{"Celý katalóg" if lang=="sk" else "Celý katalog"}</strong></a></li>{subs}</ul></li>')
         else:
             items.append(f'<li><a href="{href}"{cur}>{label}</a></li>')
+
+    hladat = "Hľadať produkt" if lang == "sk" else "Hledat produkt"
+    items.append(
+        f'<li class="nav-q"><form role="search" action="{page}produkty.html" method="get">'
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
+        'stroke-linecap="round" aria-hidden="true">'
+        '<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>'
+        f'<input type="search" name="q" placeholder="{hladat}…" aria-label="{hladat}">'
+        '</form></li>')
     nav = "".join(items)
 
     f = "index.html" if slug == "index" else slug + ".html"
@@ -124,7 +133,6 @@ def header(lang, base, slug, page="", langlinks=None):
 
     cart_label = "Košík" if lang == "sk" else "Košík"
     util = "Solárne panely pre vozidlá, karavany a outdoor" if lang == "sk" else "Solární panely pro vozidla, karavany a outdoor"
-    search_ph = "Hľadať produkt…" if lang == "sk" else "Hledat produkt…"
     menu = "Menu"
     return f"""<div class="util"><div class="util-in">
   <span>{util}</span><span class="sp"></span>
