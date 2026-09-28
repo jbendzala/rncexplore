@@ -19,6 +19,9 @@ SPEC_KEYS = [
     ("Short circuit current", "isc"), ("Short Circuit Current", "isc"),
     ("Maximum system voltage", "vsys"),
     ("Net Weight", "kg"), ("Net. Weight", "kg"),
+    # Deky a skladacie panely uvádzajú dva rozmery — rozložený a zložený.
+    # Rozložený musí ísť prvý, inak sa nižšie chytí rozmer regulátora.
+    ("Dimensions(unfolded)", "dim"), ("Dimensions (unfolded)", "dim"),
     ("Dimensions", "dim"), ("J-Box", "jbox"),
 ]
 
@@ -42,7 +45,12 @@ def tidy(v, key=None):
     v = re.split(r"\s*/\s*[\d.x×]+\s*(?:lbs?|inch|in|ft)\b", v)[0]
     v = re.sub(r"\s*/\s*[\d.]+\s*(?:lbs?|inch|in|ft)\b.*$", "", v, flags=re.I)
     if key == "dim":
-        nums = re.findall(r"[\d.]+", v.split("/")[0])
+        # Lensun píše rozmer raz v palcoch a raz v milimetroch, poradie sa
+        # medzi produktmi líši. Vezmeme ten úsek, ktorý má na konci mm,
+        # inak by sa z "112.2x31.4in/2851x797mm" stal panel veľký 11 cm.
+        casti = [c for c in re.split(r"\s*/\s*", v) if re.search(r"mm\b", c, re.I)]
+        zdroj = casti[0] if casti else v.split("/")[0]
+        nums = re.findall(r"[\d.]+", zdroj)
         if len(nums) >= 2:
             return " × ".join(n.replace(".", ",") for n in nums[:3]) + " mm"
     v = re.sub(r"(\d)\s*kgs?\b", r"\1 kg", v, flags=re.I)

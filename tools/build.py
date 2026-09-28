@@ -207,6 +207,18 @@ def build():
             path = os.path.join(pdir, fn)
             open(path, "w", encoding="utf-8").write("".join(out))
             made.append(os.path.relpath(path, ROOT))
+
+    # Keď Lensun produkt stiahne a z katalógu vypadne, jeho stránka by tu
+    # zostala ležať a sitemap by na ňu posielala vyhľadávače. Zmažeme ju.
+    live = {p["id"] for p in ALLP}
+    for d in ("produkt", os.path.join("cz", "produkt")):
+        full = os.path.join(ROOT, d)
+        if not os.path.isdir(full):
+            continue
+        for fn in os.listdir(full):
+            if fn.endswith(".html") and fn[:-5] not in live:
+                os.remove(os.path.join(full, fn))
+                print("   zmazané (produkt už nie je v katalógu):", d + "/" + fn)
     return made
 
 if __name__ == "__main__":
