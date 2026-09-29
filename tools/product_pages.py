@@ -50,8 +50,22 @@ def render(p, ALL, lang, reviews, base):
         f'<button type="button" data-src="{esc(u)}?width=1000" aria-current="{str(k==0).lower()}">'
         f'<img loading="lazy" src="{esc(u)}?width=160" alt="{esc(name)} — {T("fotografia","fotografie",lang)} {k+1}"></button>'
         for k, u in enumerate(imgs[:8]))
+    # Šípky majú zmysel len pri viacerých fotkách; pri jedinej by klikaním
+    # nič nerobili, tak sa vôbec nevykreslia.
+    sipky = ("" if len(imgs) < 2 else
+             f'<button type="button" class="pd-arr pd-prev" id="pdPrev" '
+             f'aria-label="{T("Predchádzajúca fotografia","Předchozí fotografie",lang)}">'
+             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
+             'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+             '<path d="M15 5l-7 7 7 7"/></svg></button>'
+             f'<button type="button" class="pd-arr pd-next" id="pdNext" '
+             f'aria-label="{T("Ďalšia fotografia","Další fotografie",lang)}">'
+             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
+             'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+             '<path d="M9 5l7 7-7 7"/></svg></button>'
+             f'<span class="pd-count" id="pdCount">1/{len(imgs[:8])}</span>')
     gallery = (f'<div class="pd-main"><img id="pdMain" src="{esc(imgs[0])}?width=1000" '
-               f'alt="{esc(name)}"></div>'
+               f'alt="{esc(name)}">{sipky}</div>'
                + (f'<div class="pd-thumbs">{thumbs}</div>' if len(imgs) > 1 else "")
                ) if imgs else '<div class="pd-main"></div>'
 

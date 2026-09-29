@@ -98,6 +98,9 @@ def build(item):
             "sk": sk, "cs": cs, "p": float(v["price"]), "sku": v.get("sku") or "",
             "was": float(v["compare_at_price"]) if v.get("compare_at_price") else None,
         })
+    # Pár produktov má parametre v popise rozsypané vo vetách, nie v riadkoch
+    # „Peak power: …“. Tam sa dajú dopísať ručne cez kľúč spec v zozname.
+    specs.update(item.get("spec") or {})
     if specs:
         rec["spec"] = specs
     pack = parse_pack(text)

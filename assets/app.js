@@ -541,7 +541,9 @@
     "Suzuki":        "Suzuki-Logo.wine.png",
     "Fiat":          "Fiat_logo.svg.webp",
     "Volkswagen":    "Volkswagen_logo.png",
-    "Ineos":         "INEOS_logo.svg.webp"
+    "Ineos":         "INEOS_logo.svg.webp",
+    "Nissan":        "Nissan-logo.png",
+    "Porsche":       "Porsche-logo.png"
   };
   /* cesta k priečinku assets/ sa líši pre /cz/, odvodíme ju zo štýlov */
   function assetBase() {
@@ -632,15 +634,33 @@
     }
     paint();
 
-    /* galéria */
-    [].forEach.call(document.querySelectorAll(".pd-thumbs button"), function (b) {
-      b.onclick = function () {
-        el("pdMain").src = b.dataset.src;
-        [].forEach.call(document.querySelectorAll(".pd-thumbs button"), function (x) {
-          x.setAttribute("aria-current", String(x === b));
-        });
-      };
-    });
+    /* Galéria. Náhľady aj šípky posúvajú to isté — jedna funkcia, ktorá
+       nastaví veľkú fotku, zvýrazní náhľad a prepíše počítadlo. Poradie sa
+       drží v poli, aby sa šípkami dalo prechádzať dokola. */
+    var thumbs = [].slice.call(document.querySelectorAll(".pd-thumbs button"));
+    var foto = 0;
+    function ukazFoto(i) {
+      if (!thumbs.length) return;
+      foto = (i + thumbs.length) % thumbs.length;
+      var b = thumbs[foto];
+      el("pdMain").src = b.dataset.src;
+      thumbs.forEach(function (x) { x.setAttribute("aria-current", String(x === b)); });
+      var c = el("pdCount");
+      if (c) c.textContent = (foto + 1) + "/" + thumbs.length;
+    }
+    thumbs.forEach(function (b, i) { b.onclick = function () { ukazFoto(i); }; });
+    var prev = el("pdPrev"), next = el("pdNext");
+    if (prev) prev.onclick = function () { ukazFoto(foto - 1); };
+    if (next) next.onclick = function () { ukazFoto(foto + 1); };
+    /* šípkami na klávesnici, keď kurzor nie je vo formulárovom poli */
+    if (thumbs.length > 1) {
+      document.addEventListener("keydown", function (e) {
+        var t = e.target.tagName;
+        if (t === "INPUT" || t === "TEXTAREA" || t === "SELECT") return;
+        if (e.key === "ArrowLeft") ukazFoto(foto - 1);
+        else if (e.key === "ArrowRight") ukazFoto(foto + 1);
+      });
+    }
 
     /* objednávka s predvoleným prevedením */
     var ob = el("pdOrder");
