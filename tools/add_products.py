@@ -48,11 +48,48 @@ VARIANTS = [
 
 
 def vlabel(title):
+    """Názov prevedenia. Lensun ho píše zakaždým inak — „Solar Panel +
+    Solar Controller", „Solar Panel + 20A Solar Controller + Extend
+    16ft/5m Cable", „2pcs 80w solar panel" — a zoznam vzoriek na to
+    nestačil: dve rôzne prevedenia vychádzali rovnako a zákazník potom
+    v ponuke nevidel, čím sa líšia. Preto názov neprekladáme, ale
+    skladáme z toho, čo v balení naozaj je."""
     t = (title or "").lower()
-    for pat, names in VARIANTS:
-        if pat in t:
-            return names
-    return ("Základné prevedenie", "Základní provedení")
+
+    # hotová sada má u Lensunu ustálené pomenovanie, to necháme
+    if "complete kit" in t or "full kit" in t or "fullkit" in t:
+        return ("Kompletná sada (panel + MPPT regulátor + fólia)",
+                "Kompletní sada (panel + MPPT regulátor + fólie)")
+
+    kusov = 1
+    if "two solar panels" in t or "2pcs" in t or "2 pcs" in t:
+        kusov = 2
+    elif "three solar panels" in t or "3pcs" in t or "3 pcs" in t:
+        kusov = 3
+
+    mppt = "mppt" in t
+    regulator = "controller" in t or "regulator" in t
+    kabel = "cable" in t or "extend" in t or "connector" in t
+    folia = "decal" in t
+
+    pridane_sk, pridane_cs = [], []
+    if regulator:
+        pridane_sk.append("MPPT regulátor" if mppt else "regulátor")
+        pridane_cs.append("MPPT regulátor" if mppt else "regulátor")
+    if folia:
+        pridane_sk.append("vinylová fólia"); pridane_cs.append("vinylová fólie")
+    if kabel:
+        pridane_sk.append("predlžovací kábel"); pridane_cs.append("prodlužovací kabel")
+
+    if kusov == 1:
+        zaklad_sk = zaklad_cs = "Panel" if pridane_sk else "Samotný panel"
+    elif kusov == 2:
+        zaklad_sk, zaklad_cs = "Dva panely", "Dva panely"
+    else:
+        zaklad_sk, zaklad_cs = "Tri panely", "Tři panely"
+
+    return (" + ".join([zaklad_sk] + pridane_sk),
+            " + ".join([zaklad_cs] + pridane_cs))
 
 
 def fetch(handle):
@@ -116,7 +153,11 @@ def write(P):
     """Prepíše katalóg aj s prepočítanými počtami kategórií a značiek."""
     src = open(DATA, encoding="utf-8").read()
     meta = json.loads(re.search(r"window\.CATALOG_META=(\{.*?\});", src, re.S).group(1))
-    names = {c["k"]: c for c in meta["cats"]}
+    # Názvy kategórií berieme z menu, nie z katalógu — inak by prvý produkt
+    # v dosiaľ prázdnej kategórii spadol na chýbajúcom preklade.
+    from pages_shell import SUBCATS
+    names = {k: {"sk": a, "cs": b} for k, a, b in SUBCATS}
+    names.update({c["k"]: c for c in meta["cats"]})
     cats = Counter(p["cat"] for p in P)
     brands = Counter(p["b"] for p in P if p["b"])
     new_meta = {

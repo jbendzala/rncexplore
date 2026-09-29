@@ -76,6 +76,22 @@ def srec(h, w, sk, cs, stan_sk, stan_cs):
     return rec(h, "rooftent", None, w, sk, cs, dsk, dcs)
 
 
+def box(w, co_sk, co_cs):
+    """Panel tvarovaný na nadstavbu prívesu alebo kryt korby."""
+    return _dvoj(
+        f"Panel {w} W tvarovaný na {co_sk}. Lepí sa priamo na plech a dobíja "
+        "batériu prívesu či vozidla počas státia, bez strešného nosiča a bez "
+        "vŕtania.",
+        f"Panel {w} W tvarovaný na {co_cs}. Lepí se přímo na plech a dobíjí "
+        "baterii přívěsu či vozu při stání, bez střešního nosiče a bez "
+        "vrtání.")
+
+
+def brec(h, cat, w, sk, cs, co_sk, co_cs):
+    dsk, dcs = box(w, co_sk, co_cs)
+    return rec(h, cat, None, w, sk, cs, dsk, dcs)
+
+
 NAHRADY = []          # tentoraz Lensun nič nestiahol, len pridal
 
 NOVE = [
@@ -319,4 +335,106 @@ NOVE = [
          "Solární panel 480W na střešní stan (2 × 240 W)",
          "strešný stan ako dvojica panelov s článkami Back Contact",
          "střešní stan jako dvojice panelů s články Back Contact"),
+
+    # ------------------------ doplnené na žiadosť zákazníka (29. 9. 2026)
+    # Pôvodne vynechané ako takmer-duplikáty alebo mimoeurópske vozidlá.
+    # Keď je cieľom veľkoobchod, partner si vyberá z celej ponuky.
+    frec("lensunsolar-100w-flexible-solar-panel-9bb", 100,
+         "Flexibilný solárny panel 100W s článkami PERC 9BB",
+         "Flexibilní solární panel 100W s články PERC 9BB"),
+    rec("lensunsolar-100w-flexible-solar-panel-with-back-junction-box",
+        "flexible", None, 100,
+        "Flexibilný solárny panel 100W so zadnou pripojovacou skrinkou",
+        "Flexibilní solární panel 100W se zadní připojovací skříňkou",
+        "Flexibilný panel 100 W s pripojovacou skrinkou na zadnej strane — "
+        "kábel vychádza pod panel, nie po jeho boku. Hodí sa tam, kde sa "
+        "prevŕta strecha a vedenie má zmiznúť rovno pod ňou.",
+        "Flexibilní panel 100 W s připojovací skříňkou na zadní straně — "
+        "kabel vychází pod panel, ne po jeho boku. Hodí se tam, kde se "
+        "provrtá střecha a vedení má zmizet rovnou pod ní."),
+    rec("30w-12v-flexible-solar-panel-cable-on-the-back-side",
+        "flexible", None, 30,
+        "Flexibilný solárny panel 30W s káblom na zadnej strane",
+        "Flexibilní solární panel 30W s kabelem na zadní straně",
+        "Flexibilný panel 30 W s káblom vyvedeným zozadu. Okraj zostane "
+        "čistý, takže panel sadne aj tam, kde nie je kam viesť kábel po "
+        "povrchu.",
+        "Flexibilní panel 30 W s kabelem vyvedeným zezadu. Okraj zůstane "
+        "čistý, takže panel sedne i tam, kde není kudy vést kabel po "
+        "povrchu.",
+        spec={"w": "30 W", "eff": "23,5 %"}),
+    rec("lensunsolar-55w-flexible-solar-panel-with-backside-cable",
+        "flexible", None, 55,
+        "Flexibilný solárny panel 55W s káblom na zadnej strane",
+        "Flexibilní solární panel 55W s kabelem na zadní straně",
+        "Flexibilný panel 55 W s káblom vyvedeným zozadu, rozmer 1000 × 350 mm. "
+        "Úzky tvar sadne na strechu karavanu medzi strešné okno a okraj.",
+        "Flexibilní panel 55 W s kabelem vyvedeným zezadu, rozměr 1000 × 350 mm. "
+        "Úzký tvar sedne na střechu karavanu mezi střešní okno a okraj."),
+    rec("lensunsolar-300w-solar-panel-blanket-with-controller",
+        "blanket", None, 300,
+        "Solárna deka 300W v kompletnej sade s MPPT regulátorom",
+        "Solární deka 300W v kompletní sadě s MPPT regulátorem",
+        "Solárna deka 300 W dodaná ako hotová zostava — s vodotesným 20A MPPT "
+        "regulátorom, poistkami, svorkami na batériu a päťmetrovým káblom. "
+        "Netreba doobjednávať nič, po rozbalení sa rovno pripojí.",
+        "Solární deka 300 W dodaná jako hotová sestava — s vodotěsným 20A MPPT "
+        "regulátorem, pojistkami, svorkami na baterii a pětimetrovým kabelem. "
+        "Netřeba doobjednávat nic, po rozbalení se rovnou připojí."),
+    rec("lensunsolar-400w-flexible-solar-panel", "flexible", None, 400,
+        "Flexibilný solárny panel 400W, ohybný do 250°",
+        "Flexibilní solární panel 400W, ohebný do 250°",
+        "Najväčší flexibilný panel v ponuke — 1825 × 1142 mm a 400 W pri "
+        "hmotnosti 7 kg. Ohne sa až do 250°, takže sadne aj na výrazne "
+        "klenutú strechu. Lensun ho vedie ako veľkoobchodnú položku, "
+        "dostupnosť preto overujeme pri objednávke.",
+        "Největší flexibilní panel v nabídce — 1825 × 1142 mm a 400 W při "
+        "hmotnosti 7 kg. Ohne se až do 250°, takže sedne i na výrazně "
+        "klenutou střechu. Lensun jej vede jako velkoobchodní položku, "
+        "dostupnost proto ověřujeme při objednávce."),
+
+    # nadstavby prívesov a kryty korby
+    brec("turtleback-expedition-trailers-lensun-66w-flexible-solar-panel",
+         "rv", 66,
+         "TurtleBack Expedition – 66W solárny panel na úložný box prívesu",
+         "TurtleBack Expedition – 66W solární panel na úložný box přívěsu",
+         "úložný box expedičného prívesu TurtleBack",
+         "úložný box expedičního přívěsu TurtleBack"),
+    brec("load-trail-14k-dump-trailer-tapered-storage-box-lensun-80w-12v-flexible-solar-panel",
+         "rv", 80,
+         "Load Trail 14k – 80W solárny panel na úložný box prívesu",
+         "Load Trail 14k – 80W solární panel na úložný box přívěsu",
+         "zošikmený úložný box sklápacieho prívesu Load Trail 14k",
+         "zešikmený úložný box sklápěcího přívěsu Load Trail 14k"),
+    brec("load-trail-14k-dump-trailer-tapered-small-storage-box-lensun-30w-flexible-solar-panel",
+         "rv", 30,
+         "Load Trail 14k – 30W solárny panel na malý úložný box prívesu",
+         "Load Trail 14k – 30W solární panel na malý úložný box přívěsu",
+         "malý zošikmený úložný box sklápacieho prívesu Load Trail 14k",
+         "malý zešikmený úložný box sklápěcího přívěsu Load Trail 14k"),
+    brec("gmc-sierra-1500-bakflip-mx4-tonneau-cover-lensun-80w-solar-panel",
+         "tonneau", 240,
+         "GMC Sierra 1500 – solárne panely na kryt korby BAKFlip MX4",
+         "GMC Sierra 1500 – solární panely na kryt korby BAKFlip MX4",
+         "pevný kryt korby BAKFlip MX4 ako zostava dvoch alebo troch "
+         "osemdesiatwattových panelov",
+         "pevný kryt korby BAKFlip MX4 jako sestava dvou nebo tří "
+         "osmdesátiwattových panelů"),
+
+    # strešné stany a karavany mimo Európy, doplnené pre úplnosť ponuky
+    srec("intrepid-camp-gear-geo-2-5-rooftop-tent-lensun-200w-flexible-solar-panel", 200,
+         "Solárny panel 200W na strešný stan Intrepid Camp Gear Geo 2.5",
+         "Solární panel 200W na střešní stan Intrepid Camp Gear Geo 2.5",
+         "strešný stan Intrepid Camp Gear Geo 2.5",
+         "střešní stan Intrepid Camp Gear Geo 2.5"),
+    rec("lensunsolar-55w-flexible-solar-panel-for-kimberley-kampers",
+        "flexible", None, 55,
+        "Flexibilný solárny panel 55W pre karavany Kimberley Kampers",
+        "Flexibilní solární panel 55W pro karavany Kimberley Kampers",
+        "Flexibilný panel 55 W s káblom vyvedeným zozadu, pripravený na "
+        "karavany Kimberley Kampers. Je to ten istý panel ako univerzálna "
+        "55W verzia, len s inou etiketou.",
+        "Flexibilní panel 55 W s kabelem vyvedeným zezadu, připravený na "
+        "karavany Kimberley Kampers. Je to tentýž panel jako univerzální "
+        "55W verze, jen s jinou etiketou."),
 ]
