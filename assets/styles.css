@@ -232,6 +232,22 @@ select:focus{border-color:var(--ink)}
 .price s{font-size:12px;color:var(--ink-3)}
 .price .ask{font-size:14px;font-weight:600;color:var(--ink-2)}
 
+/* ---------- cena s DPH a pod ňou bez DPH ----------
+   Zákon žiada, aby spotrebiteľ videl konečnú cenu, preto je nahlas suma
+   s DPH. Firemný zákazník potrebuje aj základ dane, ten ide pod ňu
+   potichu — rovnaké číslo, aké bude na faktúre. */
+.price-main{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
+.price-vat{font-size:11.5px;font-weight:600;color:var(--ink-3);
+  letter-spacing:.02em;text-transform:lowercase}
+.price-net{display:block;width:100%;margin-top:2px;
+  font-size:12.5px;color:var(--ink-3);line-height:1.3}
+/* vo veľkom type (náhľad, detail) znesie o kúsok väčšie písmo */
+.p-price .price-vat,.pd-price .price-vat{font-size:13px}
+.p-price .price-net,.pd-price .price-net{font-size:13.5px;margin-top:4px}
+/* súčet v košíku bez dane — druhý riadok pod celkovou sumou */
+.cart-sum-net{padding-top:0!important;font-size:13px!important;color:var(--ink-3)}
+.cart-sum-net span:last-child{color:var(--ink-3)}
+
 /* ---------- tlacidla ---------- */
 .btn{border:1px solid var(--ink);background:var(--ink);color:var(--bone);
   font-family:var(--f-display);font-weight:700;font-size:13px;letter-spacing:.03em;

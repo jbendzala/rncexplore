@@ -33,7 +33,7 @@
       noneTitle: "Nič sme nenašli", noneText: "Skúste iné hľadané slovo alebo zrušte filtre.",
       noneHelp: "Nenašli ste panel na svoje vozidlo? Napíšte nám — väčšinu tvarovaných panelov vieme vyrobiť na mieru.",
       noneCta: "Kontaktujte nás",
-      detail: "Detail", order: "Do košíka", choose: "Vybrať prevedenie", askPrice: "Cena na vyžiadanie", from: "od",
+      detail: "Detail", order: "Do košíka", choose: "Vybrať prevedenie", askPrice: "Cena na vyžiadanie", from: "od", withVat: "s DPH", noVat: "bez DPH",
       close: "Zavrieť", noImg: "Bez fotografie",
       specs: "Parametre", power: "Výkon", voltage: "Napätie", current: "Prúd",
       weight: "Hmotnosť", code: "Kód produktu", category: "Kategória", brand: "Značka",
@@ -73,7 +73,7 @@
       noneTitle: "Nic jsme nenašli", noneText: "Zkuste jiné hledané slovo nebo zrušte filtry.",
       noneHelp: "Nenašli jste panel na své vozidlo? Napište nám — většinu tvarovaných panelů umíme vyrobit na míru.",
       noneCta: "Kontaktujte nás",
-      detail: "Detail", order: "Do košíku", choose: "Vybrat provedení", askPrice: "Cena na vyžádání", from: "od",
+      detail: "Detail", order: "Do košíku", choose: "Vybrat provedení", askPrice: "Cena na vyžádání", from: "od", withVat: "s DPH", noVat: "bez DPH",
       close: "Zavřít", noImg: "Bez fotografie",
       specs: "Parametry", power: "Výkon", voltage: "Napětí", current: "Proud",
       weight: "Hmotnost", code: "Kód produktu", category: "Kategorie", brand: "Značka",
@@ -124,6 +124,21 @@
     return v;
   }
   function money(usd) { return fmt(convert(usd)); }
+
+  /* Cena bez DPH sa počíta zo zobrazenej sumy s DPH, nie z dolárov znova —
+     tá je po zaokrúhlení a práve ona ide na faktúru. Keby sme ju rátali
+     zvlášť, obe čísla by sa po vynásobení sadzbou nestretli. */
+  function moneyNet(usd) { return fmt(convert(usd) / (1 + (CFG.vat || 0))); }
+
+  /* Cena tak, ako ju vidí zákazník: nahlas suma s DPH, pod ňou tichšie
+     tá bez DPH. Platiteľ DPH potrebuje druhé číslo, spotrebiteľ prvé. */
+  function priceLines(usd, odkedy) {
+    var od = odkedy ? esc(T.from) + " " : "";
+    return '<span class="price-main"><b>' + od + esc(money(usd)) + "</b>" +
+      '<span class="price-vat">' + esc(T.withVat) + "</span></span>" +
+      '<span class="price-net">(' + od + esc(moneyNet(usd)) + " " +
+      esc(T.noVat) + ")</span>";
+  }
   /* naformátuje už prepočítanú sumu (aby 2 × 369 € bolo presne 738 €) */
   function fmt(v) {
     /* celé sumy bez halierov, nezaokrúhlené (doprava, súčet) s nimi —
@@ -231,7 +246,7 @@
     var alt = CUR === "EUR" ? null : null;
     return '<div class="price">' +
       (p.was && CFG.showCompareAt ? "<s>" + esc(money(p.was)) + "</s>" : "") +
-      "<b>" + (many ? esc(T.from) + " " : "") + esc(money(p.usd)) + "</b>" +
+      priceLines(p.usd, many) +
       "</div>";
   }
 
@@ -313,7 +328,7 @@
         (CFG.showPrices === false
           ? '<div class="p-price"><b>' + esc(T.askPrice) + "</b></div>"
           : '<div class="p-price">' + (p.was && CFG.showCompareAt ? "<s>" + esc(money(p.was)) + "</s>" : "") +
-            "<b>" + ((p.var && p.var.length > 1) ? esc(T.from) + " " : "") + esc(money(p.usd)) + "</b></div>") +
+            priceLines(p.usd, !!(p.var && p.var.length > 1)) + "</div>") +
         '<table class="tbl">' + rows.map(function (r) {
           return "<tr><th>" + esc(r[0]) + "</th><td>" + esc(r[1]) + "</td></tr>"; }).join("") + "</table>" +
         '<button class="btn wide" id="toOrder">' + esc(T.order) + "</button>" +
@@ -608,7 +623,7 @@
           ? '<b>' + esc(T.askPrice) + "</b>"
           : (((v.was || p.was) && CFG.showCompareAt
                 ? "<s>" + esc(money(v.was || p.was)) + "</s>" : "") +
-             "<b>" + esc(money(v.p)) + "</b>" +
+             priceLines(v.p, false) +
              (v.sku ? '<span class="pd-sku">' + esc(v.sku) + "</span>" : ""));
       }
       [].forEach.call(document.querySelectorAll("#pdSwatch .swatch"), function (b, k) {

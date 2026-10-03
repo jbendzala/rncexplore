@@ -16,7 +16,7 @@
           toCatalog: "Prejsť do katalógu", keepShopping: "Pokračovať v nákupe",
           item: "Položka", variant: "Prevedenie",
           qty: "Počet", unit: "Cena za kus", sum: "Spolu", remove: "Odstrániť",
-          total: "Celkom s DPH", goods: "Tovar", shipping: "Doprava",
+          total: "Celkom s DPH", totalNet: "bez DPH", goods: "Tovar", shipping: "Doprava",
           dlvCourier: "Doručenie kuriérom", dlvPickup: "Osobný odber v Bytči",
           shipFree: "v cene", free: "bez príplatku",
           vatNote: "Ceny tovaru sú vrátane 23 % DPH. Doprava je jednou sumou za celú objednávku, osobný odber bez príplatku.",
@@ -36,7 +36,7 @@
           toCatalog: "Přejít do katalogu", keepShopping: "Pokračovat v nákupu",
           item: "Položka", variant: "Provedení",
           qty: "Počet", unit: "Cena za kus", sum: "Celkem", remove: "Odstranit",
-          total: "Celkem s DPH", goods: "Zboží", shipping: "Doprava",
+          total: "Celkem s DPH", totalNet: "bez DPH", goods: "Zboží", shipping: "Doprava",
           dlvCourier: "Doručení kurýrem", dlvPickup: "Osobní odběr v Bytči",
           shipFree: "v ceně", free: "bez příplatku",
           vatNote: "Ceny zboží jsou včetně 23 % DPH. Doprava je jednou částkou za celou objednávku, osobní odběr bez příplatku.",
@@ -196,6 +196,12 @@
             esc(pickup ? T.free : fmt(shipCost())) + "</span></div>") +
         '<div class="cart-sum"><span>' + esc(T.total) + "</span><b>" +
           esc(fmt(totals(c) + shipping(c))) + "</b></div>" +
+        /* Firemný zákazník potrebuje aj sumu bez dane. Počíta sa zo
+           zobrazeného súčtu s DPH, nie z cien znova — aby obe čísla
+           sedeli s tým, čo bude na faktúre. */
+        '<div class="cart-sum-net"><span></span><span>' +
+          esc(fmt((totals(c) + shipping(c)) / (1 + (CFG.vat || 0)))) + " " +
+          esc(T.totalNet) + "</span></div>" +
       "</div>" +
       '<p class="note">' + esc(T.vatNote) + "</p>" +
       '<p class="cart-back"><a class="btn ghost" href="produkty.html">' +
