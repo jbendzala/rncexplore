@@ -15,6 +15,16 @@ BASE = "https://www.rncexplore.com/"
 # a v košíku by vyhľadávač indexoval prázdny stav.
 SKIP = {"cz.html", "kosik.html", "cz/kosik.html"}
 
+# Presmerovania majú noindex a do sitemapy nepatria — vyhľadávač by
+# dostal protichodný pokyn: raz indexuj, raz neindexuj.
+try:
+    from build import REDIRECTS
+    for _st in REDIRECTS:
+        SKIP.add("produkt/" + _st + ".html")
+        SKIP.add("cz/produkt/" + _st + ".html")
+except Exception:
+    pass
+
 
 def _priority(rel):
     if rel in ("index.html", "cz/index.html"):

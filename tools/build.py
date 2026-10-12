@@ -90,6 +90,31 @@ HEADS = {
  "podmienky":   ("Obchodné podmienky", "Obchodní podmínky"),
 }
 
+# Produkty, ktoré z katalógu vypadli, ale ich adresu už pozná Google aj
+# zákazníci v záložkách. Namiesto 404 pošleme človeka na nástupcu.
+# Kľúč je stará adresa, hodnota tá, na ktorú sa presmeruje.
+REDIRECTS = {
+    "toyota-land-cruiser-lc250-lensun-140w-hood-flexible-solar-panel":
+        "toyota-landcruiser-prado-250-lensun-115w-bonnet-flexible-solar-panel",
+}
+
+
+def redirect_page(lang, novy):
+    """Statický hosting nevie 301, tak presmerujeme stránkou samotnou.
+       Canonical povie vyhľadávaču, ktorá adresa je tá platná."""
+    cz = lang != "sk"
+    base = "https://www.rncexplore.com/" + ("cz/" if cz else "")
+    cesta = base + "produkt/" + novy + ".html"
+    txt = ("Stránka sa presunula na" if not cz else "Stránka se přesunula na")
+    return (f'<!doctype html>\n<html lang="{"cs" if cz else "sk"}">\n<head>\n'
+            f'<meta charset="utf-8">\n<title>{"Solární panel" if cz else "Solárny panel"}</title>\n'
+            f'<link rel="canonical" href="{cesta}">\n'
+            f'<meta http-equiv="refresh" content="0; url={novy}.html">\n'
+            f'<meta name="robots" content="noindex">\n</head>\n<body>\n'
+            f'<p>{txt} <a href="{novy}.html">{cesta}</a>.</p>\n'
+            f'<script>location.replace("{novy}.html");</script>\n</body>\n</html>\n')
+
+
 def page_head(lang, slug, title):
     sk = lang == "sk"
     home = "Domov" if sk else "Domů"
@@ -208,9 +233,19 @@ def build():
             open(path, "w", encoding="utf-8").write("".join(out))
             made.append(os.path.relpath(path, ROOT))
 
+    # Presmerovania zo zrušených adries
+    for st, novy in REDIRECTS.items():
+        for d, lang in (("produkt", "sk"), (os.path.join("cz", "produkt"), "cs")):
+            full = os.path.join(ROOT, d)
+            os.makedirs(full, exist_ok=True)
+            open(os.path.join(full, st + ".html"), "w", encoding="utf-8").write(
+                redirect_page(lang, novy))
+            made.append(d + "/" + st + ".html")
+
     # Keď Lensun produkt stiahne a z katalógu vypadne, jeho stránka by tu
     # zostala ležať a sitemap by na ňu posielala vyhľadávače. Zmažeme ju.
-    live = {p["id"] for p in ALLP}
+    # Presmerovania sú výnimka — tie tam majú zostať.
+    live = {p["id"] for p in ALLP} | set(REDIRECTS)
     for d in ("produkt", os.path.join("cz", "produkt")):
         full = os.path.join(ROOT, d)
         if not os.path.isdir(full):
