@@ -88,9 +88,8 @@ def main():
         polozky = [p for p in P if p["cat"] == kat]
         cesta = os.path.join(CIEL, f"rncexplore-{subor}.csv")
         prevedeni = fotiek = 0
-        with open(cesta, "w", encoding="utf-8-sig", newline="") as f:
-            w = csv.DictWriter(f, fieldnames=STLPCE, delimiter=",")
-            w.writeheader()
+        riadky = []
+        if True:
             for p in polozky:
                 obrazky = p.get("img") or []
                 for i, v in enumerate(p["var"]):
@@ -132,15 +131,27 @@ def main():
                             r.update({"Image Src": obrazky[0], "Image Position": 1,
                                       "Image Alt Text": p["n"]["sk"]})
                             fotiek += 1
-                    w.writerow(r)
+                    riadky.append(r)
                     prevedeni += 1
                 # ostatné fotografie vlastnými riadkami
                 for k, u in enumerate(obrazky[1:], start=2):
                     r = {x: "" for x in STLPCE}
                     r.update({"Handle": p["id"], "Image Src": u, "Image Position": k,
                               "Image Alt Text": f'{p["n"]["sk"]} — fotografia {k}'})
-                    w.writerow(r)
+                    riadky.append(r)
                     fotiek += 1
+        # Stĺpec, ktorý zostal prázdny v každom riadku, do súboru nepatrí —
+        # Shopify si chýbajúce doplní sám a tabuľka je o dosť čitateľnejšia.
+        pouzite = [k for k in STLPCE if any(str(r.get(k, "")) != "" for r in riadky)]
+        vyhodene = [k for k in STLPCE if k not in pouzite]
+        with open(cesta, "w", encoding="utf-8-sig", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=pouzite, delimiter=",",
+                               extrasaction="ignore")
+            w.writeheader()
+            w.writerows(riadky)
+
+        if vyhodene:
+            print(f"     vynechané prázdne stĺpce: {', '.join(vyhodene)}")
         print(f"  {nazvy.get(kat, kat):<22} {len(polozky):>3} produktov · "
               f"{prevedeni:>3} prevedení · {fotiek:>3} fotografií · "
               f"zľava {int(zlava*100)} %  ->  {os.path.basename(cesta)}")
