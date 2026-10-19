@@ -2,8 +2,15 @@
 """Vypíše obsah produktov do XML vo formáte, aký Shoptet sám exportuje.
 
 CSV import založil produkty, ceny a prevedenia — ale popisy, fotografie,
-zaradenie do kategórií, hmotnosti ani parametre neprenáša. Toto je druhý
-krok: doplní presne to, čo v obchode chýba.
+zaradenie do kategórií ani parametre neprenáša. Toto je druhý krok:
+doplní presne to, čo v obchode chýba.
+
+Hmotnosť tu zámerne nie je. Pole kg v katalógu nie je skutočná hmotnosť
+zásielky — deväťdesiat zo stopäťdesiatich siedmich produktov v ňom má
+rovnakú desiatku, teda náhradnú hodnotu. Technický list pritom uvádza
+panely na 1,5 až 3 kg. Shoptet podľa hmotnosti počíta cenu dopravy, a
+desiatka by ju u väčšiny panelov zdvihla bez dôvodu. Hmotnosti treba
+doplniť podľa skutočného balenia, nie odtiaľto.
 
 Produkty sa nezakladajú znova. Shoptet páruje podľa kódu prevedenia, a
 kódy už v obchode sú — len ich pri importe premenil na veľké písmená a
@@ -26,6 +33,14 @@ from export_shoptet import kod, PARAMETER, DAVKA
 CIEL = os.path.expanduser("~/Documents/rncexplore-shoptet-obsah.xml")
 VYROBCA = "LensunSolar"
 
+# Či import pochopí popisy, fotografie a kategórie tak, ako čakáme, sa
+# z exportu obchodu vyčítať nedá — tie polia sú tam prázdne, tak ich
+# Shoptet nevypísal. Preto píšeme aj súbor s jediným produktom: skúška
+# na ňom nič nestojí a ukáže, čo import naozaj spraví. Vybraný je
+# Discovery Sport, ktorý má štyri prevedenia, osem fotografií a opravené
+# štítky prevedení — na ňom je teda vidieť aj to, že sa párovanie trafilo.
+SKUSKA = "land-rover-discovery-sport-lensun-100w-bonnet-solar-panel"
+
 
 def shoptet_kod(p, v):
     """Kód v podobe, akú z neho urobil Shoptet pri importe CSV."""
@@ -46,7 +61,6 @@ def prevedenie(p, v, odsadenie, s_parametrom):
     r, o = [], " " * odsadenie
     r.append(f"{o}<CODE>{e(shoptet_kod(p, v))}</CODE>")
     r.append(f"{o}<UNIT>ks</UNIT>")
-    r.append(f"{o}<LOGISTIC><WEIGHT>{p.get('kg') or 0}</WEIGHT></LOGISTIC>")
     if s_parametrom:
         r.append(f"{o}<PARAMETERS><PARAMETER>")
         r.append(f"{o}  <NAME>{e(PARAMETER)}</NAME>")
@@ -115,6 +129,11 @@ def main():
     prevedeni = sum(len(p["var"]) for p in P)
     print(f"{len(P)} produktov, {prevedeni} prevedení, {fotiek} fotografií "
           f"-> {CIEL}")
+
+    skus = [p for p in P if p["id"] == SKUSKA]
+    c = os.path.expanduser("~/Documents/rncexplore-shoptet-obsah-skuska.xml")
+    zapis(c, skus, nazvy)
+    print(f"\nna skúšku jeden produkt -> {c}")
 
     # Po dávkach, z tej istej opatrnosti ako pri CSV — a tu navyše preto,
     # že 857 fotografií si Shoptet musí sám stiahnuť.
