@@ -17,7 +17,7 @@ TU = os.path.dirname(os.path.abspath(__file__))
 KOREN = os.path.dirname(TU)
 sys.path.insert(0, TU)
 import seo
-from export_shoptet_xml import shoptet_kod
+from export_shoptet_xml import shoptet_kod, DELIT
 
 def nas_katalog():
     s = open(os.path.join(KOREN, 'data', 'products.js'), encoding='utf-8').read()
@@ -32,10 +32,10 @@ def nas_katalog():
                 'cena': round(seo.price(v['p'], 'EUR'), 2),
                 'kat': kat[p['cat']], 'fotiek': len(p.get('img') or []),
             }
-    return P, naše
+    return P, naše, kat
 
 def main(cesta):
-    P, naše = nas_katalog()
+    P, naše, kategorie = nas_katalog()
     r = ET.parse(cesta).getroot()
     polozky = r.findall('SHOPITEM')
 
@@ -44,13 +44,15 @@ def main(cesta):
     print(f'produktov  {len(polozky):>5}   katalóg {len(P)}')
 
     v_shope, bez_popisu, bez_fotiek, bez_kat = {}, [], [], []
+    kat_produktu = {}
     for it in polozky:
         nazov = (it.findtext('NAME') or '').strip()
         if not (it.findtext('DESCRIPTION') or '').strip():
             bez_popisu.append(nazov)
         if it.find('IMAGES') is None or not it.findall('IMAGES/IMAGE'):
             bez_fotiek.append(nazov)
-        if not it.findall('CATEGORIES/CATEGORY'):
+        kat_produktu[nazov] = {k.text for k in it.findall('CATEGORIES/CATEGORY')}
+        if not kat_produktu[nazov]:
             bez_kat.append(nazov)
         varianty = it.findall('VARIANTS/VARIANT') or [it]
         for v in varianty:
@@ -94,6 +96,24 @@ def main(cesta):
             zlecena.append((k, a['cena'], b['cena'], a['nazov']))
         if b['prev'] and a['prev'] != b['prev']:
             zlestitok.append((k, a['prev'], b['prev']))
+
+    # Zaradenie do kategórií. Posielame rodiča aj podkategóriu, ale Shoptet
+    # rodiča zahodí — produkt v podkategórii považuje za zaradený aj v nej,
+    # takže vo výpise rodiča sa objaví tak či tak. Za správne preto berieme
+    # obe podoby.
+    zle_kat = []
+    for p in P:
+        kat = kategorie[p['cat']]
+        pod = f'{kat} > {p["b"]}' if p['cat'] in DELIT and p.get('b') else None
+        ok = [{kat}] if pod is None else [{pod}, {kat, pod}]
+        maju = kat_produktu.get(p['n']['sk'])
+        if maju is None or maju not in ok:
+            zle_kat.append((p['n']['sk'], sorted(maju) if maju else None,
+                            sorted(ok[-1])))
+    print()
+    print(f'zlé zaradenie do kategórií {len(zle_kat):>4}')
+    for n, m, c in zle_kat[:8]:
+        print(f'   {n[:44]:<46} má {m}  čakáme {c}')
 
     print()
     print(f'prevedení bez ceny      {len(bezceny):>4}')
