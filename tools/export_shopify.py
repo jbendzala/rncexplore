@@ -27,6 +27,11 @@ ODDELENIA = [
     ("rooftent", "stresne-stany",      0.25),
 ]
 
+# Zľavy pre zvyšné oddelenia zatiaľ nie sú dohodnuté. Produkty do súhrnného
+# súboru patria aj tak — veľkoobchodné stĺpce im zostanú prázdne, nech je
+# na prvý pohľad vidieť, čo treba doplniť, namiesto vymysleného čísla.
+ZLAVY = {k: z for k, _, z in ODDELENIA}
+
 STLPCE = [
     "Handle", "Title", "Body (HTML)", "Vendor", "Product Category", "Type",
     "Tags", "Published", "Option1 Name", "Option1 Value",
@@ -84,8 +89,9 @@ def main():
     nazvy = {c["k"]: c["sk"] for c in meta["cats"]}
     dph = seo.CFG.get("vat", 0.23)
 
-    for kat, subor, zlava in ODDELENIA:
-        polozky = [p for p in P if p["cat"] == kat]
+    davky = [(k, su, z) for k, su, z in ODDELENIA] + [(None, "vsetky-produkty", None)]
+    for kat, subor, zlava in davky:
+        polozky = [p for p in P if kat is None or p["cat"] == kat]
         cesta = os.path.join(CIEL, f"rncexplore-{subor}.csv")
         prevedeni = fotiek = 0
         riadky = []
@@ -95,7 +101,8 @@ def main():
                 for i, v in enumerate(p["var"]):
                     brutto = seo.price(v["p"], "EUR")
                     netto = brutto / (1 + dph)
-                    vo_netto = netto * (1 - zlava)
+                    zl = ZLAVY.get(p["cat"])
+                    vo_netto = None if zl is None else netto * (1 - zl)
                     r = {k: "" for k in STLPCE}
                     r.update({
                         "Handle": p["id"],
@@ -109,9 +116,11 @@ def main():
                         "Variant Taxable": "TRUE",
                         "Variant Weight Unit": "kg",
                         "Cena bez DPH (EUR)": ciarka(netto),
-                        "Veľkoobchodná zľava (%)": int(zlava * 100),
-                        "Veľkoobchodná cena bez DPH (EUR)": ciarka(vo_netto),
-                        "Veľkoobchodná cena s DPH (EUR)": ciarka(vo_netto * (1 + dph)),
+                        "Veľkoobchodná zľava (%)": "" if zl is None else int(zl * 100),
+                        "Veľkoobchodná cena bez DPH (EUR)":
+                            "" if vo_netto is None else ciarka(vo_netto),
+                        "Veľkoobchodná cena s DPH (EUR)":
+                            "" if vo_netto is None else ciarka(vo_netto * (1 + dph)),
                     })
                     if i == 0:          # prvý riadok nesie údaje o produkte
                         r.update({
@@ -152,9 +161,16 @@ def main():
 
         if vyhodene:
             print(f"     vynechané prázdne stĺpce: {', '.join(vyhodene)}")
-        print(f"  {nazvy.get(kat, kat):<22} {len(polozky):>3} produktov · "
+        popis = "VŠETKY ODDELENIA" if kat is None else nazvy.get(kat, kat)
+        if kat is None:
+            chyba = sorted({nazvy.get(q["cat"], q["cat"]) for q in polozky
+                            if q["cat"] not in ZLAVY})
+            if chyba:
+                print(f"     bez dohodnutej veľkoobchodnej zľavy: {', '.join(chyba)}")
+        print(f"  {popis:<22} {len(polozky):>3} produktov · "
               f"{prevedeni:>3} prevedení · {fotiek:>3} fotografií · "
-              f"zľava {int(zlava*100)} %  ->  {os.path.basename(cesta)}")
+              f"zľava {str(int(zlava*100))+' %' if zlava else 'podľa oddelenia'}"
+              f"  ->  {os.path.basename(cesta)}")
 
 
 if __name__ == "__main__":
