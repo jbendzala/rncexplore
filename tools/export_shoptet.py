@@ -22,6 +22,12 @@ import seo
 
 CIEL = os.path.expanduser("~/Documents/rncexplore-shoptet-produkty.csv")
 
+# Shoptet veľký súbor odmietol, hoci malý s tou istou hlavičkou prešiel —
+# ide teda o strop na objem, nie o formát. Súbor preto píšeme aj po
+# dávkach. Produkt sa nikdy nerozdelí: jeho prevedenia musia prísť spolu,
+# inak by Shoptet založil ten istý panel dvakrát.
+DAVKA = 40          # koľko produktov najviac do jedného súboru
+
 # Názov stĺpca s prevedením sa v Shoptete stane názvom parametra,
 # ktorý zákazník uvidí nad výberom.
 PARAMETER = "Prevedenie"
@@ -90,6 +96,37 @@ def main():
     with open(CIEL, "w", encoding="utf-8-sig", newline="") as f:
         f.write("\r\n".join(riadky) + "\r\n")
     print(f"{produktov} produktov, {prevedeni} prevedení -> {CIEL}")
+
+    # to isté po dávkach
+    davky, teraz, kusov = [], [], 0
+    for p in P:
+        if kusov and kusov % DAVKA == 0:
+            davky.append(teraz); teraz = []
+        teraz.append(p); kusov += 1
+    if teraz:
+        davky.append(teraz)
+
+    print(f"\npo dávkach (najviac {DAVKA} produktov na súbor):")
+    skupina = 0
+    for i, cast in enumerate(davky, 1):
+        rr = [hlavicka]
+        for p in cast:
+            viac = len(p["var"]) > 1
+            if viac:
+                skupina += 1
+            for v in p["var"]:
+                cena = f'{seo.price(v["p"], "EUR"):.2f}'.replace(".", ",")
+                rr.append(";".join([
+                    pole(kod(p, v)), pole(skupina if viac else "", False),
+                    pole(p["n"]["sk"]), pole("", False), pole(cena),
+                    pole(""), pole(""), pole(""), pole("", False), pole("", False),
+                    pole(v["sk"] if viac else "", False), pole(SKLAD), "",
+                ]))
+        c = os.path.expanduser(f"~/Documents/rncexplore-shoptet-{i}-z-{len(davky)}.csv")
+        with open(c, "w", encoding="utf-8-sig", newline="") as f:
+            f.write("\r\n".join(rr) + "\r\n")
+        print(f"  {os.path.basename(c):<34} {len(cast):>3} produktov · "
+              f"{len(rr)-1:>3} riadkov")
 
 
 if __name__ == "__main__":
