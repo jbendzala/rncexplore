@@ -100,6 +100,16 @@ def cesty(p, kategoria):
     return [kategoria], kategoria
 
 
+def seo_popis(p):
+    """Popis do výsledkov vyhľadávania. Google ukáže asi 155 znakov, zvyšok
+    odreže — tak ho režeme sami, a na hranici slova, nie v polovici."""
+    t = p["d"]["sk"]
+    if len(t) <= 155:
+        return t
+    kus = t[:155]
+    return kus[:kus.rfind(" ")].rstrip(" ,;–-") + "…"
+
+
 def shopitem(p, kategoria):
     viac = len(p["var"]) > 1
     r = ["  <SHOPITEM>"]
@@ -107,6 +117,15 @@ def shopitem(p, kategoria):
     r.append(f"    <SHORT_DESCRIPTION>{e(prvá_veta(p['d']['sk']))}</SHORT_DESCRIPTION>")
     r.append(f"    <DESCRIPTION>{e(telo(p))}</DESCRIPTION>")
     r.append(f"    <MANUFACTURER>{e(VYROBCA)}</MANUFACTURER>")
+    # Titulok a popis pre vyhľadávače. Bez nich dá Shoptet každému produktu
+    # predvolený titulok a Google si popis vyberie sám z čohokoľvek na
+    # stránke. Titulok dopĺňame firmou, aby bol v zoznamoch rozpoznateľný.
+    r.append(f"    <SEO_TITLE>{e(p['n']['sk'] + ' | RnC Explore')}</SEO_TITLE>")
+    r.append(f"    <META_DESCRIPTION>{e(seo_popis(p))}</META_DESCRIPTION>")
+    if p.get("v"):
+        r.append("    <RELATED_VIDEOS><RELATED_VIDEO>"
+                 f"<YOUTUBE_VIDEO_CODE>{e(p['v'])}</YOUTUBE_VIDEO_CODE>"
+                 "</RELATED_VIDEO></RELATED_VIDEOS>")
     zoznam, hlavna = cesty(p, kategoria)
     r.append("    <CATEGORIES>")
     r += [f"      <CATEGORY>{e(k)}</CATEGORY>" for k in zoznam]
@@ -146,7 +165,10 @@ def shopitem(p, kategoria):
     return r
 
 
-SCHEMA = os.path.join(TU, "shoptet-schema", "products-supplier-v10.rng")
+# Validujeme proti complete, nie supplier: SEO_TITLE, META_DESCRIPTION a
+# RELATED_VIDEOS supplier nepozná. Complete je nadmnožina, takže nič
+# nestrácame.
+SCHEMA = os.path.join(TU, "shoptet-schema", "products-complete-v10.rng")
 
 
 def over(cesta):
