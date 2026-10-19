@@ -82,6 +82,24 @@ def prevedenie(p, v, odsadenie, s_parametrom):
     return r
 
 
+# Značku vozidla nemožno dať do MANUFACTURER — tam patrí LensunSolar a
+# potrebujeme ho tak pre Heureku a Google. Preto je značka podkategóriou.
+# Delíme len panely na kapotu: tých je 103 a každý patrí ku konkrétnemu
+# autu. Flexibilné panely a panely pre strešné stany sú univerzálne, tam
+# by podkategória podľa značky nemala čo znamenať.
+DELIT = {"hood"}
+
+
+def cesty(p, kategoria):
+    """Kategórie produktu. Shoptet vnorenie zapisuje cez „>“ a strom si
+    vytvorí sám. Rodiča vypisujeme zvlášť, aby sa produkt objavil aj v ňom
+    bez ohľadu na to, či je v obchode zapnuté dedenie z podkategórií."""
+    if p["cat"] in DELIT and p.get("b"):
+        podkat = f'{kategoria} > {p["b"]}'
+        return [kategoria, podkat], podkat
+    return [kategoria], kategoria
+
+
 def shopitem(p, kategoria):
     viac = len(p["var"]) > 1
     r = ["  <SHOPITEM>"]
@@ -89,7 +107,11 @@ def shopitem(p, kategoria):
     r.append(f"    <SHORT_DESCRIPTION>{e(prvá_veta(p['d']['sk']))}</SHORT_DESCRIPTION>")
     r.append(f"    <DESCRIPTION>{e(telo(p))}</DESCRIPTION>")
     r.append(f"    <MANUFACTURER>{e(VYROBCA)}</MANUFACTURER>")
-    r.append(f"    <CATEGORIES><CATEGORY>{e(kategoria)}</CATEGORY></CATEGORIES>")
+    zoznam, hlavna = cesty(p, kategoria)
+    r.append("    <CATEGORIES>")
+    r += [f"      <CATEGORY>{e(k)}</CATEGORY>" for k in zoznam]
+    r.append(f"      <DEFAULT_CATEGORY>{e(hlavna)}</DEFAULT_CATEGORY>")
+    r.append("    </CATEGORIES>")
 
     obrazky = p.get("img") or []
     if obrazky:
