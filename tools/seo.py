@@ -43,6 +43,11 @@ def _cfg():
         "markup": num("markup", 1.0), "vat": num("vat", 0.0),
         "rates": rates, "ship": ship, "shipInPrice": flag("shippingInPrice"),
         "rounding": txt("rounding"),
+        # Údaje, ktoré na webe dopĺňa JavaScript do prázdnych <span>. Mimo
+        # prehliadača ich musí niekto dosadiť — napríklad export obsahu do
+        # cudzieho redakčného systému, kde náš skript nebeží.
+        "dic": txt("dic"), "icDph": txt("icDph"), "hours": txt("hours"),
+        "infoEmail": txt("infoEmail"), "web": txt("web"),
     }
 
 

@@ -5,13 +5,17 @@ Telo článku sa skladá do HTML, aby sa dalo nahrať do redakčného systému
 bez prepisovania. Fotografie a videá zostávajú ako odkazy — sú na
 serveri Lensunu a na YouTube, nesťahujeme ich.
 """
-import csv, html, os, sys
+import csv, html, os, re, sys
 
 TU = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, TU)
 import blog_content as B
 
 CIEL = os.path.expanduser("~/Documents/rncexplore-blog.csv")
+# Články sa do Shoptetu nedajú naimportovať — produktový XML nesie len
+# produkty. Vkladajú sa teda ručne, a z bunky v tabuľke sa HTML kopíruje
+# zle. Preto píšeme aj súbor na článok: otvoriť, označiť všetko, vložiť.
+CIEL_HTML = os.path.expanduser("~/Documents/rncexplore-shoptet-blog")
 WEB = "https://www.rncexplore.com"
 
 
@@ -51,6 +55,35 @@ def main():
                 f'{WEB}/cz/blog/{p["slug"]}.html',
             ])
     print(f"{len(B.POSTS)} článkov -> {CIEL}")
+
+    os.makedirs(CIEL_HTML, exist_ok=True)
+    print(f"\npo článkoch na vloženie do Shoptetu -> {CIEL_HTML}")
+    for p in B.POSTS:
+        for i, pr in ((0, ""), (1, "cz-")):
+            # perex je v Shoptete samostatné pole, do tela nepatrí
+            t = telo(p, i)
+            with open(os.path.join(CIEL_HTML, f'{pr}{p["slug"]}.html'),
+                      "w", encoding="utf-8") as f:
+                f.write(re.sub(r">\s*<", ">\n<", t).strip() + "\n")
+    print(f"  {len(B.POSTS) * 2} súborov (slovensky aj česky)")
+
+    # Prehľad na vkladanie — čo kam a v akom poradí, od najstaršieho.
+    sup = os.path.join(CIEL_HTML, "_prehlad.txt")
+    with open(sup, "w", encoding="utf-8") as f:
+        f.write("Články na vloženie do Shoptetu (Obsah -> Články).\n"
+                "Poradie je od najstaršieho, aby dátumy v blogu vyšli.\n\n")
+        for p in sorted(B.POSTS, key=lambda x: x["date"]):
+            rub = B.CAT.get(p["cat"], (p["cat"], p["cat"]))
+            f.write(f'{p["date"]}  {rub[0]:<22} {p["title"][0]}\n'
+                    f'          adresa: {p["slug"]}\n'
+                    f'          telo:   {p["slug"]}.html / cz-{p["slug"]}.html\n'
+                    f'          perex:  {p["lead"][0][:96]}\n')
+            if p.get("hero"):
+                f.write(f'          foto:   {p["hero"]}\n')
+            if p.get("video"):
+                f.write(f'          video:  https://youtu.be/{p["video"]}\n')
+            f.write("\n")
+    print(f"  _prehlad.txt — zoznam s perexmi, fotkami a poradím")
 
 
 if __name__ == "__main__":
