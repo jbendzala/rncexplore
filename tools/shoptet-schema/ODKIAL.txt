@@ -1,0 +1,15 @@
+Schéma, proti ktorej Shoptet validuje importný XML feed. Bez nej sa chyba
+„Váš feed neprešiel validáciou podľa RNG schémy“ dá len hádať — s ňou ju
+xmllint ukáže na riadok.
+
+Stiahnuté 19. 10. 2026 z:
+  https://www.shoptet.cz/export/schema/products-datatype-v10.rng
+  https://www.shoptet.cz/export/schema/products-supplier-v10.rng
+  https://www.shoptet.cz/export/schema/products-complete-v10.rng
+
+Súbory sa navzájom includujú podľa názvu, takže musia zostať spolu a
+nesmú sa premenovať. Validujeme proti supplier — je to podmnožina
+complete, takže čo prejde ním, prejde aj tým druhým.
+
+Ručná kontrola:
+  xmllint --noout --relaxng tools/shoptet-schema/products-supplier-v10.rng subor.xml

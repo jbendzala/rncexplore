@@ -17,11 +17,15 @@ kódy už v obchode sú — len ich pri importe premenil na veľké písmená a
 plus nahradil pomlčkou. Preto ich tu vypisujeme v tej istej podobe, inak
 by sa katalóg založil druhý raz.
 
+Súbory si pred odovzdaním sami overíme proti schéme Shoptetu, ktorá je
+v tools/shoptet-schema. Import totiž odmietne celý feed jednou vetou,
+bez riadka a bez názvu prvku — hľadať chybu až v obchode je drahé.
+
 Cenu zámerne neposielame. V obchode je správna (maloobchodná s DPH) a
 pri opakovanom zápise by sa dala pokaziť, keby import číslo pochopil ako
 cenu bez DPH. Tento súbor nesie iba obsah.
 """
-import html, json, os, re, sys
+import html, json, os, re, subprocess, sys
 
 TU = os.path.dirname(os.path.abspath(__file__))
 KOREN = os.path.dirname(TU)
@@ -84,16 +88,18 @@ def shopitem(p, kategoria):
         r += [f"      <IMAGE>{e(u)}</IMAGE>" for u in obrazky]
         r.append("    </IMAGES>")
 
-    # Parametre na úrovni produktu — podľa nich sa dá v Shoptete filtrovať.
+    # Parametre na úrovni produktu. PARAMETERS tu nesmie byť — schéma ho
+    # pripúšťa len vnútri prevedenia, kde určuje jeho kombináciu. Pre údaje
+    # o celom produkte má Shoptet INFORMATION_PARAMETERS.
     par = [("Výkon", f"{p['w']} W")] if p.get("w") else []
     if p.get("b"):
         par.append(("Značka vozidla", p["b"]))
     if par:
-        r.append("    <PARAMETERS>")
+        r.append("    <INFORMATION_PARAMETERS>")
         for a, b in par:
-            r.append(f"      <PARAMETER><NAME>{e(a)}</NAME>"
-                     f"<VALUE>{e(b)}</VALUE></PARAMETER>")
-        r.append("    </PARAMETERS>")
+            r.append(f"      <INFORMATION_PARAMETER><NAME>{e(a)}</NAME>"
+                     f"<VALUE>{e(b)}</VALUE></INFORMATION_PARAMETER>")
+        r.append("    </INFORMATION_PARAMETERS>")
 
     if viac:
         r.append("    <VARIANTS>")
@@ -107,6 +113,28 @@ def shopitem(p, kategoria):
 
     r.append("  </SHOPITEM>")
     return r
+
+
+SCHEMA = os.path.join(TU, "shoptet-schema", "products-supplier-v10.rng")
+
+
+def over(cesta):
+    """Nechá súbor skontrolovať tou istou schémou, akou ho kontroluje Shoptet.
+
+    Import odmietne celý feed jednou vetou, bez riadka a bez názvu prvku.
+    xmllint povie presne, čo je zle — preto to robíme tu a nie až v obchode.
+    """
+    try:
+        v = subprocess.run(["xmllint", "--noout", "--relaxng", SCHEMA, cesta],
+                           capture_output=True, text=True)
+    except FileNotFoundError:
+        return "xmllint nie je k dispozícii, neoverené"
+    if v.returncode == 0:
+        return "schéma v poriadku"
+    chyby = [r for r in v.stderr.splitlines() if "validity error" in r]
+    for r in chyby[:5]:
+        print("   " + r.strip())
+    return f"NEPREJDE — {len(chyby)} chýb"
 
 
 def zapis(cesta, produkty, nazvy):
@@ -128,12 +156,12 @@ def main():
     fotiek = sum(len(p.get("img") or []) for p in P)
     prevedeni = sum(len(p["var"]) for p in P)
     print(f"{len(P)} produktov, {prevedeni} prevedení, {fotiek} fotografií "
-          f"-> {CIEL}")
+          f"-> {CIEL}\n   {over(CIEL)}")
 
     skus = [p for p in P if p["id"] == SKUSKA]
     c = os.path.expanduser("~/Documents/rncexplore-shoptet-obsah-skuska.xml")
     zapis(c, skus, nazvy)
-    print(f"\nna skúšku jeden produkt -> {c}")
+    print(f"\nna skúšku jeden produkt -> {c}\n   {over(c)}")
 
     # Po dávkach, z tej istej opatrnosti ako pri CSV — a tu navyše preto,
     # že 857 fotografií si Shoptet musí sám stiahnuť.
@@ -143,7 +171,8 @@ def main():
         c = os.path.expanduser(f"~/Documents/rncexplore-shoptet-obsah-{i}-z-{len(davky)}.xml")
         zapis(c, cast, nazvy)
         print(f"  {os.path.basename(c):<40} {len(cast):>3} produktov · "
-              f"{sum(len(p.get('img') or []) for p in cast):>3} fotografií")
+              f"{sum(len(p.get('img') or []) for p in cast):>3} fotografií · "
+              f"{over(c)}")
 
 
 if __name__ == "__main__":
