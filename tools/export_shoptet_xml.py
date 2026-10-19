@@ -5,12 +5,14 @@ CSV import založil produkty, ceny a prevedenia — ale popisy, fotografie,
 zaradenie do kategórií ani parametre neprenáša. Toto je druhý krok:
 doplní presne to, čo v obchode chýba.
 
-Hmotnosť tu zámerne nie je. Pole kg v katalógu nie je skutočná hmotnosť
-zásielky — deväťdesiat zo stopäťdesiatich siedmich produktov v ňom má
-rovnakú desiatku, teda náhradnú hodnotu. Technický list pritom uvádza
-panely na 1,5 až 3 kg. Shoptet podľa hmotnosti počíta cenu dopravy, a
-desiatka by ju u väčšiny panelov zdvihla bez dôvodu. Hmotnosti treba
-doplniť podľa skutočného balenia, nie odtiaľto.
+Hmotnosť posielame z poľa kg, nie z technického listu. Lensun uvádza
+čistú hmotnosť panela (1 až 3,5 kg pri paneloch na kapotu), ale prepravca
+účtuje zásielku — a tá je tvrdý obal veľkosti 1,4 × 0,5 m. Pole kg je
+odhad prepravnej hmotnosti a je trojnásobok až desaťnásobok čistej, čo
+tomu zodpovedá. Čistú hmotnosť zákazník vidí v tabuľke parametrov.
+
+Sú to odhady, nie vážené čísla. Keď klient zváži jednu skutočnú zásielku
+od každej veľkosti, prepočítame ich.
 
 Produkty sa nezakladajú znova. Shoptet páruje podľa kódu prevedenia, a
 kódy už v obchode sú — len ich pri importe premenil na veľké písmená a
@@ -74,6 +76,7 @@ def prevedenie(p, v, odsadenie, s_parametrom):
     r, o = [], " " * odsadenie
     r.append(f"{o}<CODE>{e(shoptet_kod(p, v))}</CODE>")
     r.append(f"{o}<UNIT>ks</UNIT>")
+    r.append(f"{o}<LOGISTIC><WEIGHT>{p['kg']}</WEIGHT></LOGISTIC>")
     if s_parametrom:
         r.append(f"{o}<PARAMETERS><PARAMETER>")
         r.append(f"{o}  <NAME>{e(PARAMETER)}</NAME>")
