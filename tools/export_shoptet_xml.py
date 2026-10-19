@@ -47,8 +47,17 @@ SKUSKA = "land-rover-discovery-sport-lensun-100w-bonnet-solar-panel"
 
 
 def shoptet_kod(p, v):
-    """Kód v podobe, akú z neho urobil Shoptet pri importe CSV."""
-    return kod(p, v).upper().replace("+", "-")
+    """Kód v podobe, akú z neho urobil Shoptet pri importe CSV.
+
+    Odpozerané z exportu obchodu: veľké písmená, plus aj zvieračka na
+    pomlčku, medzery zostávajú (LS-75FX2-RG - 60FX2-RG-D185 je v obchode
+    s medzerami). Zvieračka je v katalógu jediná — 2*LS-200FX2-N+FullKit —
+    a práve na nej sa párovanie prvý raz netrafilo.
+    """
+    k = kod(p, v).upper()
+    for znak in "+*":
+        k = k.replace(znak, "-")
+    return k
 
 
 def e(x):
