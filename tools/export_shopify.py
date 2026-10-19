@@ -8,7 +8,7 @@ len prevedenia, a za nimi riadky s ostatnými fotografiami.
 Navyše sú v súbore štyri stĺpce s cenami, ktoré Shopify nepozná a pri
 importe ich preskočí — sú tam pre nás a pre veľkoobchodných partnerov.
 """
-import csv, html, json, os, re, sys
+import collections, csv, html, json, os, re, sys
 
 TU = os.path.dirname(os.path.abspath(__file__))
 KOREN = os.path.dirname(TU)
@@ -27,10 +27,11 @@ ODDELENIA = [
     ("rooftent", "stresne-stany",      0.25),
 ]
 
-# Zľavy pre zvyšné oddelenia zatiaľ nie sú dohodnuté. Produkty do súhrnného
-# súboru patria aj tak — veľkoobchodné stĺpce im zostanú prázdne, nech je
-# na prvý pohľad vidieť, čo treba doplniť, namiesto vymysleného čísla.
-ZLAVY = {k: z for k, _, z in ODDELENIA}
+# Veľkoobchodná zľava pre každú kategóriu. Klient ju dohodol takto:
+# panely na kapotu 30 %, všetko ostatné 25 %. Preto má zvyšok spoločnú
+# hodnotu a netreba ho vypisovať po jednom.
+ZLAVA_INAK = 0.25
+ZLAVY = collections.defaultdict(lambda: ZLAVA_INAK, {k: z for k, _, z in ODDELENIA})
 
 STLPCE = [
     "Handle", "Title", "Body (HTML)", "Vendor", "Product Category", "Type",
@@ -101,7 +102,7 @@ def main():
                 for i, v in enumerate(p["var"]):
                     brutto = seo.price(v["p"], "EUR")
                     netto = brutto / (1 + dph)
-                    zl = ZLAVY.get(p["cat"])
+                    zl = ZLAVY[p["cat"]]
                     vo_netto = None if zl is None else netto * (1 - zl)
                     r = {k: "" for k in STLPCE}
                     r.update({
@@ -163,10 +164,9 @@ def main():
             print(f"     vynechané prázdne stĺpce: {', '.join(vyhodene)}")
         popis = "VŠETKY ODDELENIA" if kat is None else nazvy.get(kat, kat)
         if kat is None:
-            chyba = sorted({nazvy.get(q["cat"], q["cat"]) for q in polozky
-                            if q["cat"] not in ZLAVY})
-            if chyba:
-                print(f"     bez dohodnutej veľkoobchodnej zľavy: {', '.join(chyba)}")
+            zl = collections.Counter(ZLAVY[q["cat"]] for q in polozky)
+            print("     veľkoobchodné zľavy: " + ", ".join(
+                f"{int(z*100)} % na {n} produktov" for z, n in sorted(zl.items())))
         print(f"  {popis:<22} {len(polozky):>3} produktov · "
               f"{prevedeni:>3} prevedení · {fotiek:>3} fotografií · "
               f"zľava {str(int(zlava*100))+' %' if zlava else 'podľa oddelenia'}"
