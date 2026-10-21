@@ -33,10 +33,11 @@ TU = os.path.dirname(os.path.abspath(__file__))
 KOREN = os.path.dirname(TU)
 sys.path.insert(0, TU)
 import seo
+import vystup
 from export_shopify import telo          # popis v HTML — rovnaký ako pre Shopify
 from export_shoptet import kod, PARAMETER, DAVKA
 
-CIEL = os.path.expanduser("~/Documents/rncexplore-shoptet-obsah.xml")
+CIEL = vystup.kam(vystup.IMPORT, "obsah-xml", "obsah.xml")
 VYROBCA = "LensunSolar"
 
 # Či import pochopí popisy, fotografie a kategórie tak, ako čakáme, sa
@@ -215,7 +216,7 @@ def main():
           f"-> {CIEL}\n   {over(CIEL)}")
 
     skus = [p for p in P if p["id"] == SKUSKA]
-    c = os.path.expanduser("~/Documents/rncexplore-shoptet-obsah-skuska.xml")
+    c = vystup.kam(vystup.IMPORT, "obsah-xml", "skuska-jeden-produkt.xml")
     zapis(c, skus, nazvy)
     print(f"\nna skúšku jeden produkt -> {c}\n   {over(c)}")
 
@@ -224,7 +225,8 @@ def main():
     davky = [P[i:i + DAVKA] for i in range(0, len(P), DAVKA)]
     print(f"\npo dávkach (najviac {DAVKA} produktov na súbor):")
     for i, cast in enumerate(davky, 1):
-        c = os.path.expanduser(f"~/Documents/rncexplore-shoptet-obsah-{i}-z-{len(davky)}.xml")
+        c = vystup.kam(vystup.IMPORT, "obsah-xml",
+                       f"davka-{i}-z-{len(davky)}.xml")
         zapis(c, cast, nazvy)
         print(f"  {os.path.basename(c):<40} {len(cast):>3} produktov · "
               f"{sum(len(p.get('img') or []) for p in cast):>3} fotografií · "

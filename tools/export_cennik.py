@@ -136,7 +136,8 @@ def build(out):
 
 
 if __name__ == "__main__":
-    dest = sys.argv[1] if len(sys.argv) > 1 else os.path.expanduser(
-        "~/Documents/rncexplore-cennik.xlsx")
+    import vystup
+    dest = sys.argv[1] if len(sys.argv) > 1 else vystup.kam(
+        vystup.NASE, "cennik.xlsx")
     n, v = build(dest)
     print(f"{n} produktov, {v} prevedení -> {dest}")

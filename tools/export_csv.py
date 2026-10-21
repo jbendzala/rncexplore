@@ -10,8 +10,9 @@ TU = os.path.dirname(os.path.abspath(__file__))
 KOREN = os.path.dirname(TU)
 sys.path.insert(0, TU)
 import seo
+import vystup
 
-CIEL = os.path.expanduser("~/Documents/rncexplore-produkty.csv")
+CIEL = vystup.kam(vystup.NASE, "produkty.csv")
 WEB = "https://www.rncexplore.com"
 
 

@@ -23,10 +23,11 @@ TU = os.path.dirname(os.path.abspath(__file__))
 KOREN = os.path.dirname(TU)
 sys.path.insert(0, TU)
 import seo
+import vystup
 import pages_content as pc
 from build import catalog_counts
 
-CIEL = os.path.expanduser("~/Documents/rncexplore-shoptet-stranky")
+CIEL = vystup.kam(vystup.VLOZIT, "stranky")
 
 # Ktoré stránky vyviezť a ako sa budú volať súbory. Košík, katalóg ani
 # domovskú stránku nevyvážame — tie si Shoptet robí sám.

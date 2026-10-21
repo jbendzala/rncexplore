@@ -14,8 +14,9 @@ TU = os.path.dirname(os.path.abspath(__file__))
 KOREN = os.path.dirname(TU)
 sys.path.insert(0, TU)
 import seo
+import vystup
 
-CIEL = os.path.expanduser("~/Documents")
+CIEL = vystup.kam(vystup.NASE, "oddelenia")
 VENDOR = "LensunSolar"
 KATEGORIA_G = "Hardware > Power & Electrical Supplies > Solar Energy Kits"
 
@@ -93,7 +94,7 @@ def main():
     davky = [(k, su, z) for k, su, z in ODDELENIA] + [(None, "vsetky-produkty", None)]
     for kat, subor, zlava in davky:
         polozky = [p for p in P if kat is None or p["cat"] == kat]
-        cesta = os.path.join(CIEL, f"rncexplore-{subor}.csv")
+        cesta = os.path.join(CIEL, f"{subor}.csv")
         prevedeni = fotiek = 0
         riadky = []
         if True:

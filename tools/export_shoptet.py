@@ -19,8 +19,9 @@ TU = os.path.dirname(os.path.abspath(__file__))
 KOREN = os.path.dirname(TU)
 sys.path.insert(0, TU)
 import seo
+import vystup
 
-CIEL = os.path.expanduser("~/Documents/rncexplore-shoptet-produkty.csv")
+CIEL = vystup.kam(vystup.IMPORT, "produkty-csv", "produkty.csv")
 
 # Shoptet veľký súbor odmietol, hoci malý s tou istou hlavičkou prešiel —
 # ide teda o strop na objem, nie o formát. Súbor preto píšeme aj po
@@ -122,7 +123,8 @@ def main():
                     pole(""), pole(""), pole(""), pole("", False), pole("", False),
                     pole(v["sk"] if viac else "", False), pole(SKLAD), "",
                 ]))
-        c = os.path.expanduser(f"~/Documents/rncexplore-shoptet-{i}-z-{len(davky)}.csv")
+        c = vystup.kam(vystup.IMPORT, "produkty-csv",
+                       f"davka-{i}-z-{len(davky)}.csv")
         with open(c, "w", encoding="utf-8-sig", newline="") as f:
             f.write("\r\n".join(rr) + "\r\n")
         print(f"  {os.path.basename(c):<34} {len(cast):>3} produktov · "

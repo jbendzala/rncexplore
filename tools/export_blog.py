@@ -10,12 +10,13 @@ import csv, html, os, re, sys
 TU = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, TU)
 import blog_content as B
+import vystup
 
-CIEL = os.path.expanduser("~/Documents/rncexplore-blog.csv")
+CIEL = vystup.kam(vystup.NASE, "blog-prehlad.csv")
 # Články sa do Shoptetu nedajú naimportovať — produktový XML nesie len
 # produkty. Vkladajú sa teda ručne, a z bunky v tabuľke sa HTML kopíruje
 # zle. Preto píšeme aj súbor na článok: otvoriť, označiť všetko, vložiť.
-CIEL_HTML = os.path.expanduser("~/Documents/rncexplore-shoptet-blog")
+CIEL_HTML = vystup.kam(vystup.VLOZIT, "blog")
 WEB = "https://www.rncexplore.com"
 
 
