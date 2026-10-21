@@ -20,8 +20,9 @@ Záhlavie berie najviac 8192 znakov a vzhľad má 18 kB, takže sa doň
 nevojde. CSS preto ide ako samostatný súbor.
 
   a) Vzhľad a obsah → Správca súborov → Nahrať súbor
-     Nahraj rnc-vzhlad.css. Po nahraní bude dostupný na adrese
-     /user/documents/rnc-vzhlad.css.
+     Nahraj rnc-vzhlad.css. Správca súborov ukladá do podzložky upload/,
+     takže výsledná adresa je /user/documents/upload/rnc-vzhlad.css —
+     overené na nahranom súbore, bez upload/ to vracia 404.
 
      Keby Správca súborov odmietol prípону .css, je druhá cesta: FTP.
      Nastavenia → Hosting → FTP → Pridať. Je to SFTP, server
@@ -30,8 +31,9 @@ nevojde. CSS preto ide ako samostatný súbor.
      Klient na to je WinSCP alebo FileZilla. FTP je od tarifu Basic.
 
   b) Vzhľad a obsah → Editor → záložka „HTML kód“ → sekcia „Záhlavie“
-     Vlož celý obsah do-zahlavia.html. Je to len odkaz na nahraté CSS a
-     na písma — 674 znakov, zmestí sa s rezervou.
+     Otvor do-zahlavia.html, skopíruj celý obsah a vlož ho do toho poľa.
+     Ten súbor sa nikam nenahráva — je to text na vloženie. Sú to štyri
+     riadky s odkazmi na písma a na nahraté CSS, 681 znakov.
 
 Potom obnov obchod s Cmd+Shift+R.
 

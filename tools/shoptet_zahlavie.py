@@ -13,8 +13,8 @@ Vznikajú teda dva súbory:
     rnc-vzhlad.css      nahrať do Vzhľad a obsah → Správca súborov
     do-zahlavia.html    vložiť do záhlavia (zmestí sa, je krátke)
 
-Na odkaz používame relatívnu adresu /user/documents/…, nie celú s
-doménou — po prepnutí na www.rncexplore.com bude fungovať bez úpravy.
+Na odkaz používame relatívnu adresu, nie celú s doménou — po prepnutí na
+www.rncexplore.com bude fungovať bez úpravy.
 
 Za adresou je ?v= s odtlačkom obsahu. Keď sa CSS zmení, zmení sa aj
 adresa a prehliadače si stiahnu nové. Bez toho by návštevník videl starý
@@ -37,6 +37,10 @@ import vystup
 
 ZDROJ = os.path.join(KOREN, "shoptet", "vlastne-css.css")
 SUBOR = "rnc-vzhlad.css"            # ako sa bude volať v Správcovi súborov
+# Správca súborov ukladá do podzložky upload/, nie do /user/documents/.
+# Overené na nahranom súbore: /user/documents/rnc-vzhlad.css vracia 404,
+# /user/documents/upload/rnc-vzhlad.css vracia 200 a text/css.
+CESTA = "/user/documents/upload"
 STROP = 8192                        # koľko znakov znesie záhlavie
 
 
@@ -67,7 +71,7 @@ def main():
         r.append('<link rel="preconnect" href="https://fonts.googleapis.com">')
         r.append('<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>')
         r.append(f'<link rel="stylesheet" href="{pisma.group(1)}">')
-    r.append(f'<link rel="stylesheet" href="/user/documents/{SUBOR}?v={odtlacok}">')
+    r.append(f'<link rel="stylesheet" href="{CESTA}/{SUBOR}?v={odtlacok}">')
     zahlavie = "\n".join(r) + "\n"
 
     cesta_z = vystup.kam(vystup.IMPORT, "vzhlad", "do-zahlavia.html")
