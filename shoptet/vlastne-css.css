@@ -431,12 +431,22 @@ input:checked + .filter-label,
   text-transform: none;
   padding: 3px 10px;
 }
-.flag-custom1,
+/* Vlastnému príznaku (custom1 = „Z recenzie“) zapisuje Shoptet farbu
+   priamo do stránky ako style="background-color:…", a to prebije
+   akékoľvek CSS. Nastavuje sa teda v administrácii, nie tu:
+   Nastavenia → Produkty → Parametre a príznaky. Náš jantár je #F0A830.
+
+   Čo tu spraviť treba, je text: šablóna dáva príznakom biely
+   (.flag { color: --colors-foregrounds-content-inverted }), a biela na
+   jantárovej má kontrast 2,0 : 1, čo je nečitateľné. Tmavý má 9,1 : 1.
+   Pravidlo vyššie (.flags .flag) je o triedu silnejšie než ich, takže
+   vyhráva aj bez !important — inline štýl nesie len podklad, nie text. */
 .flag-action,
 .flag-discount {
   background: var(--rnc-amber);
 }
-.flag-text { color: inherit; }
+.flags .flag .flag-text,
+.extra-flags .flag .flag-text { color: inherit; }
 
 /* --- 11. KARTA PRODUKTU ------------------------------------------------
    Návrh má pod nadpisom text, až potom cenu a výber variantu. Shoptet
