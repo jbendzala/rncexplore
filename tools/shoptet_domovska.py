@@ -8,12 +8,11 @@ sa do úvodnej stránky, kde máme plnú kontrolu:
 
     Vzhľad a obsah → Stránky → úvodná stránka → HTML režim
 
-Vyhľadávanie vozidla podľa značky, modelu a roku v tom nie je — na to
-nemáme štruktúrované dáta (model a rok sú len v názve produktu) a chcelo
-by to vlastný JavaScript. Na jeho mieste je pás s trinástimi značkami,
-ktoré v katalógu naozaj sú, čo rieši to isté o úroveň jednoduchšie.
+Vyhľadávanie vozidla sa vkladá hotové z tools/shoptet_vyhladavanie.py —
+ten si musí stiahnuť adresy produktov z mapy stránok obchodu, takže je to
+jediná časť stavby, ktorá potrebuje sieť. Spusti ho pred týmto skriptom.
 
-Rovnako tu nie sú stany a kempingové vybavenie, ktoré návrh ukazuje
+Nie sú tu stany a kempingové vybavenie, ktoré návrh ukazuje
 medzi kategóriami — tie v katalógu nie sú.
 
 Spustenie:  python3 tools/shoptet_domovska.py
@@ -117,23 +116,15 @@ def hero(P):
 </section>'''
 
 
-def znacky(meta):
-    """Náhrada za vyhľadávanie vozidla z návrhu.
-
-    Značka, model a rok by chceli štruktúrované dáta a vlastný skript.
-    Trinásť značiek, ktoré v katalógu sú, rieši to isté hľadanie o úroveň
-    jednoduchšie a funguje bez jediného riadku JavaScriptu.
-    """
-    odkazy = "".join(
-        f'<a href="/{b["k"].lower().replace(" ", "-")}/">{e(b["k"])}'
-        f'<span>{b["n"]}</span></a>' for b in meta["brands"])
-    return f'''
-<section class="rnc-sec">
-  <h2>Nájdi panel pre svoje vozidlo</h2>
-  <p class="rnc-sub">Vyber značku a zobrazíme panely tvarované presne na jej modely.</p>
-  <div class="rnc-brand-grid">{odkazy}</div>
-  <p class="rnc-note">Nenašli ste vozidlo? <a href="/na-mieru/">Vyrobíme panel na mieru</a></p>
-</section>'''
+def vyhladavanie():
+    """Vyhľadávanie vozidla. Vyrába ho tools/shoptet_vyhladavanie.py, lebo
+    si musí stiahnuť adresy produktov z mapy stránok obchodu — a to je
+    jediné miesto v celej stavbe, ktoré potrebuje sieť. Tu sa len vloží."""
+    cesta = vystup.kam(vystup.IMPORT, "vzhlad", "vyhladavanie-vozidla.html")
+    if not os.path.exists(cesta):
+        sys.exit("chýba vyhľadávanie vozidla — spusti najprv:\n"
+                 "  python3 tools/shoptet_vyhladavanie.py")
+    return open(cesta, encoding="utf-8").read()
 
 
 def kategorie(P, meta):
@@ -269,7 +260,7 @@ def main():
         "     Vyrába tools/shoptet_domovska.py — needituj tu, uprav zdroj.",
         "     Vkladá sa do: Vzhľad a obsah → Stránky → úvodná stránka,",
         "     v editore prepni na HTML režim. -->",
-        hero(P), znacky(meta), kategorie(P, meta), odporucame(P),
+        hero(P), vyhladavanie(), kategorie(P, meta), odporucame(P),
         benefity(), recenzie(), clanky(), b2b(),
     ]
     h = "\n".join(casti) + "\n"
@@ -280,6 +271,7 @@ def main():
     print(f"  sekcií: {len(casti) - 4}")
     print(f"  kategórií: {len(KATEGORIE)} · značiek: {len(meta['brands'])} · "
           f"produktov: {len(ODPORUCAME)} · recenzií: {len(REVIEWS)} · článkov: 3")
+    print("  vyhľadávanie vozidla: vložené")
 
 
 if __name__ == "__main__":

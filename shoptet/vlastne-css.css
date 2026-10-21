@@ -767,19 +767,58 @@ label { color: var(--rnc-ink); }
 }
 .rnc-hero-body li::before { content: "✓ "; color: var(--rnc-amber); }
 
-/* značky namiesto vyhľadávania vozidla */
-.rnc-brand-grid { display: flex; flex-wrap: wrap; gap: 10px; }
-.rnc-brand-grid a {
-  display: flex; align-items: baseline; gap: 7px;
+/* vyhľadávanie vozidla */
+.rnc-find {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
   background: var(--rnc-surface);
   border: 1px solid var(--rnc-line);
-  border-radius: 999px;
-  padding: 9px 16px;
-  font-family: var(--rnc-display); font-weight: 600;
-  color: var(--rnc-head); text-decoration: none;
+  border-radius: var(--rnc-radius);
+  padding: 22px;
 }
-.rnc-brand-grid a:hover { border-color: var(--rnc-amber); color: var(--rnc-tint); }
-.rnc-brand-grid span { color: var(--rnc-muted); font-weight: 400; font-size: 13px; }
+.rnc-find label {
+  display: block;
+  font-family: var(--rnc-display);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--rnc-head);
+}
+.rnc-find select {
+  display: block; width: 100%; margin-top: 7px;
+  padding: 11px 12px;
+  background: var(--rnc-bg);
+  border: 1px solid var(--rnc-line-2);
+  border-radius: 10px;
+  font-family: var(--rnc-body); font-size: 15px;
+  color: var(--rnc-ink);
+}
+.rnc-find select:disabled { color: var(--rnc-muted); background: var(--rnc-chip); }
+
+.rnc-find-out:not(:empty) { margin-top: 26px; }
+.rnc-find-pocet {
+  font-family: var(--rnc-display); font-weight: 600;
+  color: var(--rnc-head); margin: 0 0 14px;
+}
+.rnc-find-nic {
+  background: var(--rnc-chip);
+  border-radius: var(--rnc-radius);
+  padding: 16px 18px; margin: 0 0 14px;
+  color: var(--rnc-ink);
+}
+/* Druhá skupina výsledkov: panely pre ten model, ku ktorým v katalógu
+   nemáme roky výroby. Zámerne tlmená, aby nekonkurovala tým, ktoré rok
+   naozaj sedia. */
+.rnc-find-dalsie {
+  margin: 28px 0 14px;
+  padding-top: 18px;
+  border-top: 1px solid var(--rnc-line);
+  color: var(--rnc-muted); font-size: 14px;
+}
+
+@media (max-width: 720px) {
+  .rnc-find { grid-template-columns: 1fr; }
+}
 
 /* kategórie */
 .rnc-cats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
