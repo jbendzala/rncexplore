@@ -45,9 +45,84 @@
   --rnc-body:       Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
-/* --- 2. ZÁKLAD ----------------------------------------------------------- */
+/* --- 2. PREMENNÉ ŠABLÓNY -------------------------------------------------
+   Toto je páka, ktorú som prvý raz nevyužil, a bez nej vzhľad takmer
+   nebolo vidieť. Classic 11 nemá farby napísané v pravidlách — riadi sa
+   vlastnými premennými, ktoré Shoptet vkladá do stránky:
+
+       --color-primary                           123× v ich štýle
+       --colors-foregrounds-borders-secondary     69×
+       --colors-foregrounds-content-secondary     53×
+       --colors-surface-primary                   31×
+
+   Prepísať tie premenné teda prefarbí celý obchod naraz, aj miesta, na
+   ktoré by som sám nemyslel. Pravidlá nižšie už len dolaďujú.
+
+   Pri --color-primary treba prepísať aj rozpad na H, S a L — Shoptet si
+   z nich počíta odtiene cez hsl(), takže keby zostali pôvodné, svetlejšie
+   varianty by naďalej boli modré.                                        */
+:root {
+  --color-primary:              #F0A830;
+  --color-primary-h:            38;
+  --color-primary-s:            86%;
+  --color-primary-l:            56%;
+  --color-primary-hover:        #D9921A;
+  --color-primary-hover-h:      38;
+  --color-primary-hover-s:      79%;
+  --color-primary-hover-l:      48%;
+
+  --color-secondary:            #0E1512;
+  --color-secondary-h:          154;
+  --color-secondary-s:          20%;
+  --color-secondary-l:          7%;
+  --color-secondary-hover:      #000000;
+  --color-secondary-hover-h:    154;
+  --color-secondary-hover-s:    20%;
+  --color-secondary-hover-l:    3%;
+
+  --color-tertiary:             #8A5A00;
+  --color-tertiary-h:           39;
+  --color-tertiary-s:           100%;
+  --color-tertiary-l:           27%;
+  --color-tertiary-hover:       #6E4800;
+  --color-tertiary-hover-h:     39;
+  --color-tertiary-hover-s:     100%;
+  --color-tertiary-hover-l:     22%;
+
+  --color-header-background:    #F7F5F0;
+  --template-font:              Inter;
+  --template-headings-font:     Manrope;
+
+  /* plochy a text */
+  --colors-surface-primary:                 #FFFFFF;
+  --colors-surface-white:                   #FFFFFF;
+  --colors-surface-secondary:               #F7F5F0;
+  --colors-surface-subtle:                  #EFECE4;
+  --colors-surface-tertiary:                #D8D4C8;
+  --colors-surface-rating:                  #F0A830;
+  --colors-foregrounds-content-primary:     #0E1512;
+  --colors-foregrounds-content-secondary:   #5E655F;
+  --colors-foregrounds-content-tertiary:    #767B76;
+  --colors-foregrounds-content-quaternary:  #767B76;
+  --colors-foregrounds-headlines-primary:   #141C18;
+  --colors-foregrounds-borders-primary:     #D8D4C8;
+  --colors-foregrounds-borders-secondary:   #E6E2D8;
+  --colors-foregrounds-icons-primary:       #5E655F;
+  --colors-focus-primary:                   #8A5A00;
+  --colors-forms-background:                #FFFFFF;
+  --colors-forms-border:                    #D8D4C8;
+  --colors-forms-activated:                 #8A5A00;
+  --colors-state-success:                   #168455;
+  --colors-forms-positive:                  #168455;
+}
+
+/* --- 3. ZÁKLAD -----------------------------------------------------------
+   body má v šablóne „background: #fff !important“, takže bez !important
+   by krémový podklad neprešiel. Je to jediné miesto, kde ho používam
+   kvôli farbe — a je vynútené ich vlastným pravidlom, nie mojou
+   pohodlnosťou.                                                          */
 body {
-  background: var(--rnc-bg);
+  background: var(--rnc-bg) !important;
   color: var(--rnc-ink);
   font-family: var(--rnc-body);
   -webkit-font-smoothing: antialiased;
@@ -84,9 +159,13 @@ textarea:focus-visible,
   * { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
 
-/* --- 3. TLAČIDLÁ ---------------------------------------------------------
+/* --- 4. TLAČIDLÁ ---------------------------------------------------------
    btn-conversion je „Do košíka“ — jediné jantárové na stránke, aby bolo
-   jasné, čo je hlavná akcia.                                              */
+   jasné, čo je hlavná akcia.
+
+   Triedy sú zdvojené (.btn.btn-conversion) zámerne: Shoptet ich tak píše
+   sám a jednou triedou by sme ich neprebili. Nie je to ozdoba, je to
+   jediný spôsob, ako sa dostať nad ich pravidlo bez !important.           */
 .btn {
   font-family: var(--rnc-display);
   font-weight: 600;
@@ -95,47 +174,47 @@ textarea:focus-visible,
   transition: background-color .15s, color .15s, border-color .15s;
 }
 
-.btn-conversion,
-.add-to-cart-button {
+.btn.btn-conversion,
+.btn.add-to-cart-button {
   background: var(--rnc-amber);
   border-color: var(--rnc-amber);
   color: var(--rnc-ink);
 }
-.btn-conversion:hover,
-.add-to-cart-button:hover,
-.btn-conversion:focus,
-.add-to-cart-button:focus {
+.btn.btn-conversion:hover,
+.btn.add-to-cart-button:hover,
+.btn.btn-conversion:focus,
+.btn.add-to-cart-button:focus {
   background: var(--rnc-amber-dark);
   border-color: var(--rnc-amber-dark);
   color: var(--rnc-ink);
 }
 
-.btn-primary {
+.btn.btn-primary {
   background: var(--rnc-ink);
   border-color: var(--rnc-ink);
   color: #fff;
 }
-.btn-primary:hover { background: #000; border-color: #000; color: #fff; }
+.btn.btn-primary:hover { background: #000; border-color: #000; color: #fff; }
 
-.btn-secondary,
-.btn-default,
-.pagination__link,
-.loadMore__button,
-.goToTop__button {
+.btn.btn-secondary,
+.btn.btn-default,
+.pagination .pagination__link,
+.btn.loadMore__button,
+.btn.goToTop__button {
   background: var(--rnc-surface);
   border-color: var(--rnc-line-2);
   color: var(--rnc-ink);
 }
-.btn-secondary:hover,
-.btn-default:hover,
-.pagination__link:hover,
-.loadMore__button:hover {
+.btn.btn-secondary:hover,
+.btn.btn-default:hover,
+.pagination .pagination__link:hover,
+.btn.loadMore__button:hover {
   background: var(--rnc-chip);
   border-color: var(--rnc-ink);
   color: var(--rnc-ink);
 }
 
-/* --- 4. HORNÁ LIŠTA A HLAVIČKA ------------------------------------------
+/* --- 5. HORNÁ LIŠTA A HLAVIČKA ------------------------------------------
    V návrhu je nad logom tmavý pásik s prepínačom jazyka, odkazom na
    veľkoobchod a kontaktom.                                                */
 .top-navigation-bar {
@@ -163,8 +242,10 @@ textarea:focus-visible,
 
 /* Názov obchodu v hlavičke — kým nie je nahrané logo, nech aspoň sedí
    písmo a prestrky, ako to má návrh. */
-.site-name a,
-.site-name a span {
+#header .site-name a,
+#header .site-name a.text-logo,
+#header .site-name .text-logo,
+#header .site-name .text-logo small {
   font-family: var(--rnc-display);
   font-weight: 700;
   letter-spacing: .06em;
@@ -172,7 +253,7 @@ textarea:focus-visible,
   color: var(--rnc-head);
 }
 
-/* --- 5. HLAVNÉ MENU ----------------------------------------------------- */
+/* --- 6. HLAVNÉ MENU ----------------------------------------------------- */
 .menu-level-1 > li > a {
   font-family: var(--rnc-display);
   font-weight: 600;
@@ -192,7 +273,7 @@ textarea:focus-visible,
   box-shadow: var(--rnc-shadow);
 }
 
-/* --- 6. VYHĽADÁVANIE A KOŠÍK -------------------------------------------- */
+/* --- 7. VYHĽADÁVANIE A KOŠÍK -------------------------------------------- */
 .search-form,
 .search-input {
   border-radius: 10px;
@@ -219,7 +300,7 @@ textarea:focus-visible,
   box-shadow: var(--rnc-shadow);
 }
 
-/* --- 7. NAVIGAČNÁ CESTA ------------------------------------------------- */
+/* --- 8. NAVIGAČNÁ CESTA ------------------------------------------------- */
 .breadcrumbs,
 .breadcrumbs a,
 .breadcrumbs span {
@@ -228,7 +309,7 @@ textarea:focus-visible,
 }
 .breadcrumbs a:hover { color: var(--rnc-ink); }
 
-/* --- 8. FILTRE VO VÝPISE -----------------------------------------------
+/* --- 9. FILTRE VO VÝPISE -----------------------------------------------
    Návrh ich má ako štítky na krémovom podklade, nie ako šedé políčka.    */
 .filter-sections,
 .filter-section {
@@ -284,7 +365,7 @@ input:checked + .filter-label,
   font-variant-numeric: tabular-nums;
 }
 
-/* --- 9. KACHLIČKA PRODUKTU ---------------------------------------------- */
+/* --- 10. KACHLIČKA PRODUKTU ---------------------------------------------- */
 .products .product {
   background: var(--rnc-surface);
   border: 1px solid var(--rnc-line);
@@ -342,7 +423,7 @@ input:checked + .filter-label,
 }
 .flag-text { color: inherit; }
 
-/* --- 10. KARTA PRODUKTU ------------------------------------------------
+/* --- 11. KARTA PRODUKTU ------------------------------------------------
    Návrh má pod nadpisom text, až potom cenu a výber variantu. Shoptet
    posiela krátky popis pod tlačidlom do košíka. Všetky tie bloky sú však
    súrodenci v jednom kontejneri, takže ich preusporiada flexbox — bez
@@ -430,7 +511,7 @@ input:checked + .filter-label,
   .benefitBanner.position--benefitProduct { grid-template-columns: 1fr; }
 }
 
-/* --- 11. ZÁLOŽKY POD PRODUKTOM ----------------------------------------
+/* --- 12. ZÁLOŽKY POD PRODUKTOM ----------------------------------------
    Popis produktu generujeme my, takže sekcie a rozbaľovače v ňom sú naše
    HTML. Tu sa len zariadi, aby záložka nevyzerala ako záložka.            */
 .shp-tabs-wrapper { background: transparent; border: 0; }
@@ -542,7 +623,7 @@ input:checked + .filter-label,
 .rnc-review footer { font-size: 13px; color: var(--rnc-muted); }
 .rnc-review footer strong { color: var(--rnc-ink); }
 
-/* --- 12. SÚVISIACE PRODUKTY A DOMOVSKÁ STRÁNKA ------------------------- */
+/* --- 13. SÚVISIACE PRODUKTY A DOMOVSKÁ STRÁNKA ------------------------- */
 .homepage-group-title,
 .homepage-products-heading-1 {
   font-family: var(--rnc-display);
@@ -558,11 +639,11 @@ input:checked + .filter-label,
 .extended-banner-text { color: var(--rnc-muted); }
 .extended-banner-link { color: var(--rnc-tint); font-weight: 600; }
 
-/* --- 13. STRÁNKOVANIE A DOČÍTANIE -------------------------------------- */
-.pagination__link,
-.loadMore__button { border-radius: 10px; }
+/* --- 14. STRÁNKOVANIE A DOČÍTANIE -------------------------------------- */
+.pagination .pagination__link,
+.btn.loadMore__button { border-radius: 10px; }
 
-/* --- 14. PÄTIČKA -------------------------------------------------------- */
+/* --- 15. PÄTIČKA -------------------------------------------------------- */
 .footer,
 #footer {
   background: var(--rnc-ink);
@@ -580,7 +661,7 @@ input:checked + .filter-label,
   font-weight: 600;
 }
 
-/* --- 15. FORMULÁRE ------------------------------------------------------ */
+/* --- 16. FORMULÁRE ------------------------------------------------------ */
 input[type="text"], input[type="email"], input[type="tel"],
 input[type="number"], input[type="password"], textarea, select {
   background: var(--rnc-surface);
@@ -591,7 +672,7 @@ input[type="number"], input[type="password"], textarea, select {
 }
 label { color: var(--rnc-ink); }
 
-/* --- 16. KOŠÍK A OBJEDNÁVKA --------------------------------------------
+/* --- 17. KOŠÍK A OBJEDNÁVKA --------------------------------------------
    Zámerne len farby a písmo. Trojkrok je pevný a prestavovať ho skriptom
    znamená riskovať objednávky.                                            */
 /* .cart-content je overené na prázdnom košíku. .co-box a #order-form sú
