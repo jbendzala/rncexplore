@@ -34,8 +34,9 @@ KOREN = os.path.dirname(TU)
 sys.path.insert(0, TU)
 import seo
 import vystup
-from export_shopify import telo          # popis v HTML — rovnaký ako pre Shopify
+from export_shopify import POPISKY, PORADIE
 from export_shoptet import kod, PARAMETER, DAVKA
+from pages_content import REVIEWS
 
 CIEL = vystup.kam(vystup.IMPORT, "obsah-xml", "obsah.xml")
 VYROBCA = "LensunSolar"
@@ -68,9 +69,16 @@ def e(x):
 
 
 def prvá_veta(t):
-    """Krátky popis — prvá veta dlhého. Shoptet ho dáva nad fotografiu."""
-    m = re.match(r"(.+?[.!?])(\s|$)", t.strip(), re.S)
-    return (m.group(1) if m else t).strip()
+    """Prvá veta popisu.
+
+    Bodka sama o sebe vetu nekončí: „Dacia Duster 3. generácia“ má bodku
+    v poradovej číslovke a naivné delenie z toho urobí „…vozidla Dacia
+    Duster 3.“ Vetu preto končíme len tam, kde za bodkou nasleduje medzera
+    a veľké písmeno, a kde pred ňou nie je číslica.
+    """
+    t = t.strip()
+    m = re.search(r"(?<!\d)[.!?](?=\s+[A-ZÁÄČĎÉÍĽĹŇÓÔŔŠŤÚÝŽ])", t)
+    return t[:m.end()].strip() if m else t
 
 
 def prevedenie(p, v, odsadenie, s_parametrom):
@@ -104,6 +112,88 @@ def cesty(p, kategoria):
     return [kategoria], kategoria
 
 
+# Recenzie zákazníkov podľa adresy produktu. Máme ich tri zo 157, takže
+# sekciu „Skúsenosť zákazníka“ z návrhu dostanú len tie tri — prázdny rám
+# na zvyšných 154 kartách by vyzeral horšie než žiadny.
+RECENZIE = {r["pid"]: r for r in REVIEWS}
+
+# Texty, ktoré sú v návrhu rovnaké pri každom produkte.
+MONTAZ = ("Priemerne zručný človek panel nalepí za jednu až dve hodiny a "
+          "nepotrebuje špeciálne náradie.")
+ZAPOJENIE = ("Panel, regulátor aj káble nájdete pokope. Pri otázkach vám "
+             "poradí náš odborný tím.")
+OBJEDNAVKA = ("Vyberiete produkt a prevedenie, vložíte ho do košíka a "
+              "objednáte. Faktúru pošleme e-mailom a tovar odošleme po úhrade.")
+NA_MIERU = ("Ak v ponuke nenájdete svoje vozidlo, panel vyrobíme na mieru.")
+
+
+def vozidlo(p):
+    """Z názvu vytiahne vozidlo — časť pred pomlčkou.
+
+    „Dacia Duster 1. generácia (2010–2017) – 100W solárny panel na kapotu“
+    dá „Dacia Duster 1. generácia (2010–2017)“. Univerzálne panely bez auta
+    v názve pomlčku nemajú a vrátia nič.
+    """
+    if not p.get("b"):
+        return ""
+    casti = p["n"]["sk"].split(" – ")
+    return casti[0].strip() if len(casti) > 1 else ""
+
+
+def kratky_popis(p):
+    """Krátky popis. CSS ho na karte posúva nad cenu, takže je to prvé, čo
+    zákazník prečíta — návrh tam má vetu o produkte a riadok s vozidlom."""
+    r = [f"<p>{e(prvá_veta(p['d']['sk']))}</p>"]
+    auto = vozidlo(p)
+    if auto:
+        r.append(f'<p class="rnc-fit">Tvarovaný na <strong>{e(auto)}</strong> · '
+                 f'<a href="/na-mieru/">Iné vozidlo? Na mieru</a></p>')
+    return "".join(r)
+
+
+def rozbal(nadpis, telo_html):
+    return (f"<details><summary>{e(nadpis)}</summary>{telo_html}</details>")
+
+
+def popis(p):
+    """Popis produktu v podobe, akú má návrh: veta, tabuľka parametrov a
+    rozbaľovače. Shoptet to zobrazí v záložke, CSS zo záložky urobí sekciu.
+
+    Štyri výhody („Prečo panel na kapotu“) tu nie sú zámerne — tie Shoptet
+    vykresľuje sám cez benefitBanner a nastavujú sa v administrácii.
+    """
+    c = [f"<p>{e(p['d']['sk'])}</p>"]
+
+    spec = p.get("spec") or {}
+    riadky = [(POPISKY[k], spec[k]) for k in PORADIE if spec.get(k)]
+    if p.get("b"):
+        riadky.append(("Značka vozidla", p["b"]))
+    c.append('<h2>Detaily produktu</h2>')
+    if riadky:
+        c.append("<h3>Technické údaje</h3><table>")
+        c += [f"<tr><th>{e(a)}</th><td>{e(b)}</td></tr>" for a, b in riadky]
+        c.append("</table>")
+
+    c.append(rozbal("Montáž", f"<p>{MONTAZ}</p>"
+                    '<p><a href="/montaz/">Postup montáže krok za krokom →</a></p>'))
+    c.append(rozbal("Čo potrebujete k zapojeniu", f"<p>{ZAPOJENIE}</p>"))
+    if p.get("pack"):
+        polozky = "".join(f"<li>{e(r['sk'])}</li>" for r in p["pack"])
+        c.append(rozbal("Obsah balenia", f"<ul>{polozky}</ul>"))
+    c.append(rozbal("Objednávka a platba", f"<p>{OBJEDNAVKA}</p>"))
+    c.append(rozbal("Iné vozidlo alebo rozmer", f"<p>{NA_MIERU}</p>"
+                    '<p><a href="/na-mieru/">Panely na mieru →</a></p>'))
+
+    rec = RECENZIE.get(p["id"])
+    if rec:
+        c.append('<h2>Skúsenosť zákazníka</h2>'
+                 f'<blockquote class="rnc-review"><p>{e(rec["sk"])}</p>'
+                 f'<footer><strong>{e(rec["who"])}</strong> · {e(rec["car"])} · '
+                 'recenzia z lensunsolar.com, preložená a skrátená</footer>'
+                 '</blockquote>')
+    return "".join(c)
+
+
 def seo_popis(p):
     """Popis do výsledkov vyhľadávania. Google ukáže asi 155 znakov, zvyšok
     odreže — tak ho režeme sami, a na hranici slova, nie v polovici."""
@@ -118,17 +208,24 @@ def shopitem(p, kategoria):
     viac = len(p["var"]) > 1
     r = ["  <SHOPITEM>"]
     r.append(f"    <NAME>{e(p['n']['sk'])}</NAME>")
-    r.append(f"    <SHORT_DESCRIPTION>{e(prvá_veta(p['d']['sk']))}</SHORT_DESCRIPTION>")
-    r.append(f"    <DESCRIPTION>{e(telo(p))}</DESCRIPTION>")
+    r.append(f"    <SHORT_DESCRIPTION>{e(kratky_popis(p))}</SHORT_DESCRIPTION>")
+    r.append(f"    <DESCRIPTION>{e(popis(p))}</DESCRIPTION>")
     r.append(f"    <MANUFACTURER>{e(VYROBCA)}</MANUFACTURER>")
+    # Štítok „Z recenzie“ na kachličke. Shoptet má šesť voľných príznakov,
+    # custom1 je prvý — jeho názov sa nastavuje v administrácii.
+    if p["id"] in RECENZIE:
+        r.append("    <FLAGS><FLAG><CODE>custom1</CODE>"
+                 "<ACTIVE>1</ACTIVE></FLAG></FLAGS>")
     # Titulok a popis pre vyhľadávače. Bez nich dá Shoptet každému produktu
     # predvolený titulok a Google si popis vyberie sám z čohokoľvek na
     # stránke. Titulok dopĺňame firmou, aby bol v zoznamoch rozpoznateľný.
     r.append(f"    <SEO_TITLE>{e(p['n']['sk'] + ' | RnC Explore')}</SEO_TITLE>")
     r.append(f"    <META_DESCRIPTION>{e(seo_popis(p))}</META_DESCRIPTION>")
-    if p.get("v"):
+    # Video je v poli vid, nie v. Pole v je napätie panela (12 V, 36 V) —
+    # to tu nemá čo robiť a raz sa tak už stalo.
+    if p.get("vid"):
         r.append("    <RELATED_VIDEOS><RELATED_VIDEO>"
-                 f"<YOUTUBE_VIDEO_CODE>{e(p['v'])}</YOUTUBE_VIDEO_CODE>"
+                 f"<YOUTUBE_VIDEO_CODE>{e(p['vid'])}</YOUTUBE_VIDEO_CODE>"
                  "</RELATED_VIDEO></RELATED_VIDEOS>")
     zoznam, hlavna = cesty(p, kategoria)
     r.append("    <CATEGORIES>")

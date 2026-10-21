@@ -1,0 +1,600 @@
+/* ==========================================================================
+   rncexplore.com — vzhľad podľa návrhu grafika, nad šablónou Classic.
+
+   Vloží sa do administrácie: Vzhľad → Editor → Vlastné CSS. Toto pole
+   Shoptet pri aktualizácii šablóny nemaže, takže úpravy prežijú.
+
+   Čo tu NIE JE a prečo: štruktúru HTML Shoptet nedovolí zmeniť. Všetko
+   nižšie je preto len vzhľad, prípadne preusporiadanie súrodencov cez
+   flexbox — nikde sa nič neprepisuje JavaScriptom. V košíku a objednávke
+   je to zámer: tie majú pevný trojkrok a hrabať sa v nich skriptom
+   znamená riskovať objednávky.
+
+   Triedy sú odpozerané zo skutočného HTML nášho obchodu, nie z
+   dokumentácie: Classic, farebná varianta 11-one, rozloženie catalog3.
+   ========================================================================== */
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700&display=swap");
+
+/* --- 1. DIZAJNOVÉ PREMENNÉ ------------------------------------------------
+   Prevzaté z návrhu. Všetko ostatné sa odvoláva sem, takže zmena farby je
+   zmena na jednom riadku.                                                  */
+:root {
+  --rnc-ink:        #0E1512;   /* text a tmavé plochy */
+  --rnc-head:       #141C18;   /* nadpisy */
+  --rnc-amber:      #F0A830;   /* akcent — do košíka, dôležité odkazy */
+  --rnc-amber-dark: #D9921A;   /* stlačené */
+  --rnc-bg:         #F7F5F0;   /* podklad stránky */
+  --rnc-surface:    #FFFFFF;   /* kachličky, karty */
+  --rnc-line:       #E6E2D8;   /* jemná linka */
+  --rnc-line-2:     #D8D4C8;   /* výraznejšia linka */
+  --rnc-muted:      #5E655F;   /* druhotný text */
+  --rnc-tint:       #8A5A00;   /* odkazy, zameranie */
+  --rnc-chip:       #EFECE4;   /* štítky a filtre */
+  --rnc-ok:         #168455;   /* dostupnosť */
+  --rnc-shadow:     0 8px 30px rgba(12, 32, 26, .10);
+  --rnc-radius:     14px;
+  --rnc-display:    Manrope, Inter, system-ui, sans-serif;
+  --rnc-body:       Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+/* --- 2. ZÁKLAD ----------------------------------------------------------- */
+body {
+  background: var(--rnc-bg);
+  color: var(--rnc-ink);
+  font-family: var(--rnc-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5,
+.p-detail-inner-header h1,
+.homepage-group-title,
+.products-block .h4 {
+  font-family: var(--rnc-display);
+  color: var(--rnc-head);
+  letter-spacing: -.01em;
+  text-wrap: balance;
+}
+
+h1 { font-weight: 700; }
+h2, h3 { font-weight: 600; }
+
+a { color: var(--rnc-tint); }
+a:hover { color: var(--rnc-ink); }
+
+/* Zameranie klávesnicou musí byť vidieť — Shoptet ho v Classic skrýva. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+.btn:focus-visible {
+  outline: 2px solid var(--rnc-tint);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+
+/* --- 3. TLAČIDLÁ ---------------------------------------------------------
+   btn-conversion je „Do košíka“ — jediné jantárové na stránke, aby bolo
+   jasné, čo je hlavná akcia.                                              */
+.btn {
+  font-family: var(--rnc-display);
+  font-weight: 600;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  transition: background-color .15s, color .15s, border-color .15s;
+}
+
+.btn-conversion,
+.add-to-cart-button {
+  background: var(--rnc-amber);
+  border-color: var(--rnc-amber);
+  color: var(--rnc-ink);
+}
+.btn-conversion:hover,
+.add-to-cart-button:hover,
+.btn-conversion:focus,
+.add-to-cart-button:focus {
+  background: var(--rnc-amber-dark);
+  border-color: var(--rnc-amber-dark);
+  color: var(--rnc-ink);
+}
+
+.btn-primary {
+  background: var(--rnc-ink);
+  border-color: var(--rnc-ink);
+  color: #fff;
+}
+.btn-primary:hover { background: #000; border-color: #000; color: #fff; }
+
+.btn-secondary,
+.btn-default,
+.pagination__link,
+.loadMore__button,
+.goToTop__button {
+  background: var(--rnc-surface);
+  border-color: var(--rnc-line-2);
+  color: var(--rnc-ink);
+}
+.btn-secondary:hover,
+.btn-default:hover,
+.pagination__link:hover,
+.loadMore__button:hover {
+  background: var(--rnc-chip);
+  border-color: var(--rnc-ink);
+  color: var(--rnc-ink);
+}
+
+/* --- 4. HORNÁ LIŠTA A HLAVIČKA ------------------------------------------
+   V návrhu je nad logom tmavý pásik s prepínačom jazyka, odkazom na
+   veľkoobchod a kontaktom.                                                */
+.top-navigation-bar {
+  background: var(--rnc-ink);
+  color: rgba(255, 255, 255, .86);
+  font-size: 13px;
+  border: 0;
+}
+.top-navigation-bar a,
+.top-navigation-contacts a,
+.top-navigation-menu a,
+.top-navigation-tools a {
+  color: rgba(255, 255, 255, .86);
+}
+.top-navigation-bar a:hover { color: var(--rnc-amber); }
+
+.top-navigation-tools--language a { font-weight: 600; }
+
+.header-top,
+.navigation-wrapper,
+.header-background-light {
+  background: var(--rnc-bg);
+  border-bottom: 1px solid var(--rnc-line);
+}
+
+/* Názov obchodu v hlavičke — kým nie je nahrané logo, nech aspoň sedí
+   písmo a prestrky, ako to má návrh. */
+.site-name a,
+.site-name a span {
+  font-family: var(--rnc-display);
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--rnc-head);
+}
+
+/* --- 5. HLAVNÉ MENU ----------------------------------------------------- */
+.menu-level-1 > li > a {
+  font-family: var(--rnc-display);
+  font-weight: 600;
+  color: var(--rnc-head);
+  border: 0;
+}
+.menu-level-1 > li > a:hover,
+.menu-level-1 > li.active > a {
+  color: var(--rnc-tint);
+  box-shadow: inset 0 -2px 0 var(--rnc-amber);
+}
+
+.menu-level-2 {
+  background: var(--rnc-surface);
+  border: 1px solid var(--rnc-line);
+  border-radius: var(--rnc-radius);
+  box-shadow: var(--rnc-shadow);
+}
+
+/* --- 6. VYHĽADÁVANIE A KOŠÍK -------------------------------------------- */
+.search-form,
+.search-input {
+  border-radius: 10px;
+}
+.search-input {
+  background: var(--rnc-surface);
+  border: 1px solid var(--rnc-line-2);
+  color: var(--rnc-ink);
+}
+.search-input::placeholder { color: var(--rnc-muted); }
+
+.cart-count {
+  background: var(--rnc-amber);
+  color: var(--rnc-ink);
+  font-weight: 700;
+}
+.cart-price { font-family: var(--rnc-display); font-weight: 600; }
+
+.cart-widget,
+.cart-widget-inner {
+  background: var(--rnc-surface);
+  border: 1px solid var(--rnc-line);
+  border-radius: var(--rnc-radius);
+  box-shadow: var(--rnc-shadow);
+}
+
+/* --- 7. NAVIGAČNÁ CESTA ------------------------------------------------- */
+.breadcrumbs,
+.breadcrumbs a,
+.breadcrumbs span {
+  font-size: 13px;
+  color: var(--rnc-muted);
+}
+.breadcrumbs a:hover { color: var(--rnc-ink); }
+
+/* --- 8. FILTRE VO VÝPISE -----------------------------------------------
+   Návrh ich má ako štítky na krémovom podklade, nie ako šedé políčka.    */
+.filter-sections,
+.filter-section {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--rnc-line);
+}
+.filter-section > h4,
+.filter-section .param-filter-top {
+  font-family: var(--rnc-display);
+  font-weight: 600;
+  color: var(--rnc-head);
+}
+
+.filter-label {
+  background: var(--rnc-chip);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 4px 12px;
+  color: var(--rnc-ink);
+  cursor: pointer;
+  transition: background-color .15s, border-color .15s;
+}
+.filter-label:hover { border-color: var(--rnc-line-2); }
+.filter-label.disabled { opacity: .45; cursor: default; }
+
+/* zaškrtnutý filter — jantárový rám, nie výplň, aby to neprekričalo cenu */
+input:checked + .filter-label,
+.filter-label.active {
+  background: var(--rnc-surface);
+  border-color: var(--rnc-amber);
+  font-weight: 600;
+}
+
+.filter-count { color: var(--rnc-muted); font-weight: 400; }
+
+.toggle-filters { color: var(--rnc-tint); font-weight: 600; }
+
+/* Cenový posuvník. V HTML je len prázdny <div class="param-price-filter">
+   — vnútro mu dorobí jQuery UI až v prehliadači, takže tieto triedy sa v
+   zdroji stránky nenájdu. Nemazať preto, že „tam nie sú“. */
+.param-price-filter { background: var(--rnc-chip); border: 0; }
+.param-price-filter .ui-slider-range { background: var(--rnc-amber); }
+.param-price-filter .ui-slider-handle {
+  background: var(--rnc-surface);
+  border: 2px solid var(--rnc-ink);
+  border-radius: 999px;
+}
+.slider-content .from,
+.slider-content .to {
+  color: var(--rnc-muted);
+  font-family: var(--rnc-display);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- 9. KACHLIČKA PRODUKTU ---------------------------------------------- */
+.products .product {
+  background: var(--rnc-surface);
+  border: 1px solid var(--rnc-line);
+  border-radius: var(--rnc-radius);
+  overflow: hidden;
+  transition: box-shadow .18s, transform .18s, border-color .18s;
+}
+.products .product:hover {
+  border-color: var(--rnc-line-2);
+  box-shadow: var(--rnc-shadow);
+  transform: translateY(-2px);
+}
+
+.products .product .image { background: var(--rnc-bg); }
+
+.products .product a.name {
+  font-family: var(--rnc-display);
+  font-weight: 600;
+  color: var(--rnc-head);
+  line-height: 1.3;
+}
+.products .product a.name:hover { color: var(--rnc-tint); }
+
+.products .product .p-code { color: var(--rnc-muted); font-size: 12px; }
+
+.products .product .availability,
+.availability-value { color: var(--rnc-ok); font-weight: 500; }
+
+.products .product .price-final,
+.p-final-price-wrapper .price-final {
+  font-family: var(--rnc-display);
+  font-weight: 700;
+  color: var(--rnc-head);
+}
+
+/* Štítky na kachličke. „Z recenzie“ nastavíme ako príznak custom1 pri
+   importe — Shoptet ho vykreslí sem. Obal je .extra-flags, vnútri
+   .flags.flags-extra a v nej .flag.flag-custom1 s .flag-text. */
+.extra-flags .flag,
+.flags .flag {
+  background: var(--rnc-chip);
+  color: var(--rnc-ink);
+  border-radius: 999px;
+  font-family: var(--rnc-display);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: .02em;
+  text-transform: none;
+  padding: 3px 10px;
+}
+.flag-custom1,
+.flag-action,
+.flag-discount {
+  background: var(--rnc-amber);
+}
+.flag-text { color: inherit; }
+
+/* --- 10. KARTA PRODUKTU ------------------------------------------------
+   Návrh má pod nadpisom text, až potom cenu a výber variantu. Shoptet
+   posiela krátky popis pod tlačidlom do košíka. Všetky tie bloky sú však
+   súrodenci v jednom kontejneri, takže ich preusporiada flexbox — bez
+   JavaScriptu a bez rizika pri aktualizácii.                              */
+.p-info-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.p-info-wrapper .p-short-description   { order: 1; }
+.p-info-wrapper .p-final-price-wrapper { order: 2; }
+.p-info-wrapper .availability-value    { order: 3; }
+.p-info-wrapper .detail-parameters     { order: 4; }
+.p-info-wrapper .add-to-cart           { order: 5; }
+.p-info-wrapper .benefitBanner         { order: 6; }
+.p-info-wrapper .social-buttons-wrapper{ order: 7; }
+
+.p-short-description {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--rnc-ink);
+  margin: 0;
+}
+
+.p-final-price-wrapper .price-final { font-size: 32px; }
+.p-final-price-wrapper .price-measure { color: var(--rnc-muted); font-size: 13px; }
+
+/* výber prevedenia */
+.detail-parameters {
+  width: 100%;
+  background: var(--rnc-surface);
+  border: 1px solid var(--rnc-line);
+  border-radius: var(--rnc-radius);
+}
+.detail-parameters td,
+.detail-parameters th { border: 0; padding: 10px 12px; }
+.detail-parameters select {
+  width: 100%;
+  background: var(--rnc-surface);
+  border: 1px solid var(--rnc-line-2);
+  border-radius: 10px;
+  color: var(--rnc-ink);
+  font-family: var(--rnc-body);
+  padding: 10px 12px;
+}
+
+.add-to-cart { display: flex; gap: 10px; align-items: stretch; }
+.add-to-cart .quantity input {
+  border: 1px solid var(--rnc-line-2);
+  border-radius: 10px;
+  background: var(--rnc-surface);
+  font-family: var(--rnc-display);
+  font-weight: 600;
+}
+.add-to-cart-button { flex: 1 1 auto; font-size: 17px; padding: 14px 20px; }
+
+/* Štyri výhody. Shoptet ich dáva do pravého stĺpca, kde sú štyri vedľa
+   seba pritesné — preto 2 × 2. V návrhu sú na celú šírku pod produktom;
+   ak sa v administrácii dá benefitBanner posunúť nižšie, vyjde to presne. */
+.benefitBanner.position--benefitProduct {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+.benefitBanner__item {
+  background: var(--rnc-surface);
+  border: 1px solid var(--rnc-line);
+  border-radius: var(--rnc-radius);
+  padding: 14px;
+  margin: 0;
+}
+.benefitBanner__content {
+  font-family: var(--rnc-display);
+  font-weight: 600;
+  color: var(--rnc-head);
+  font-size: 14px;
+  line-height: 1.35;
+}
+.benefitBanner__picture img { max-height: 28px; width: auto; }
+
+@media (max-width: 600px) {
+  .benefitBanner.position--benefitProduct { grid-template-columns: 1fr; }
+}
+
+/* --- 11. ZÁLOŽKY POD PRODUKTOM ----------------------------------------
+   Popis produktu generujeme my, takže sekcie a rozbaľovače v ňom sú naše
+   HTML. Tu sa len zariadi, aby záložka nevyzerala ako záložka.            */
+.shp-tabs-wrapper { background: transparent; border: 0; }
+.shp-tabs {
+  border-bottom: 1px solid var(--rnc-line);
+  font-family: var(--rnc-display);
+}
+.shp-tabs > li > a {
+  color: var(--rnc-muted);
+  border: 0;
+  font-weight: 600;
+}
+.shp-tabs > li.active > a {
+  color: var(--rnc-head);
+  background: transparent;
+  box-shadow: inset 0 -2px 0 var(--rnc-amber);
+}
+
+.tab-content { background: transparent; border: 0; padding-top: 24px; }
+
+.description-inner,
+.basic-description,
+.extended-description {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--rnc-ink);
+  max-width: 68ch;
+}
+.description-inner h2,
+.extended-description h2 { margin-top: 32px; }
+.description-inner h3,
+.extended-description h3 { margin-top: 20px; font-size: 18px; }
+
+/* tabuľka technických parametrov v našom popise */
+.description-inner table,
+.extended-description table {
+  width: 100%;
+  max-width: 560px;
+  border-collapse: collapse;
+  background: var(--rnc-surface);
+  border: 1px solid var(--rnc-line);
+  border-radius: var(--rnc-radius);
+  overflow: hidden;
+}
+.description-inner th,
+.extended-description th {
+  text-align: left;
+  font-family: var(--rnc-body);
+  font-weight: 500;
+  color: var(--rnc-muted);
+  width: 45%;
+}
+.description-inner td,
+.extended-description td { font-variant-numeric: tabular-nums; }
+.description-inner th,
+.description-inner td,
+.extended-description th,
+.extended-description td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--rnc-line);
+}
+
+/* rozbaľovače, ktoré pridávame do popisu */
+.description-inner details,
+.extended-description details {
+  background: var(--rnc-surface);
+  border: 1px solid var(--rnc-line);
+  border-radius: var(--rnc-radius);
+  margin: 10px 0;
+  padding: 0 16px;
+}
+.description-inner summary,
+.extended-description summary {
+  font-family: var(--rnc-display);
+  font-weight: 600;
+  color: var(--rnc-head);
+  cursor: pointer;
+  padding: 14px 0;
+  list-style: none;
+}
+.description-inner summary::-webkit-details-marker,
+.extended-description summary::-webkit-details-marker { display: none; }
+.description-inner details[open],
+.extended-description details[open] { padding-bottom: 8px; }
+
+/* Riadok „Tvarovaný na …“ v krátkom popise. Generuje ho export, lebo
+   Shoptet pre takýto údaj pole nemá. */
+.p-short-description .rnc-fit {
+  font-size: 14px;
+  color: var(--rnc-muted);
+  padding: 10px 14px;
+  background: var(--rnc-chip);
+  border-radius: 10px;
+  margin: 12px 0 0;
+}
+.p-short-description .rnc-fit strong { color: var(--rnc-ink); }
+
+/* Citát zákazníka. Má ho len tri produkty zo 157 — tie, kde recenziu
+   naozaj máme. */
+.rnc-review {
+  background: var(--rnc-surface);
+  border: 1px solid var(--rnc-line);
+  border-left: 3px solid var(--rnc-amber);
+  border-radius: var(--rnc-radius);
+  padding: 18px 20px;
+  margin: 16px 0;
+}
+.rnc-review p { margin: 0 0 10px; }
+.rnc-review footer { font-size: 13px; color: var(--rnc-muted); }
+.rnc-review footer strong { color: var(--rnc-ink); }
+
+/* --- 12. SÚVISIACE PRODUKTY A DOMOVSKÁ STRÁNKA ------------------------- */
+.homepage-group-title,
+.homepage-products-heading-1 {
+  font-family: var(--rnc-display);
+  font-weight: 600;
+  color: var(--rnc-head);
+}
+
+.extended-banner-title {
+  font-family: var(--rnc-display);
+  font-weight: 700;
+  color: var(--rnc-head);
+}
+.extended-banner-text { color: var(--rnc-muted); }
+.extended-banner-link { color: var(--rnc-tint); font-weight: 600; }
+
+/* --- 13. STRÁNKOVANIE A DOČÍTANIE -------------------------------------- */
+.pagination__link,
+.loadMore__button { border-radius: 10px; }
+
+/* --- 14. PÄTIČKA -------------------------------------------------------- */
+.footer,
+#footer {
+  background: var(--rnc-ink);
+  color: rgba(255, 255, 255, .78);
+  border: 0;
+}
+#footer a,
+.footer a { color: rgba(255, 255, 255, .78); }
+#footer a:hover,
+.footer a:hover { color: var(--rnc-amber); }
+#footer h4,
+.footer h4 {
+  font-family: var(--rnc-display);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* --- 15. FORMULÁRE ------------------------------------------------------ */
+input[type="text"], input[type="email"], input[type="tel"],
+input[type="number"], input[type="password"], textarea, select {
+  background: var(--rnc-surface);
+  border: 1px solid var(--rnc-line-2);
+  border-radius: 10px;
+  color: var(--rnc-ink);
+  font-family: var(--rnc-body);
+}
+label { color: var(--rnc-ink); }
+
+/* --- 16. KOŠÍK A OBJEDNÁVKA --------------------------------------------
+   Zámerne len farby a písmo. Trojkrok je pevný a prestavovať ho skriptom
+   znamená riskovať objednávky.                                            */
+/* .cart-content je overené na prázdnom košíku. .co-box a #order-form sú
+   z krokov objednávky, ktoré bez tovaru v košíku neuvidím — ak by sa
+   nechytili, nič sa nerozbije, len tam zostane pôvodný vzhľad. */
+.cart-content,
+.co-box,
+#order-form {
+  background: var(--rnc-surface);
+  border: 1px solid var(--rnc-line);
+  border-radius: var(--rnc-radius);
+}
+.cart-table th { font-family: var(--rnc-display); color: var(--rnc-muted); }

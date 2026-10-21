@@ -1,0 +1,83 @@
+VZHĽAD PODĽA NÁVRHU — AKO HO NASADIŤ
+====================================
+
+Súbor:  vlastne-css.css
+
+Stavia nad bezplatnou šablónou Classic, ktorú obchod už má (farebná
+varianta 11-one, rozloženie catalog3). Apollo nie je potrebné — Apollo je
+tiež len vrstva nad Classic.
+
+
+1. VLOŽIŤ CSS
+-------------
+Administrácia → Vzhľad → Editor → Vlastné CSS.
+Obsah súboru vložiť celý. Toto pole Shoptet pri aktualizácii šablóny
+nemaže, takže vzhľad prežije.
+
+Písma Manrope a Inter si CSS načíta samo z Google Fonts prvým riadkom
+(@import). Ak by ich Shoptet blokoval, presuň ten jeden riadok ako
+<link> do Vzhľad → Editor → HTML kódy → hlavička.
+
+
+2. NASTAVIŤ V ADMINISTRÁCII (CSS to spraviť nemôže)
+---------------------------------------------------
+Štyri výhody na karte produktu
+    Vzhľad → Benefity. Shoptet ich vykresľuje sám, v návrhu sú to:
+      Energia bez motora      — panel nabíja batériu počas státia aj jazdy
+      Tvarovaný na vozidlo    — na tvar konkrétneho modelu a generácie
+      Montáž bez vŕtania      — prilepí sa na povrch, bez dier a rámov
+      Stavaný na drsné použitie — vietor, dážď, prach, vibrácie
+    CSS ich zoradí do mriežky 2 × 2.
+
+Štítok „Z recenzie“
+    Vzhľad alebo Produkty → Príznaky → custom1 pomenovať „Z recenzie“.
+    Import ho zapína trom produktom, pri ktorých recenziu naozaj máme.
+
+Logo
+    Vzhľad → Logo. Kým tam nie je, hlavička zobrazí názov obchodu
+    v správnom písme a prestrkoch.
+
+Horná lišta
+    Nastavenia → Navigácia. Do hornej lišty patrí prepínač jazyka,
+    odkaz Veľkoobchod (B2B) a kontakt — tak to má návrh.
+
+
+3. ČO CSS ROBÍ A ČO NEROBÍ
+--------------------------
+Robí len vzhľad. Štruktúru HTML Shoptet zmeniť nedovolí a nikde sa tu nič
+neprepisuje JavaScriptom.
+
+Jedna výnimka, ktorá nie je hack: pravý stĺpec karty produktu je
+preusporiadaný flexboxom. Návrh má text nad cenou, Shoptet ho posiela pod
+tlačidlom do košíka — a keďže sú to súrodenci v jednom kontejneri, stačí
+im zmeniť poradie. Prežije to aktualizáciu aj vypnutý JavaScript.
+
+Košík a objednávka majú len farby a písmo. Trojkrok je pevný a
+prestavovať ho skriptom znamená riskovať objednávky.
+
+
+4. ČO ZOSTÁVA OTVORENÉ
+----------------------
+Pamätanie filtrov v prehliadači
+    Návrh má „Zapamätať si môj výber filtrov v tomto prehliadači“.
+    Shoptet to nemá, treba na to vlastný JavaScript s localStorage. Nie je
+    v tomto CSS, je to samostatná práca.
+
+Štyri výhody na celú šírku
+    Návrh ich má pod produktom na celú šírku, Shoptet v pravom stĺpci.
+    Ak sa v administrácii dá benefitBanner posunúť nižšie, vyjde to
+    presne; inak sú v stĺpci ako 2 × 2.
+
+Sekcie namiesto záložky
+    Popis produktu Shoptet zobrazuje v záložke „Popis“. CSS zo záložky
+    robí niečo bližšie k sekciám, ale nie je to to isté.
+
+
+5. OVERENÉ
+----------
+Každý selektor v tom CSS bol porovnaný so skutočným HTML obchodu —
+domovská stránka, výpis kategórie, podkategória, karta produktu, košík.
+Neoverené zostali štyri:
+    ui-slider-range, ui-slider-handle   dorobí jQuery až v prehliadači
+    cart-table, co-box                  kroky objednávky s tovarom v košíku
+Všetky štyri sú okomentované priamo v CSS.
