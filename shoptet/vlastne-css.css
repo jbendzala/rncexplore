@@ -253,15 +253,30 @@ textarea:focus-visible,
   color: var(--rnc-head);
 }
 
-/* --- 6. HLAVNÉ MENU ----------------------------------------------------- */
+/* --- 6. HLAVNÉ MENU -----------------------------------------------------
+   Pozor na vedľajší účinok prepisu premenných: Classic maľuje celý pás
+   menu farbou --color-primary, takže po zmene akcentu zjantárovel celý.
+   Návrh ho má krémový s tmavým textom a jantárovou linkou pod položkou,
+   na ktorej stojíš — akcent má byť na tlačidle do košíka, nie na páse
+   cez celú šírku.                                                        */
+.navigation-in {
+  background-color: var(--rnc-bg);
+  border-bottom: 1px solid var(--rnc-line);
+}
+.navigation-in > ul > li > a,
 .menu-level-1 > li > a {
   font-family: var(--rnc-display);
   font-weight: 600;
   color: var(--rnc-head);
+  background-color: transparent;
   border: 0;
 }
+.navigation-in > ul > li > a:hover,
+.navigation-in > ul > li.exp > a,
+.navigation-in > ul > li.active > a,
 .menu-level-1 > li > a:hover,
 .menu-level-1 > li.active > a {
+  background-color: var(--rnc-bg);
   color: var(--rnc-tint);
   box-shadow: inset 0 -2px 0 var(--rnc-amber);
 }
