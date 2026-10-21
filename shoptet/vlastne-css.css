@@ -1,11 +1,13 @@
 /* ==========================================================================
    rncexplore.com — vzhľad podľa návrhu grafika, nad šablónou Classic.
 
-   Nevkladá sa priamo — Shoptet samostatné pole pre CSS nemá. Spusti
-   tools/shoptet_zahlavie.py, ktorý z tohto súboru vyrobí blok so <style>
-   a <link> na písma, a ten sa vloží do:
+   Toto je zdroj. Nasadzuje sa tak, že tools/shoptet_zahlavie.py z neho
+   vyrobí dva súbory: samotné CSS na nahranie do Správcu súborov a krátky
+   odkaz naň do záhlavia. Dôvod je prozaický — záhlavie berie najviac
+   8192 znakov a tento súbor má dvakrát tolko.
 
-       Vzhľad a obsah → Editor → záložka „HTML kód“ → sekcia „Záhlavie“
+       Vzhľad a obsah → Správca súborov            rnc-vzhlad.css
+       Vzhľad a obsah → Editor → HTML kód → Záhlavie   odkaz naň
 
    Záhlavie Shoptet pri aktualizácii šablóny nemaže, takže vzhľad prežije.
 

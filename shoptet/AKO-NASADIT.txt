@@ -1,26 +1,44 @@
 VZHĽAD PODĽA NÁVRHU — AKO HO NASADIŤ
 ====================================
 
-Zdroj:    shoptet/vlastne-css.css   (tu sa upravuje)
-Na vložiť: rncexplore-podklady/shoptet-import/vzhlad/do-zahlavia.html
+Zdroj:  shoptet/vlastne-css.css   (jediné miesto, kde sa upravuje)
 
-Druhý súbor vyrába prvý — po každej zmene CSS spusti:
+Po každej zmene spusti:
     python3 tools/shoptet_zahlavie.py
+
+Vyrobí dva súbory do rncexplore-podklady/shoptet-import/vzhlad/:
+    rnc-vzhlad.css      nahrať do Správcu súborov    (18 kB)
+    do-zahlavia.html    vložiť do záhlavia           (674 znakov)
 
 Stavia nad bezplatnou šablónou Classic, ktorú obchod má. Apollo nie je
 potrebná, je to tiež len vrstva nad Classic.
 
 
-1. VLOŽIŤ VZHĽAD
-----------------
-    Vzhľad a obsah → Editor → záložka „HTML kód“ → sekcia „Záhlavie“
+1. VLOŽIŤ VZHĽAD — DVA KROKY
+----------------------------
+Záhlavie berie najviac 8192 znakov a vzhľad má 18 kB, takže sa doň
+nevojde. CSS preto ide ako samostatný súbor.
 
-Vlož celý obsah do-zahlavia.html. Shoptet samostatné pole „Vlastné CSS“
-nemá; do záhlavia patria meta značky, odkazy na štýly a skripty, takže
-CSS tam ide zabalené v <style>. Záhlavie Shoptet pri aktualizácii šablóny
-nemaže.
+  a) Vzhľad a obsah → Správca súborov → Nahrať súbor
+     Nahraj rnc-vzhlad.css. Po nahraní bude dostupný na adrese
+     /user/documents/rnc-vzhlad.css.
 
-Potom obnov obchod s Cmd+Shift+R — CSS drží v cache pár minút.
+     Keby Správca súborov odmietol prípону .css, je druhá cesta: FTP.
+     Nastavenia → Hosting → FTP → Pridať. Je to SFTP, server
+     sftp://ftp.<doména>, používateľské meno obsahuje číslo projektu
+     (user_123). Súbory nahrané cez FTP končia na tej istej adrese.
+     Klient na to je WinSCP alebo FileZilla. FTP je od tarifu Basic.
+
+  b) Vzhľad a obsah → Editor → záložka „HTML kód“ → sekcia „Záhlavie“
+     Vlož celý obsah do-zahlavia.html. Je to len odkaz na nahraté CSS a
+     na písma — 674 znakov, zmestí sa s rezervou.
+
+Potom obnov obchod s Cmd+Shift+R.
+
+Odkaz je relatívny (/user/documents/…), takže po prepnutí domény na
+www.rncexplore.com bude fungovať bez úpravy. Za adresou je ?v= s
+odtlačkom obsahu — pri zmene CSS sa zmení a prehliadače si stiahnu nové.
+Po každom nahraní nového CSS treba teda znova vložiť aj záhlavie.
 
 
 2. ŠTYRI VÝHODY NA KARTE PRODUKTU
