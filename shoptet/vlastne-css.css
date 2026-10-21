@@ -1,8 +1,13 @@
 /* ==========================================================================
    rncexplore.com — vzhľad podľa návrhu grafika, nad šablónou Classic.
 
-   Vloží sa do administrácie: Vzhľad → Editor → Vlastné CSS. Toto pole
-   Shoptet pri aktualizácii šablóny nemaže, takže úpravy prežijú.
+   Nevkladá sa priamo — Shoptet samostatné pole pre CSS nemá. Spusti
+   tools/shoptet_zahlavie.py, ktorý z tohto súboru vyrobí blok so <style>
+   a <link> na písma, a ten sa vloží do:
+
+       Vzhľad a obsah → Editor → záložka „HTML kód“ → sekcia „Záhlavie“
+
+   Záhlavie Shoptet pri aktualizácii šablóny nemaže, takže vzhľad prežije.
 
    Čo tu NIE JE a prečo: štruktúru HTML Shoptet nedovolí zmeniť. Všetko
    nižšie je preto len vzhľad, prípadne preusporiadanie súrodencov cez

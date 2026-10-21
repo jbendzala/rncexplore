@@ -1,48 +1,77 @@
 VZHĽAD PODĽA NÁVRHU — AKO HO NASADIŤ
 ====================================
 
-Súbor:  vlastne-css.css
+Zdroj:    shoptet/vlastne-css.css   (tu sa upravuje)
+Na vložiť: rncexplore-podklady/shoptet-import/vzhlad/do-zahlavia.html
 
-Stavia nad bezplatnou šablónou Classic, ktorú obchod už má (farebná
-varianta 11-one, rozloženie catalog3). Apollo nie je potrebné — Apollo je
-tiež len vrstva nad Classic.
+Druhý súbor vyrába prvý — po každej zmene CSS spusti:
+    python3 tools/shoptet_zahlavie.py
 
-
-1. VLOŽIŤ CSS
--------------
-Administrácia → Vzhľad → Editor → Vlastné CSS.
-Obsah súboru vložiť celý. Toto pole Shoptet pri aktualizácii šablóny
-nemaže, takže vzhľad prežije.
-
-Písma Manrope a Inter si CSS načíta samo z Google Fonts prvým riadkom
-(@import). Ak by ich Shoptet blokoval, presuň ten jeden riadok ako
-<link> do Vzhľad → Editor → HTML kódy → hlavička.
+Stavia nad bezplatnou šablónou Classic, ktorú obchod má. Apollo nie je
+potrebná, je to tiež len vrstva nad Classic.
 
 
-2. NASTAVIŤ V ADMINISTRÁCII (CSS to spraviť nemôže)
----------------------------------------------------
-Štyri výhody na karte produktu
-    Vzhľad → Benefity. Shoptet ich vykresľuje sám, v návrhu sú to:
-      Energia bez motora      — panel nabíja batériu počas státia aj jazdy
-      Tvarovaný na vozidlo    — na tvar konkrétneho modelu a generácie
-      Montáž bez vŕtania      — prilepí sa na povrch, bez dier a rámov
-      Stavaný na drsné použitie — vietor, dážď, prach, vibrácie
-    CSS ich zoradí do mriežky 2 × 2.
+1. VLOŽIŤ VZHĽAD
+----------------
+    Vzhľad a obsah → Editor → záložka „HTML kód“ → sekcia „Záhlavie“
 
-Štítok „Z recenzie“
-    Vzhľad alebo Produkty → Príznaky → custom1 pomenovať „Z recenzie“.
-    Import ho zapína trom produktom, pri ktorých recenziu naozaj máme.
+Vlož celý obsah do-zahlavia.html. Shoptet samostatné pole „Vlastné CSS“
+nemá; do záhlavia patria meta značky, odkazy na štýly a skripty, takže
+CSS tam ide zabalené v <style>. Záhlavie Shoptet pri aktualizácii šablóny
+nemaže.
 
-Logo
-    Vzhľad → Logo. Kým tam nie je, hlavička zobrazí názov obchodu
-    v správnom písme a prestrkoch.
-
-Horná lišta
-    Nastavenia → Navigácia. Do hornej lišty patrí prepínač jazyka,
-    odkaz Veľkoobchod (B2B) a kontakt — tak to má návrh.
+Potom obnov obchod s Cmd+Shift+R — CSS drží v cache pár minút.
 
 
-3. ČO CSS ROBÍ A ČO NEROBÍ
+2. ŠTYRI VÝHODY NA KARTE PRODUKTU
+---------------------------------
+    Vzhľad a obsah → Bannery → typ „Konkurenčné výhody“
+
+Shoptet ich sám zobrazí na troch miestach: na domovskej pod karuselom, nad
+pätičkou vo výpise kategórie a na karte produktu medzi fotografiou a
+popisom. Obrázok odporúčajú 150 × 150 px.
+
+Texty z návrhu:
+    Energia bez motora         Panel nabíja batériu počas státia aj jazdy.
+    Tvarovaný na vozidlo       Vyrobený na tvar konkrétneho modelu a generácie.
+    Montáž bez vŕtania         Prilepí sa na povrch, bez dier a rámov.
+    Stavaný na drsné použitie  Vietor, dážď, prach, vibrácie.
+
+CSS ich na karte produktu zoradí do mriežky 2 × 2.
+
+
+3. ŠTÍTOK „Z RECENZIE“
+----------------------
+    Nastavenia → Produkty → Parametre a príznaky → záložka „Príznaky“
+
+Klikni na riadok s príznakom custom1 a prepíš názov na „Z recenzie“.
+Import ho zapína trom produktom, pri ktorých recenziu naozaj máme.
+Systémové príznaky Akcia, Novinka a Tip nechaj, ako sú.
+
+
+4. LOGO A NÁZOV OBCHODU
+-----------------------
+    Vzhľad a obsah → Editor → sekcia so záhlavím, voľba „Upload“
+
+Kým logo nie je nahrané, Shoptet zobrazí názov a podtitul obchodu — tie sa
+nastavujú v Nastavenia → Základné nastavenia. CSS im dá správne písmo a
+prestrky, takže aj bez loga to vyzerá úmyselne.
+
+Favicon: Vzhľad a obsah → Editor → ďalšie nastavenia → Favicon.
+
+
+5. UKÁŽKOVÉ BANNERY ZO SKÚŠOBNEJ VERZIE
+---------------------------------------
+    Vzhľad a obsah → Bannery
+
+Zmaž karusel aj doplnkové bannery, čo tam dal Shoptet. Text „Vitajte v
+našom obchode“ je obsah úvodnej stránky, nie banner — ten sa mení v
+Vzhľad a obsah → Stránky.
+
+CSS obsah nemaže, len ho štýluje. Domovská stránka je samostatná práca.
+
+
+6. ČO CSS ROBÍ A ČO NEROBÍ
 --------------------------
 Robí len vzhľad. Štruktúru HTML Shoptet zmeniť nedovolí a nikde sa tu nič
 neprepisuje JavaScriptom.
@@ -56,28 +85,30 @@ Košík a objednávka majú len farby a písmo. Trojkrok je pevný a
 prestavovať ho skriptom znamená riskovať objednávky.
 
 
-4. ČO ZOSTÁVA OTVORENÉ
+7. ČO ZOSTÁVA OTVORENÉ
 ----------------------
 Pamätanie filtrov v prehliadači
     Návrh má „Zapamätať si môj výber filtrov v tomto prehliadači“.
-    Shoptet to nemá, treba na to vlastný JavaScript s localStorage. Nie je
-    v tomto CSS, je to samostatná práca.
-
-Štyri výhody na celú šírku
-    Návrh ich má pod produktom na celú šírku, Shoptet v pravom stĺpci.
-    Ak sa v administrácii dá benefitBanner posunúť nižšie, vyjde to
-    presne; inak sú v stĺpci ako 2 × 2.
+    Shoptet to nemá, treba vlastný JavaScript s localStorage. V tomto CSS
+    nie je, je to samostatná práca.
 
 Sekcie namiesto záložky
-    Popis produktu Shoptet zobrazuje v záložke „Popis“. CSS zo záložky
-    robí niečo bližšie k sekciám, ale nie je to to isté.
+    Popis produktu Shoptet zobrazuje v záložke. CSS zo záložky robí niečo
+    bližšie k sekciám, ale nie je to to isté.
+
+Farebná varianta
+    Obchod má 11-one, čo je modrá. CSS prepisuje farby tam, kde som ich
+    cielil; ak niekde modrá presvitá, skús v Návrhári šablón neutrálnejšiu
+    variantu — menej kútov na prepisovanie.
 
 
-5. OVERENÉ
+8. OVERENÉ
 ----------
-Každý selektor v tom CSS bol porovnaný so skutočným HTML obchodu —
-domovská stránka, výpis kategórie, podkategória, karta produktu, košík.
-Neoverené zostali štyri:
+Každý selektor bol porovnaný so skutočným HTML obchodu — domovská
+stránka, výpis kategórie, podkategória, karta produktu, košík. Neoverené
+zostali štyri a všetky sú okomentované priamo v CSS:
     ui-slider-range, ui-slider-handle   dorobí jQuery až v prehliadači
     cart-table, co-box                  kroky objednávky s tovarom v košíku
-Všetky štyri sú okomentované priamo v CSS.
+
+Vykreslené som to nevidel — do administrácie nemám prístup a prehliadač
+nemám. Pošli screenshot výpisu kategórie a karty produktu a doladím to.
