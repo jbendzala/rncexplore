@@ -697,7 +697,190 @@ input[type="number"], input[type="password"], textarea, select {
 }
 label { color: var(--rnc-ink); }
 
-/* --- 17. KOŠÍK A OBJEDNÁVKA --------------------------------------------
+/* --- 17. DOMOVSKÁ STRÁNKA ---------------------------------------------
+   Celá domovská je naše HTML v úvodnej stránke — Shoptet bloky z návrhu
+   neposkladá a dva z nich (články, recenzie) Classic nemá vôbec. Vyrába
+   ju tools/shoptet_domovska.py, štýluje sa tu.                           */
+.welcome { max-width: none; }
+
+.rnc-sec { padding: 56px 0; }
+.rnc-sec-alt {
+  background: var(--rnc-surface);
+  border-block: 1px solid var(--rnc-line);
+  padding-inline: 24px;
+}
+.rnc-sec > h2,
+.rnc-b2b h2 {
+  font-size: clamp(24px, 3vw, 34px);
+  margin: 0 0 8px;
+}
+.rnc-eyebrow {
+  font-family: var(--rnc-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  color: var(--rnc-tint);
+  margin: 0 0 6px;
+}
+.rnc-eyebrow-sm { margin-top: 36px; }
+.rnc-sub, .rnc-note { color: var(--rnc-muted); margin: 0 0 24px; max-width: 62ch; }
+.rnc-note { margin-top: 20px; }
+
+.rnc-btn {
+  display: inline-block;
+  background: var(--rnc-amber);
+  color: var(--rnc-ink);
+  font-family: var(--rnc-display);
+  font-weight: 600;
+  padding: 13px 22px;
+  border-radius: 10px;
+  border: 1px solid var(--rnc-amber);
+  text-decoration: none;
+}
+.rnc-btn:hover { background: var(--rnc-amber-dark); border-color: var(--rnc-amber-dark); color: var(--rnc-ink); }
+.rnc-btn-ghost { background: transparent; border-color: currentColor; color: inherit; }
+.rnc-btn-ghost:hover { background: rgba(255,255,255,.12); border-color: currentColor; color: inherit; }
+.rnc-cta { display: flex; flex-wrap: wrap; gap: 12px; margin: 22px 0 0; }
+
+/* hero */
+.rnc-hero {
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  border-radius: var(--rnc-radius);
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+.rnc-hero::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, rgba(14,21,18,.86) 0%, rgba(14,21,18,.62) 55%, rgba(14,21,18,.25) 100%);
+}
+.rnc-hero-in { position: relative; padding: 72px 40px; max-width: 640px; color: #fff; }
+.rnc-hero-in h2 { color: #fff; font-size: clamp(28px, 4vw, 44px); margin: 0 0 12px; }
+.rnc-hero .rnc-eyebrow { color: var(--rnc-amber); }
+.rnc-hero .rnc-lead { color: rgba(255,255,255,.88); font-size: 17px; margin: 0; }
+.rnc-hero-body {
+  display: flex; flex-wrap: wrap; gap: 8px 22px;
+  list-style: none; padding: 0; margin: 26px 0 0;
+  color: rgba(255,255,255,.80); font-size: 14px;
+}
+.rnc-hero-body li::before { content: "✓ "; color: var(--rnc-amber); }
+
+/* značky namiesto vyhľadávania vozidla */
+.rnc-brand-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+.rnc-brand-grid a {
+  display: flex; align-items: baseline; gap: 7px;
+  background: var(--rnc-surface);
+  border: 1px solid var(--rnc-line);
+  border-radius: 999px;
+  padding: 9px 16px;
+  font-family: var(--rnc-display); font-weight: 600;
+  color: var(--rnc-head); text-decoration: none;
+}
+.rnc-brand-grid a:hover { border-color: var(--rnc-amber); color: var(--rnc-tint); }
+.rnc-brand-grid span { color: var(--rnc-muted); font-weight: 400; font-size: 13px; }
+
+/* kategórie */
+.rnc-cats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.rnc-cat {
+  display: flex; flex-direction: column;
+  background: var(--rnc-surface);
+  border: 1px solid var(--rnc-line);
+  border-radius: var(--rnc-radius);
+  overflow: hidden; text-decoration: none;
+  transition: box-shadow .18s, transform .18s;
+}
+.rnc-cat:hover { box-shadow: var(--rnc-shadow); transform: translateY(-2px); }
+.rnc-cat-img { display: block; aspect-ratio: 4/3; background: var(--rnc-chip) center/cover; }
+.rnc-cat-txt { padding: 16px; flex: 1; }
+.rnc-cat-txt strong { display: block; font-family: var(--rnc-display); color: var(--rnc-head); }
+.rnc-cat-txt span { color: var(--rnc-muted); font-size: 13px; }
+.rnc-cat-sip { padding: 0 16px 16px; color: var(--rnc-tint); font-weight: 700; }
+
+.rnc-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.rnc-chips a {
+  background: var(--rnc-chip); border-radius: 999px;
+  padding: 7px 14px; color: var(--rnc-ink); text-decoration: none;
+  font-family: var(--rnc-display); font-weight: 600; font-size: 14px;
+}
+.rnc-chips a:hover { background: var(--rnc-amber); }
+.rnc-chips span { color: var(--rnc-muted); font-weight: 400; }
+
+/* odporúčané produkty */
+.rnc-prods { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.rnc-prod {
+  background: var(--rnc-bg);
+  border: 1px solid var(--rnc-line);
+  border-radius: var(--rnc-radius);
+  overflow: hidden;
+}
+.rnc-prod-img { display: block; aspect-ratio: 4/3; background: var(--rnc-surface) center/cover; }
+.rnc-prod h3 { font-size: 15px; margin: 14px 16px 6px; line-height: 1.35; }
+.rnc-prod-cena { margin: 0 16px 16px; color: var(--rnc-muted); font-size: 14px; }
+.rnc-prod-cena strong {
+  font-family: var(--rnc-display); font-size: 19px; color: var(--rnc-head);
+}
+
+/* benefity */
+.rnc-benefits { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.rnc-benefits strong { display: block; font-family: var(--rnc-display); color: var(--rnc-head); margin-bottom: 6px; }
+.rnc-benefits p { color: var(--rnc-muted); margin: 0; font-size: 14px; line-height: 1.6; }
+
+/* recenzie */
+.rnc-revs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.rnc-rev {
+  margin: 0; background: var(--rnc-bg);
+  border: 1px solid var(--rnc-line);
+  border-radius: var(--rnc-radius); overflow: hidden;
+}
+.rnc-rev-img { display: block; aspect-ratio: 16/10; background: var(--rnc-chip) center/cover; }
+.rnc-rev blockquote { margin: 0; padding: 18px 18px 10px; font-size: 15px; line-height: 1.6; }
+.rnc-rev figcaption { padding: 0 18px 18px; font-size: 13px; color: var(--rnc-muted); }
+.rnc-rev figcaption strong { display: block; color: var(--rnc-ink); font-family: var(--rnc-display); }
+
+/* články */
+.rnc-posts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.rnc-post { background: transparent; }
+.rnc-post-img {
+  display: block; aspect-ratio: 16/10;
+  background: var(--rnc-chip) center/cover;
+  border-radius: var(--rnc-radius); margin-bottom: 12px;
+}
+.rnc-post-meta { font-size: 13px; color: var(--rnc-muted); margin: 0 0 6px; }
+.rnc-tag {
+  background: var(--rnc-chip); border-radius: 999px;
+  padding: 3px 10px; margin-right: 8px;
+  font-family: var(--rnc-display); font-weight: 600; font-size: 12px; color: var(--rnc-ink);
+}
+.rnc-post h3 { font-size: 17px; margin: 0 0 6px; }
+.rnc-post h3 a { color: var(--rnc-head); text-decoration: none; }
+.rnc-post h3 a:hover { color: var(--rnc-tint); }
+.rnc-post p { color: var(--rnc-muted); font-size: 14px; line-height: 1.6; margin: 0 0 8px; }
+.rnc-more { font-family: var(--rnc-display); font-weight: 600; }
+
+/* veľkoobchod */
+.rnc-b2b {
+  display: flex; flex-wrap: wrap; align-items: center;
+  justify-content: space-between; gap: 20px;
+  background: var(--rnc-ink); color: #fff;
+  border-radius: var(--rnc-radius);
+  padding: 32px 36px; margin: 56px 0;
+}
+.rnc-b2b h2 { color: #fff; margin: 0 0 6px; }
+.rnc-b2b p { color: rgba(255,255,255,.78); margin: 0; }
+.rnc-b2b .rnc-cta { margin: 0; }
+
+@media (max-width: 980px) {
+  .rnc-cats, .rnc-prods, .rnc-benefits { grid-template-columns: repeat(2, 1fr); }
+  .rnc-revs, .rnc-posts { grid-template-columns: 1fr; }
+  .rnc-hero-in { padding: 48px 24px; }
+}
+@media (max-width: 560px) {
+  .rnc-cats, .rnc-prods, .rnc-benefits { grid-template-columns: 1fr; }
+}
+
+/* --- 18. KOŠÍK A OBJEDNÁVKA --------------------------------------------
    Zámerne len farby a písmo. Trojkrok je pevný a prestavovať ho skriptom
    znamená riskovať objednávky.                                            */
 /* .cart-content je overené na prázdnom košíku. .co-box a #order-form sú
