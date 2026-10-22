@@ -263,7 +263,71 @@ textarea:focus-visible,
   color: var(--rnc-head);
 }
 
-/* --- 6. HLAVNÉ MENU -----------------------------------------------------
+/* --- 6. ROZLOŽENIE HLAVIČKY --------------------------------------------
+   Návrh má v jednom páse logo, menu, vyhľadávanie a ikony. Shoptet
+   skladá to isté, len inak: nav#navigation je súrodencom formulára
+   a košíka vnútri .search. Stačí im teda zmeniť poradie flexboxom —
+   žiadny JavaScript, žiadne presúvanie prvkov.
+
+   Platí len na širokých obrazovkách. Pod 1200 px si Shoptet menu
+   zbaľuje do vlastného tlačidla a do toho nehrabeme, lebo na mobile
+   funguje dobre.                                                        */
+@media (min-width: 1200px) {
+  .header-top {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+  }
+  .header-top .site-name-wrapper { flex: 0 0 auto; margin: 0; }
+  .header-top .search {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    min-width: 0;
+  }
+  .header-top .search #navigation      { order: 1; flex: 0 1 auto; }
+  .header-top .search .search-form     { order: 2; flex: 1 1 260px; max-width: 320px; margin-left: auto; }
+  .header-top .search .navigation-buttons { order: 3; flex: 0 0 auto; }
+  .header-top .menu-helper { display: none; }
+
+  .navigation-in.menu { background: transparent; }
+  .navigation-in > ul.menu-level-1 { display: flex; gap: 4px; }
+  .navigation-in > ul > li > a { padding: 8px 14px; white-space: nowrap; }
+}
+
+/* --- 7. VYHĽADÁVANIE AKO V NÁVRHU --------------------------------------
+   Oválne pole na tmavom podklade, bez samostatného tlačidla HĽADAŤ —
+   to sa zmení na ikonu lupy vnútri poľa.                                */
+.search-form {
+  position: relative;
+  background: rgba(255, 255, 255, .08);
+  border: 1px solid rgba(255, 255, 255, .18);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.search-form .search-input {
+  background: transparent;
+  border: 0;
+  color: #fff;
+  padding: 11px 16px 11px 42px;
+  width: 100%;
+}
+.search-form .search-input::placeholder { color: var(--rnc-mist); }
+.search-form button[type="submit"],
+.search-form .btn {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 42px; padding: 0;
+  background: transparent; border: 0; color: var(--rnc-mist);
+  font-size: 0;                      /* text „HĽADAŤ“ preč, ostane ikona */
+}
+.search-form button[type="submit"]::before,
+.search-form .btn::before {
+  content: "⌕"; font-size: 20px; line-height: 1; color: var(--rnc-mist);
+}
+.search-form button[type="submit"]:hover::before { color: var(--rnc-amber); }
+
+/* --- 8. HLAVNÉ MENU -----------------------------------------------------
    Pozor na vedľajší účinok prepisu premenných: Classic maľuje celý pás
    menu farbou --color-primary, takže po zmene akcentu zjantárovel celý.
    Návrh ho má krémový s tmavým textom a jantárovou linkou pod položkou,
@@ -298,7 +362,7 @@ textarea:focus-visible,
   box-shadow: var(--rnc-shadow);
 }
 
-/* --- 7. VYHĽADÁVANIE A KOŠÍK -------------------------------------------- */
+/* --- 9. KOŠÍK -------------------------------------------- */
 .search-form,
 .search-input {
   border-radius: 10px;
@@ -325,7 +389,7 @@ textarea:focus-visible,
   box-shadow: var(--rnc-shadow);
 }
 
-/* --- 8. NAVIGAČNÁ CESTA ------------------------------------------------- */
+/* --- 10. NAVIGAČNÁ CESTA ------------------------------------------------- */
 .breadcrumbs,
 .breadcrumbs a,
 .breadcrumbs span {
@@ -334,7 +398,7 @@ textarea:focus-visible,
 }
 .breadcrumbs a:hover { color: var(--rnc-ink); }
 
-/* --- 9. FILTRE VO VÝPISE -----------------------------------------------
+/* --- 11. FILTRE VO VÝPISE -----------------------------------------------
    Návrh ich má ako štítky na krémovom podklade, nie ako šedé políčka.    */
 .filter-sections,
 .filter-section {
@@ -390,7 +454,7 @@ input:checked + .filter-label,
   font-variant-numeric: tabular-nums;
 }
 
-/* --- 10. KACHLIČKA PRODUKTU ---------------------------------------------- */
+/* --- 12. KACHLIČKA PRODUKTU ---------------------------------------------- */
 .products .product {
   background: var(--rnc-surface);
   border: 1px solid var(--rnc-line);
@@ -458,7 +522,7 @@ input:checked + .filter-label,
 .flags .flag .flag-text,
 .extra-flags .flag .flag-text { color: inherit; }
 
-/* --- 11. KARTA PRODUKTU ------------------------------------------------
+/* --- 13. KARTA PRODUKTU ------------------------------------------------
    Návrh má pod nadpisom text, až potom cenu a výber variantu. Shoptet
    posiela krátky popis pod tlačidlom do košíka. Všetky tie bloky sú však
    súrodenci v jednom kontejneri, takže ich preusporiada flexbox — bez
@@ -546,7 +610,7 @@ input:checked + .filter-label,
   .benefitBanner.position--benefitProduct { grid-template-columns: 1fr; }
 }
 
-/* --- 12. ZÁLOŽKY POD PRODUKTOM ----------------------------------------
+/* --- 14. ZÁLOŽKY POD PRODUKTOM ----------------------------------------
    Popis produktu generujeme my, takže sekcie a rozbaľovače v ňom sú naše
    HTML. Tu sa len zariadi, aby záložka nevyzerala ako záložka.            */
 .shp-tabs-wrapper { background: transparent; border: 0; }
@@ -658,7 +722,7 @@ input:checked + .filter-label,
 .rnc-review footer { font-size: 13px; color: var(--rnc-muted); }
 .rnc-review footer strong { color: var(--rnc-ink); }
 
-/* --- 13. SÚVISIACE PRODUKTY A DOMOVSKÁ STRÁNKA ------------------------- */
+/* --- 15. SÚVISIACE PRODUKTY A DOMOVSKÁ STRÁNKA ------------------------- */
 .homepage-group-title,
 .homepage-products-heading-1 {
   font-family: var(--rnc-display);
@@ -674,11 +738,11 @@ input:checked + .filter-label,
 .extended-banner-text { color: var(--rnc-muted); }
 .extended-banner-link { color: var(--rnc-tint); font-weight: 600; }
 
-/* --- 14. STRÁNKOVANIE A DOČÍTANIE -------------------------------------- */
+/* --- 16. STRÁNKOVANIE A DOČÍTANIE -------------------------------------- */
 .pagination .pagination__link,
 .btn.loadMore__button { border-radius: 10px; }
 
-/* --- 15. PÄTIČKA -------------------------------------------------------- */
+/* --- 17. PÄTIČKA -------------------------------------------------------- */
 .footer,
 #footer {
   background: var(--rnc-ink);
@@ -696,7 +760,7 @@ input:checked + .filter-label,
   font-weight: 600;
 }
 
-/* --- 16. FORMULÁRE ------------------------------------------------------ */
+/* --- 18. FORMULÁRE ------------------------------------------------------ */
 input[type="text"], input[type="email"], input[type="tel"],
 input[type="number"], input[type="password"], textarea, select {
   background: var(--rnc-surface);
@@ -707,7 +771,7 @@ input[type="number"], input[type="password"], textarea, select {
 }
 label { color: var(--rnc-ink); }
 
-/* --- 17. DOMOVSKÁ STRÁNKA ---------------------------------------------
+/* --- 19. DOMOVSKÁ STRÁNKA ---------------------------------------------
    Po zmazaní ukážkových bannerov zostali v stránke prázdne obaly —
    banners-row a wide-carousel. Textu v nich nie je ani znak, ale
    odsadenie si držia, a medzi navigáciou a hero tak vznikne svetlý pás.
@@ -1045,7 +1109,7 @@ label { color: var(--rnc-ink); }
   .rnc-cats, .rnc-prods, .rnc-benefits { grid-template-columns: 1fr; }
 }
 
-/* --- 18. KOŠÍK A OBJEDNÁVKA --------------------------------------------
+/* --- 20. KOŠÍK A OBJEDNÁVKA --------------------------------------------
    Zámerne len farby a písmo. Trojkrok je pevný a prestavovať ho skriptom
    znamená riskovať objednávky.                                            */
 /* .cart-content je overené na prázdnom košíku. .co-box a #order-form sú
