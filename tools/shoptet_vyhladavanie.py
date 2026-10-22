@@ -168,40 +168,42 @@ def main():
 SABLONA = '''<!-- Vyhľadávanie panela podľa vozidla.
      Vyrába tools/shoptet_vyhladavanie.py — needituj tu, uprav zdroj.
      Patrí do úvodnej stránky, na miesto pásu so značkami. -->
-<section class="rnc-sec" id="rnc-finder">
-  <p class="rnc-eyebrow">VYHĽADÁVANIE</p>
-  <h2>Nájdi panel pre svoje vozidlo</h2>
-  <p class="rnc-sub">Vyber značku, model a rok a zobrazíme ti kompatibilné
-     produkty.</p>
+<section class="rnc-finder" id="rnc-finder">
+  <div class="rnc-wrap">
 
-  <div class="rnc-find">
-    <label>Značka
-      <select id="rnc-b"><option value="">Vyberte značku</option></select>
-    </label>
-    <label>Model
-      <select id="rnc-m" disabled><option value="">Najprv značku</option></select>
-    </label>
-    <label>Rok výroby
-      <select id="rnc-r" disabled><option value="">Najprv model</option></select>
-    </label>
+    <div class="rnc-find-karta">
+      <div class="rnc-find-nadpis">
+        <strong>Nájdi panel pre svoje vozidlo</strong>
+        <span>Vyber značku, model a rok a zobrazíme ti kompatibilné produkty.</span>
+      </div>
+      <label>Značka
+        <select id="rnc-b"><option value="">Vyberte značku</option></select>
+      </label>
+      <label>Model
+        <select id="rnc-m" disabled><option value="">Najprv značku</option></select>
+      </label>
+      <label>Rok výroby
+        <select id="rnc-r" disabled><option value="">Najprv model</option></select>
+      </label>
+      <a class="rnc-btn" href="#rnc-vysledok" id="rnc-go">Zobraziť kompatibilné produkty →</a>
+    </div>
+
+    <div class="rnc-find-pod">
+      <p class="rnc-find-rec">Z recenzií zákazníkov: Dacia Duster 3 ·
+         Toyota Land Cruiser 100 · Jeep</p>
+      <p class="rnc-find-mieru"><a href="/na-mieru/">Nenašli ste vozidlo?
+         Panel na mieru</a></p>
+    </div>
+
+    <ul class="rnc-find-istoty">
+      <li>Slovensko a Česko (SK / CZ)</li>
+      <li>Faktúra s QR kódom e-mailom</li>
+      <li>Odoslanie po úhrade</li>
+      <li>Montáž a poradenstvo</li>
+    </ul>
+
+    <div id="rnc-vysledok" class="rnc-find-out" aria-live="polite"></div>
   </div>
-
-  <p class="rnc-cta">
-    <a class="rnc-btn" href="#rnc-vysledok" id="rnc-go">Zobraziť kompatibilné produkty →</a>
-  </p>
-  <p class="rnc-find-rec">Z recenzií zákazníkov: Dacia Duster 3 ·
-     Toyota Land Cruiser 100 · Jeep</p>
-
-  <div id="rnc-vysledok" class="rnc-find-out" aria-live="polite"></div>
-
-  <ul class="rnc-find-istoty">
-    <li>Slovensko a Česko (SK / CZ)</li>
-    <li>Faktúra s QR kódom e-mailom</li>
-    <li>Odoslanie po úhrade</li>
-    <li>Montáž a poradenstvo</li>
-  </ul>
-  <p class="rnc-note">Nenašli ste vozidlo?
-     <a href="/na-mieru/">Panel na mieru</a></p>
 </section>
 
 <script>

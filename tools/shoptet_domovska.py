@@ -103,18 +103,25 @@ def cena(x):
 
 
 def hero():
+    """Hero na celú šírku okna.
+
+    V návrhu má 1440 × 560 px, teda siaha od okraja po okraj, a štyri
+    výhody sú dole v jednom rade s jantárovými bodkami. Obsah Shoptetu je
+    pritom obmedzený na šírku stránky, takže sa z nej musíme vymaniť —
+    na to je ten výpočet so 100vw v CSS.
+    """
     body = "".join(f"<li>{e(n)}</li>" for n, _ in VYHODY)
     return f'''
 <section class="rnc-hero" style="background-image:url('{e(FOTO["hero"])}')">
-  <div class="rnc-hero-in">
+  <div class="rnc-wrap rnc-hero-in">
     <p class="rnc-eyebrow">RNC EXPLORE</p>
     <h2>Solárna energia<br>pre vozidlá a karavany</h2>
     <p class="rnc-lead">Vyberte produkt a prevedenie, vložte do košíka a
-       objednajte. Faktúru s QR kódom pošleme e-mailom a tovar odošleme
+       objednajte. Faktúru s QR kódom pošleme e-mailom, tovar odošleme
        po úhrade.</p>
     <p class="rnc-cta">
       <a class="rnc-btn" href="/panely-na-kapotu/">Zobraziť celý katalóg →</a>
-      <a class="rnc-btn rnc-btn-ghost" href="/na-mieru/">Panely na mieru</a>
+      <a class="rnc-link-light" href="/na-mieru/">Panely na mieru</a>
     </p>
     <ul class="rnc-hero-body">{body}</ul>
   </div>

@@ -39,6 +39,8 @@
   --rnc-tint:       #8A5A00;   /* odkazy, zameranie */
   --rnc-chip:       #EFECE4;   /* štítky a filtre */
   --rnc-ok:         #168455;   /* dostupnosť */
+  --rnc-g1:         #141C18;   /* hlavička */
+  --rnc-mist:       #B9BDB6;   /* text na tmavom */
   --rnc-shadow:     0 8px 30px rgba(12, 32, 26, .10);
   --rnc-radius:     14px;
   --rnc-display:    Manrope, Inter, system-ui, sans-serif;
@@ -168,8 +170,8 @@ textarea:focus-visible,
    jediný spôsob, ako sa dostať nad ich pravidlo bez !important.           */
 .btn {
   font-family: var(--rnc-display);
-  font-weight: 600;
-  border-radius: 10px;
+  font-weight: 700;
+  border-radius: 999px;
   border: 1px solid transparent;
   transition: background-color .15s, color .15s, border-color .15s;
 }
@@ -233,12 +235,20 @@ textarea:focus-visible,
 
 .top-navigation-tools--language a { font-weight: 600; }
 
+/* Hlavička je v návrhu tmavá (#141C18), nie krémová — prvý raz som ju
+   spravil svetlú, lebo som vychádzal zo starého návrhu. */
 .header-top,
 .navigation-wrapper,
 .header-background-light {
-  background: var(--rnc-bg);
-  border-bottom: 1px solid var(--rnc-line);
+  background: var(--rnc-g1);
+  border-bottom: 0;
 }
+#header .site-name a,
+#header .site-name a.text-logo,
+#header .site-name .text-logo,
+#header .site-name .text-logo small { color: #fff; }
+.search-input { background: rgba(255, 255, 255, .08); border-color: rgba(255,255,255,.18); color: #fff; }
+.search-input::placeholder { color: var(--rnc-mist); }
 
 /* Názov obchodu v hlavičke — kým nie je nahrané logo, nech aspoň sedí
    písmo a prestrky, ako to má návrh. */
@@ -260,14 +270,14 @@ textarea:focus-visible,
    na ktorej stojíš — akcent má byť na tlačidle do košíka, nie na páse
    cez celú šírku.                                                        */
 .navigation-in {
-  background-color: var(--rnc-bg);
-  border-bottom: 1px solid var(--rnc-line);
+  background-color: var(--rnc-g1);
+  border-bottom: 0;
 }
 .navigation-in > ul > li > a,
 .menu-level-1 > li > a {
   font-family: var(--rnc-display);
   font-weight: 600;
-  color: var(--rnc-head);
+  color: #fff;
   background-color: transparent;
   border: 0;
 }
@@ -276,8 +286,8 @@ textarea:focus-visible,
 .navigation-in > ul > li.active > a,
 .menu-level-1 > li > a:hover,
 .menu-level-1 > li.active > a {
-  background-color: var(--rnc-bg);
-  color: var(--rnc-tint);
+  background-color: transparent;
+  color: var(--rnc-amber);
   box-shadow: inset 0 -2px 0 var(--rnc-amber);
 }
 
@@ -734,84 +744,138 @@ label { color: var(--rnc-ink); }
 .rnc-note { margin-top: 20px; }
 
 .rnc-btn {
-  display: inline-block;
+  display: inline-flex; align-items: center; justify-content: center;
   background: var(--rnc-amber);
   color: var(--rnc-ink);
   font-family: var(--rnc-display);
-  font-weight: 600;
-  padding: 13px 22px;
-  border-radius: 10px;
+  font-weight: 700;
+  padding: 15px 28px;
+  border-radius: 999px;
   border: 1px solid var(--rnc-amber);
   text-decoration: none;
+  white-space: nowrap;
 }
+/* Druhé tlačidlo v hero je v návrhu podčiarknutý odkaz, nie rám. */
+.rnc-link-light {
+  color: #fff; font-family: var(--rnc-display); font-weight: 600;
+  text-decoration: underline; text-underline-offset: 4px;
+}
+.rnc-link-light:hover { color: var(--rnc-amber); }
 .rnc-btn:hover { background: var(--rnc-amber-dark); border-color: var(--rnc-amber-dark); color: var(--rnc-ink); }
 .rnc-btn-ghost { background: transparent; border-color: currentColor; color: inherit; }
 .rnc-btn-ghost:hover { background: rgba(255,255,255,.12); border-color: currentColor; color: inherit; }
 .rnc-cta { display: flex; flex-wrap: wrap; gap: 12px; margin: 22px 0 0; }
 
-/* hero */
+/* Vnútorná šírka stránky. Návrh má plátno 1440 s okrajmi 80, teda
+   obsah 1280. */
+.rnc-wrap { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+
+/* Hero na celú šírku okna. Obsah Shoptetu je obmedzený na šírku stránky,
+   takže sa z nej musíme vymaniť — odtiaľ ten výpočet so 100vw. */
 .rnc-hero {
   position: relative;
+  width: 100vw;
+  margin-inline: calc(50% - 50vw);
+  min-height: 560px;
+  display: flex; align-items: center;
   background-size: cover;
   background-position: center;
-  border-radius: var(--rnc-radius);
-  overflow: hidden;
-  margin-bottom: 8px;
 }
 .rnc-hero::before {
   content: "";
   position: absolute; inset: 0;
-  background: linear-gradient(90deg, rgba(14,21,18,.86) 0%, rgba(14,21,18,.62) 55%, rgba(14,21,18,.25) 100%);
+  background: linear-gradient(90deg, rgba(14,21,18,.88) 0%,
+              rgba(14,21,18,.66) 52%, rgba(14,21,18,.18) 100%);
 }
-.rnc-hero-in { position: relative; padding: 72px 40px; max-width: 640px; color: #fff; }
-.rnc-hero-in h2 { color: #fff; font-size: clamp(28px, 4vw, 44px); margin: 0 0 12px; }
+.rnc-hero-in {
+  position: relative; width: 100%;
+  padding-top: 64px; padding-bottom: 96px;
+  color: #fff;
+}
+.rnc-hero-in h2 {
+  color: #fff; margin: 0 0 18px;
+  font-size: clamp(32px, 4.6vw, 64px); font-weight: 600;
+  line-height: 1.08; letter-spacing: -.02em;
+}
 .rnc-hero .rnc-eyebrow { color: var(--rnc-amber); }
-.rnc-hero .rnc-lead { color: rgba(255,255,255,.88); font-size: 17px; margin: 0; }
-.rnc-hero-body {
-  display: flex; flex-wrap: wrap; gap: 8px 22px;
-  list-style: none; padding: 0; margin: 26px 0 0;
-  color: rgba(255,255,255,.80); font-size: 14px;
+.rnc-hero .rnc-lead {
+  color: rgba(255, 255, 255, .88);
+  font-size: 18px; line-height: 1.55; max-width: 560px; margin: 0;
 }
-.rnc-hero-body li::before { content: "✓ "; color: var(--rnc-amber); }
+.rnc-hero .rnc-cta { align-items: center; gap: 24px; margin-top: 30px; }
 
-/* vyhľadávanie vozidla */
-.rnc-find {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-  background: var(--rnc-surface);
-  border: 1px solid var(--rnc-line);
-  border-radius: var(--rnc-radius);
-  padding: 22px;
+/* Štyri výhody dole v jednom rade, s jantárovými bodkami. */
+.rnc-hero-body {
+  display: flex; flex-wrap: wrap; gap: 10px 40px;
+  list-style: none; padding: 0; margin: 56px 0 0;
+  color: #fff; font-size: 14px;
 }
-.rnc-find label {
+.rnc-hero-body li { display: flex; align-items: center; gap: 10px; }
+.rnc-hero-body li::before {
+  content: ""; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--rnc-amber); flex: 0 0 auto;
+}
+
+/* Vyhľadávanie vozidla. V návrhu je to biela karta, ktorá spodkom hero
+   prekrýva — preto to záporné odsadenie hore. */
+.rnc-finder { padding-bottom: 48px; }
+.rnc-find-karta {
+  position: relative;
+  margin-top: -56px;
+  display: grid;
+  grid-template-columns: minmax(240px, 1fr) 180px 180px 150px auto;
+  gap: 16px;
+  align-items: end;
+  background: var(--rnc-surface);
+  border-radius: 12px;
+  box-shadow: var(--rnc-shadow);
+  padding: 22px 24px;
+}
+.rnc-find-nadpis strong {
   display: block;
-  font-family: var(--rnc-display);
-  font-weight: 600;
-  font-size: 13px;
+  font-family: var(--rnc-display); font-weight: 600; font-size: 20px;
+  color: var(--rnc-head); margin-bottom: 6px;
+}
+.rnc-find-nadpis span { color: var(--rnc-muted); font-size: 12px; line-height: 1.5; }
+.rnc-find-karta label {
+  display: block;
+  font-family: var(--rnc-display); font-weight: 600; font-size: 12px;
   color: var(--rnc-head);
 }
-.rnc-find select {
-  display: block; width: 100%; margin-top: 7px;
-  padding: 11px 12px;
-  background: var(--rnc-bg);
+.rnc-find-karta select {
+  display: block; width: 100%; margin-top: 6px;
+  padding: 15px 12px;
+  background: var(--rnc-surface);
   border: 1px solid var(--rnc-line-2);
-  border-radius: 10px;
-  font-family: var(--rnc-body); font-size: 15px;
+  border-radius: 8px;
+  font-family: var(--rnc-body); font-size: 14px;
   color: var(--rnc-ink);
 }
-.rnc-find select:disabled { color: var(--rnc-muted); background: var(--rnc-chip); }
+.rnc-find-karta select:disabled { color: var(--rnc-muted); background: var(--rnc-chip); }
+.rnc-find-karta .rnc-btn { font-size: 14px; padding: 16px 24px; }
+
+/* riadok pod kartou — recenzie vľavo, odkaz na mieru vpravo */
+.rnc-find-pod {
+  display: flex; flex-wrap: wrap; gap: 10px 24px;
+  justify-content: space-between; align-items: baseline;
+  margin: 26px 0 0;
+}
+.rnc-find-pod p { margin: 0; }
+.rnc-find-mieru a {
+  font-family: var(--rnc-display); font-weight: 600; color: var(--rnc-ink);
+  text-decoration: underline; text-underline-offset: 4px;
+}
+.rnc-find-istoty {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px 20px;
+  list-style: none; padding: 0; margin: 22px 0 0;
+  color: var(--rnc-muted); font-size: 14px;
+}
 
 .rnc-find-out:not(:empty) { margin-top: 26px; }
 
 .rnc-life-txt { min-width: 0; }
 .rnc-find-rec { color: var(--rnc-muted); font-size: 14px; margin: 14px 0 0; }
 
-.rnc-find-istoty {
-  display: flex; flex-wrap: wrap; gap: 8px 26px;
-  list-style: none; padding: 0; margin: 22px 0 0;
-  color: var(--rnc-muted); font-size: 14px;
-}
 .rnc-find-istoty li::before { content: "✓ "; color: var(--rnc-ok); font-weight: 700; }
 .rnc-find-pocet {
   font-family: var(--rnc-display); font-weight: 600;
@@ -833,8 +897,16 @@ label { color: var(--rnc-ink); }
   color: var(--rnc-muted); font-size: 14px;
 }
 
-@media (max-width: 720px) {
-  .rnc-find { grid-template-columns: 1fr; }
+@media (max-width: 1100px) {
+  .rnc-find-karta { grid-template-columns: repeat(3, 1fr); }
+  .rnc-find-nadpis { grid-column: 1 / -1; }
+  .rnc-find-karta .rnc-btn { grid-column: 1 / -1; }
+  .rnc-find-istoty { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 680px) {
+  .rnc-find-karta { grid-template-columns: 1fr; margin-top: -32px; }
+  .rnc-find-istoty { grid-template-columns: 1fr; }
+  .rnc-hero-in { padding-bottom: 72px; }
 }
 
 /* kategórie */
