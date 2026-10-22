@@ -75,11 +75,14 @@ VYHODY = [
 BLOG_ZAKLAD = "/nase-spravy"       # kde Shoptet drží články
 ADRESY = {}                        # id produktu -> adresa v obchode
 
-# Fotografie, ktoré si do návrhu vybral grafik.
+# Fotografie, ktoré si do návrhu vybral grafik. Nahrávajú sa do Správcu
+# súborov a odkazujeme na vlastnú kópiu, nie na pôvodný zdroj: hero bola
+# na lensunsolar.com, čo je stránka dodávateľa. Keby ju tam zmenili,
+# zmizol by najväčší obrázok na domovskej a nikto by si toho hneď
+# nevšimol. Súbory sú v shoptet-import/vzhlad/fotky.
 FOTO = {
-    "hero": "https://lensunsolar.com/cdn/shop/files/"
-            "lensunsolar-hood-solar-panel-2_1780x.jpg?width=1600",
-    "life": "https://www.rncexplore.com/assets/hood-install.jpg?width=1000",
+    "hero": "/user/documents/upload/hero-tacoma.jpg",
+    "life": "/user/documents/upload/lifestyle-montaz.jpg",
 }
 
 
