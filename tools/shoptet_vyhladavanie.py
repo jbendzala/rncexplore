@@ -171,8 +171,8 @@ SABLONA = '''<!-- Vyhľadávanie panela podľa vozidla.
 <section class="rnc-sec" id="rnc-finder">
   <p class="rnc-eyebrow">VYHĽADÁVANIE</p>
   <h2>Nájdi panel pre svoje vozidlo</h2>
-  <p class="rnc-sub">Vyber značku, model a rok a zobrazíme panely, ktoré na
-     tvoje auto sadnú.</p>
+  <p class="rnc-sub">Vyber značku, model a rok a zobrazíme ti kompatibilné
+     produkty.</p>
 
   <div class="rnc-find">
     <label>Značka
@@ -186,10 +186,22 @@ SABLONA = '''<!-- Vyhľadávanie panela podľa vozidla.
     </label>
   </div>
 
+  <p class="rnc-cta">
+    <a class="rnc-btn" href="#rnc-vysledok" id="rnc-go">Zobraziť kompatibilné produkty →</a>
+  </p>
+  <p class="rnc-find-rec">Z recenzií zákazníkov: Dacia Duster 3 ·
+     Toyota Land Cruiser 100 · Jeep</p>
+
   <div id="rnc-vysledok" class="rnc-find-out" aria-live="polite"></div>
 
+  <ul class="rnc-find-istoty">
+    <li>Slovensko a Česko (SK / CZ)</li>
+    <li>Faktúra s QR kódom e-mailom</li>
+    <li>Odoslanie po úhrade</li>
+    <li>Montáž a poradenstvo</li>
+  </ul>
   <p class="rnc-note">Nenašli ste vozidlo?
-     <a href="/na-mieru/">Vyrobíme panel na mieru</a></p>
+     <a href="/na-mieru/">Panel na mieru</a></p>
 </section>
 
 <script>
@@ -256,6 +268,14 @@ SABLONA = '''<!-- Vyhľadávanie panela podľa vozidla.
   });
 
   zr.addEventListener("change", ukáž);
+
+  /* Výsledky sa prepočítavajú hneď pri výbere, tlačidlo z návrhu teda nič
+     nespúšťa — len posunie stránku k nim. Keby niekto klikol skôr, než si
+     vybral, pripomenie mu to. */
+  var go = document.getElementById("rnc-go");
+  if (go) go.addEventListener("click", function (ev) {
+    if (!zb.value || !zm.value) { ev.preventDefault(); zb.focus(); }
+  });
 
   function ukáž() {
     var b = zb.value, m = zm.value, r = zr.value ? +zr.value : null;

@@ -30,6 +30,7 @@ import seo
 import vystup
 import blog_content as B
 from pages_content import REVIEWS
+from shoptet_vyhladavanie import adresy, bez_diakritiky
 
 # Adresy kategórií v Shoptete. Vznikli z názvov pri importe — overené
 # v mape stránky obchodu.
@@ -72,6 +73,14 @@ VYHODY = [
 ]
 
 BLOG_ZAKLAD = "/nase-spravy"       # kde Shoptet drží články
+ADRESY = {}                        # id produktu -> adresa v obchode
+
+# Fotografie, ktoré si do návrhu vybral grafik.
+FOTO = {
+    "hero": "https://lensunsolar.com/cdn/shop/files/"
+            "lensunsolar-hood-solar-panel-2_1780x.jpg?width=1600",
+    "life": "https://www.rncexplore.com/assets/hood-install.jpg?width=1000",
+}
 
 
 def e(x):
@@ -93,25 +102,21 @@ def cena(x):
     return f"{x:,.2f}".replace(",", " ").replace(".", ",") + " €"
 
 
-def hero(P):
-    foto = next((i for p in P for i in (p.get("img") or [])
-                 if "hood-solar-system" in i), (P[0].get("img") or [""])[0])
+def hero():
+    body = "".join(f"<li>{e(n)}</li>" for n, _ in VYHODY)
     return f'''
-<section class="rnc-hero" style="background-image:url('{e(foto)}')">
+<section class="rnc-hero" style="background-image:url('{e(FOTO["hero"])}')">
   <div class="rnc-hero-in">
     <p class="rnc-eyebrow">RNC EXPLORE</p>
-    <h2>Sloboda začína tam, kde končia cesty.</h2>
-    <p class="rnc-lead">Solárne panely na kapotu a outdoor riešenia pre
-       nezávislé cestovanie.</p>
+    <h2>Solárna energia<br>pre vozidlá a karavany</h2>
+    <p class="rnc-lead">Vyberte produkt a prevedenie, vložte do košíka a
+       objednajte. Faktúru s QR kódom pošleme e-mailom a tovar odošleme
+       po úhrade.</p>
     <p class="rnc-cta">
-      <a class="rnc-btn" href="/panely-na-kapotu/">Nájsť panel pre moje vozidlo →</a>
-      <a class="rnc-btn rnc-btn-ghost" href="/panely-na-kapotu/">Zobraziť všetky produkty</a>
+      <a class="rnc-btn" href="/panely-na-kapotu/">Zobraziť celý katalóg →</a>
+      <a class="rnc-btn rnc-btn-ghost" href="/na-mieru/">Panely na mieru</a>
     </p>
-    <ul class="rnc-hero-body">
-      <li>Spoľahlivá energia na cestách</li>
-      <li>Overená kompatibilita s vozidlom</li>
-      <li>Navrhnuté pre extrémne podmienky</li>
-    </ul>
+    <ul class="rnc-hero-body">{body}</ul>
   </div>
 </section>'''
 
@@ -147,8 +152,13 @@ def kategorie(P, meta):
 
     return f'''
 <section class="rnc-sec">
-  <p class="rnc-eyebrow">KATEGÓRIE</p>
-  <h2>Vyberte, čo hľadáte</h2>
+  <div class="rnc-sec-head">
+    <div>
+      <p class="rnc-eyebrow">KATEGÓRIE</p>
+      <h2>Vyberte, čo hľadáte</h2>
+    </div>
+    <a class="rnc-more" href="/panely-na-kapotu/">Zobraziť celý katalóg →</a>
+  </div>
   <div class="rnc-cats">{velke}
   </div>
   <p class="rnc-eyebrow rnc-eyebrow-sm">SOLÁRNE PANELY PODĽA TYPU</p>
@@ -171,17 +181,25 @@ def odporucame(P):
     karty = []
     for pid in ODPORUCAME:
         p = by[pid]
+        kat = dict((k, n) for k, n, _ in KATEGORIE).get(p["cat"], "")
         karty.append(f'''
-    <article class="rnc-prod">
+    <a class="rnc-prod" href="{e(ADRESY[p["id"]])}">
       <span class="rnc-prod-img" style="background-image:url('{e((p.get("img") or [""])[0])}')"></span>
       <h3>{e(p["n"]["sk"])}</h3>
+      <p class="rnc-prod-kat">{e(kat)}</p>
       <p class="rnc-prod-cena">od <strong>{cena(od_ceny(p))}</strong>
          <span>s DPH</span></p>
-    </article>''')
+      <p class="rnc-more">Zobraziť detail →</p>
+    </a>''')
     return f'''
 <section class="rnc-sec rnc-sec-alt">
-  <p class="rnc-eyebrow">ODPORÚČAME</p>
-  <h2>Obľúbené produkty</h2>
+  <div class="rnc-sec-head">
+    <div>
+      <p class="rnc-eyebrow">ODPORÚČAME</p>
+      <h2>Odporúčame</h2>
+    </div>
+    <a class="rnc-more" href="/panely-na-kapotu/">Zobraziť celý katalóg →</a>
+  </div>
   <p class="rnc-sub">Vyberte produkt a prevedenie, vložte do košíka a objednajte.</p>
   <div class="rnc-prods">{"".join(karty)}
   </div>
@@ -192,10 +210,14 @@ def benefity():
     polozky = "".join(f'<div><strong>{e(n)}</strong><p>{e(t)}</p></div>'
                       for n, t in VYHODY)
     return f'''
-<section class="rnc-sec">
-  <h2>Energia, ktorá vám dáva slobodu</h2>
-  <p class="rnc-sub">Pre dlhšie cesty, vzdialenejšie miesta a väčšiu nezávislosť.</p>
-  <div class="rnc-benefits">{polozky}</div>
+<section class="rnc-sec rnc-life">
+  <div class="rnc-life-foto" style="background-image:url('{e(FOTO["life"])}')"></div>
+  <div class="rnc-life-txt">
+    <h2>Energia, ktorá vám dáva slobodu</h2>
+    <p class="rnc-sub">Pre dlhšie cesty, vzdialenejšie miesta a väčšiu
+       nezávislosť.</p>
+    <div class="rnc-benefits">{polozky}</div>
+  </div>
 </section>'''
 
 
@@ -232,8 +254,13 @@ def clanky():
     </article>''' for a in B.newest(3))
     return f'''
 <section class="rnc-sec">
-  <p class="rnc-eyebrow">BLOG</p>
-  <h2>Tipy, montáž a inšpirácia</h2>
+  <div class="rnc-sec-head">
+    <div>
+      <p class="rnc-eyebrow">BLOG</p>
+      <h2>Tipy, montáž a inšpirácia</h2>
+    </div>
+    <a class="rnc-more" href="{BLOG_ZAKLAD}/">Všetky články →</a>
+  </div>
   <p class="rnc-sub">Návody a nápady, vďaka ktorým z techniky vyťažíte maximum.</p>
   <div class="rnc-posts">{karty}</div>
 </section>'''
@@ -255,12 +282,18 @@ def b2b():
 
 def main():
     P, meta = katalog()
+    # Odkazy na produkty berieme z mapy stránok obchodu, nie z odhadu —
+    # rovnako ako vo vyhľadávaní vozidla.
+    mapa = adresy()
+    global ADRESY
+    ADRESY = {p["id"]: "/" + mapa[bez_diakritiky(p["n"]["sk"])] + "/"
+              for p in P if bez_diakritiky(p["n"]["sk"]) in mapa}
     casti = [
         "<!-- Domovská stránka rncexplore.com podľa návrhu grafika.",
         "     Vyrába tools/shoptet_domovska.py — needituj tu, uprav zdroj.",
         "     Vkladá sa do: Vzhľad a obsah → Stránky → úvodná stránka,",
         "     v editore prepni na HTML režim. -->",
-        hero(P), vyhladavanie(), kategorie(P, meta), odporucame(P),
+        hero(), vyhladavanie(), kategorie(P, meta), odporucame(P),
         benefity(), recenzie(), clanky(), b2b(),
     ]
     h = "\n".join(casti) + "\n"

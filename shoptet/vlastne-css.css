@@ -723,6 +723,13 @@ label { color: var(--rnc-ink); }
   margin: 0 0 6px;
 }
 .rnc-eyebrow-sm { margin-top: 36px; }
+.rnc-sec-head {
+  display: flex; flex-wrap: wrap; gap: 12px;
+  align-items: flex-end; justify-content: space-between;
+  margin-bottom: 8px;
+}
+.rnc-sec-head h2 { margin: 0; }
+.rnc-sec-head .rnc-more { white-space: nowrap; }
 .rnc-sub, .rnc-note { color: var(--rnc-muted); margin: 0 0 24px; max-width: 62ch; }
 .rnc-note { margin-top: 20px; }
 
@@ -796,6 +803,16 @@ label { color: var(--rnc-ink); }
 .rnc-find select:disabled { color: var(--rnc-muted); background: var(--rnc-chip); }
 
 .rnc-find-out:not(:empty) { margin-top: 26px; }
+
+.rnc-life-txt { min-width: 0; }
+.rnc-find-rec { color: var(--rnc-muted); font-size: 14px; margin: 14px 0 0; }
+
+.rnc-find-istoty {
+  display: flex; flex-wrap: wrap; gap: 8px 26px;
+  list-style: none; padding: 0; margin: 22px 0 0;
+  color: var(--rnc-muted); font-size: 14px;
+}
+.rnc-find-istoty li::before { content: "✓ "; color: var(--rnc-ok); font-weight: 700; }
 .rnc-find-pocet {
   font-family: var(--rnc-display); font-weight: 600;
   color: var(--rnc-head); margin: 0 0 14px;
@@ -855,14 +872,31 @@ label { color: var(--rnc-ink); }
   overflow: hidden;
 }
 .rnc-prod-img { display: block; aspect-ratio: 4/3; background: var(--rnc-surface) center/cover; }
-.rnc-prod h3 { font-size: 15px; margin: 14px 16px 6px; line-height: 1.35; }
+.rnc-prod { display: block; text-decoration: none; color: inherit; }
+.rnc-prod:hover { border-color: var(--rnc-line-2); box-shadow: var(--rnc-shadow); }
+.rnc-prod h3 { font-size: 15px; margin: 14px 16px 2px; line-height: 1.35; color: var(--rnc-head); }
+.rnc-prod-kat { margin: 0 16px 8px; font-size: 13px; color: var(--rnc-muted); }
+.rnc-prod .rnc-more { margin: 0 16px 16px; font-size: 14px; color: var(--rnc-tint); }
 .rnc-prod-cena { margin: 0 16px 16px; color: var(--rnc-muted); font-size: 14px; }
 .rnc-prod-cena strong {
   font-family: var(--rnc-display); font-size: 19px; color: var(--rnc-head);
 }
 
+/* lifestyle — fotka vľavo, výhody vpravo, ako to má návrh */
+.rnc-life {
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  gap: 36px;
+  align-items: center;
+}
+.rnc-life-foto {
+  aspect-ratio: 4/3;
+  background: var(--rnc-chip) center/cover;
+  border-radius: var(--rnc-radius);
+}
+
 /* benefity */
-.rnc-benefits { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.rnc-benefits { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
 .rnc-benefits strong { display: block; font-family: var(--rnc-display); color: var(--rnc-head); margin-bottom: 6px; }
 .rnc-benefits p { color: var(--rnc-muted); margin: 0; font-size: 14px; line-height: 1.6; }
 
@@ -911,7 +945,8 @@ label { color: var(--rnc-ink); }
 .rnc-b2b .rnc-cta { margin: 0; }
 
 @media (max-width: 980px) {
-  .rnc-cats, .rnc-prods, .rnc-benefits { grid-template-columns: repeat(2, 1fr); }
+  .rnc-life { grid-template-columns: 1fr; gap: 22px; }
+  .rnc-cats, .rnc-prods { grid-template-columns: repeat(2, 1fr); }
   .rnc-revs, .rnc-posts { grid-template-columns: 1fr; }
   .rnc-hero-in { padding: 48px 24px; }
 }
