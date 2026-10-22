@@ -708,6 +708,25 @@ input[type="number"], input[type="password"], textarea, select {
 label { color: var(--rnc-ink); }
 
 /* --- 17. DOMOVSKÁ STRÁNKA ---------------------------------------------
+   Po zmazaní ukážkových bannerov zostali v stránke prázdne obaly —
+   banners-row a wide-carousel. Textu v nich nie je ani znak, ale
+   odsadenie si držia, a medzi navigáciou a hero tak vznikne svetlý pás.
+
+   Neskrývame ich natvrdo, ale len kým sú prázdne: keby sa raz banner
+   alebo karusel naozaj nastavil, zobrazí sa sám. Preto :has(), nie
+   display:none na triedu.                                               */
+.type-index .banners-row:not(:has(img)):not(:has(a)),
+.type-index .wide-carousel:not(:has(img)),
+.type-index .next-to-carousel-banners:not(:has(img)) {
+  display: none;
+}
+
+/* Hero má nadväzovať priamo na navigáciu, bez medzery. */
+.type-index .welcome-wrapper,
+.type-index .homepage-box { padding-top: 0; margin-top: 0; }
+.welcome > div:first-child > .rnc-hero:first-child { margin-top: 0; }
+
+
    Celá domovská je naše HTML v úvodnej stránke — Shoptet bloky z návrhu
    neposkladá a dva z nich (články, recenzie) Classic nemá vôbec. Vyrába
    ju tools/shoptet_domovska.py, štýluje sa tu.                           */
