@@ -352,6 +352,16 @@ textarea:focus-visible,
   .navigation-in.menu { background: transparent; }
   .navigation-in > ul.menu-level-1 { display: flex; gap: 4px; }
   .navigation-in > ul > li > a { padding: 8px 12px; white-space: nowrap; }
+
+  /* Zvislé čiarky medzi položkami dáva Shoptet cez border-left a farbu
+     si počíta z --color-primary — odkedy je jantárová, svietia. Návrh
+     ich nemá, položky oddeľuje len medzera. Rušíme ich len tu: v
+     mobilnom zbalenom menu sú to vodorovné linky medzi riadkami a tam
+     dávajú zmysel. */
+  .navigation-in > ul > li { border: 0; }
+
+  /* Menu a vyhľadávanie trochu od seba. */
+  #navigation { margin-right: 24px; }
 }
 
 /* --- 7. VYHĽADÁVANIE AKO V NÁVRHU --------------------------------------
