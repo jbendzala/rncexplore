@@ -305,12 +305,31 @@ textarea:focus-visible,
      nej. „display: contents“ zruší obal .header-top bez toho, aby sa čokoľvek
      presúvalo v stránke — jej deti sa stanú priamymi položkami riadku
      a dajú sa usporiadať spolu s menu. */
-  .navigation-wrapper { display: flex; align-items: center; gap: 28px; }
+  .navigation-wrapper { display: flex; align-items: center; gap: 24px; }
   .header-top { display: contents; }
   .site-name-wrapper   { order: 1; flex: 0 0 auto; margin: 0; }
-  #navigation          { order: 2; flex: 0 1 auto; }
-  .search              { order: 3; flex: 1 1 260px; max-width: 340px; margin-left: auto; }
+  #navigation          { order: 2; flex: 1 1 auto; }
+  .search              { order: 3; flex: 0 1 300px; }
   .navigation-buttons  { order: 4; flex: 0 0 auto; }
+
+  /* Shoptet rieši menu tak, že #navigation je box s pevnou výškou a
+     zoznam v ňom je absolútne polohovaný so šírkou 9999em. JavaScript ho
+     potom zmeria a položky, ktoré sa nezmestia, presunie pod tlačidlo
+     „Viac“. V riadku s flexboxom z toho vyjde nulová šírka — absolútne
+     polohovaný obsah totiž žiadnu šírku nevnucuje — a menu zmizne.
+
+     Preto ho vraciame do normálneho toku. Tým sa vypne aj to presúvanie
+     do „Viac“, čo je tu v poriadku: položiek je šesť a na širokej
+     obrazovke sa zmestia. Pod 1200 px platí Shoptetovo pôvodné správanie
+     aj s mobilným zbalením.                                              */
+  #navigation { height: auto; overflow: visible; }
+  .navigation-in {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+  }
+  .navigation-in > ul.menu-level-1 { flex-wrap: nowrap; }
   .menu-helper { display: none; }
 
   .navigation-in.menu { background: transparent; }
