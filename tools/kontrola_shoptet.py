@@ -17,7 +17,7 @@ TU = os.path.dirname(os.path.abspath(__file__))
 KOREN = os.path.dirname(TU)
 sys.path.insert(0, TU)
 import seo
-from export_shoptet_xml import shoptet_kod, DELIT
+from export_shoptet_xml import shoptet_kod, DELIT, KOREN_KATEGORII
 
 def nas_katalog():
     s = open(os.path.join(KOREN, 'data', 'products.js'), encoding='utf-8').read()
@@ -104,6 +104,8 @@ def main(cesta):
     zle_kat = []
     for p in P:
         kat = kategorie[p['cat']]
+        if KOREN_KATEGORII:
+            kat = f'{KOREN_KATEGORII} > {kat}' 
         pod = f'{kat} > {p["b"]}' if p['cat'] in DELIT and p.get('b') else None
         ok = [{kat}] if pod is None else [{pod}, {kat, pod}]
         maju = kat_produktu.get(p['n']['sk'])

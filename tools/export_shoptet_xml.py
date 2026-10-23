@@ -101,15 +101,23 @@ def prevedenie(p, v, odsadenie, s_parametrom):
 # by podkategória podľa značky nemala čo znamenať.
 DELIT = {"hood"}
 
+# Koreň stromu kategórií. V obchode sú kategórie zanorené pod „Produkty“,
+# aby sa dali dať do menu ako jediná rozbaľovacia položka. Import musí
+# posielať celú cestu vrátane koreňa — inak Shoptet strom prestaví podľa
+# toho, čo dostane, a kategórie vyskočia na najvyššiu úroveň.
+KOREN_KATEGORII = "Produkty"
+
 
 def cesty(p, kategoria):
     """Kategórie produktu. Shoptet vnorenie zapisuje cez „>“ a strom si
-    vytvorí sám. Rodiča vypisujeme zvlášť, aby sa produkt objavil aj v ňom
-    bez ohľadu na to, či je v obchode zapnuté dedenie z podkategórií."""
+    podľa toho vytvorí — a aj prestaví, takže cesta musí byť úplná,
+    vrátane koreňa. Rodiča vypisujeme zvlášť, aby sa produkt objavil aj
+    v ňom bez ohľadu na to, či je zapnuté dedenie z podkategórií."""
+    k = f"{KOREN_KATEGORII} > {kategoria}" if KOREN_KATEGORII else kategoria
     if p["cat"] in DELIT and p.get("b"):
-        podkat = f'{kategoria} > {p["b"]}'
-        return [kategoria, podkat], podkat
-    return [kategoria], kategoria
+        podkat = f'{k} > {p["b"]}'
+        return [k, podkat], podkat
+    return [k], k
 
 
 # Recenzie zákazníkov podľa adresy produktu. Máme ich tri zo 157, takže
