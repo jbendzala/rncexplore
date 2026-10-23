@@ -236,12 +236,23 @@ textarea:focus-visible,
 .top-navigation-tools--language a { font-weight: 600; }
 
 /* Hlavička je v návrhu tmavá (#141C18), nie krémová — prvý raz som ju
-   spravil svetlú, lebo som vychádzal zo starého návrhu. */
+   spravil svetlú, lebo som vychádzal zo starého návrhu.
+
+   .navigation-wrapper je zároveň .container, teda má obmedzenú šírku.
+   Tmavý podklad by sa tak končil tam, kde končí obsah, a po bokoch by
+   zostali svetlé pruhy. Riešime to tieňom roztiahnutým cez celú
+   obrazovku, ktorý sa oreže len vodorovne: na rozloženie to nemá vplyv
+   a neprepisuje to poradie vrstiev, na rozdiel od podloženého prvku so
+   záporným z-indexom.                                                   */
 .header-top,
 .navigation-wrapper,
 .header-background-light {
   background: var(--rnc-g1);
   border-bottom: 0;
+}
+.navigation-wrapper {
+  box-shadow: 0 0 0 100vmax var(--rnc-g1);
+  clip-path: inset(0 -100vmax);
 }
 #header .site-name a,
 #header .site-name a.text-logo,
