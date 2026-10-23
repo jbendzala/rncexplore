@@ -291,10 +291,11 @@ textarea:focus-visible,
 }
 
 /* --- 6. ROZLOŽENIE HLAVIČKY --------------------------------------------
-   Návrh má v jednom páse logo, menu, vyhľadávanie a ikony. Shoptet
-   skladá to isté, len inak: nav#navigation je súrodencom formulára
-   a košíka vnútri .search. Stačí im teda zmeniť poradie flexboxom —
-   žiadny JavaScript, žiadne presúvanie prvkov.
+   Návrh má v jednom páse logo, menu, vyhľadávanie a ikony. Shoptet to
+   skladá inak: logo, vyhľadávanie a košík sú v .header-top, menu je
+   nav#navigation vedľa nej. Obe sú deťmi .navigation-wrapper, takže
+   stačí zmeniť poradie flexboxom — žiadny JavaScript, žiadne presúvanie
+   prvkov v stránke.
 
    Platí len na širokých obrazovkách. Pod 1200 px si Shoptet menu
    zbaľuje do vlastného tlačidla a do toho nehrabeme, lebo na mobile
@@ -308,29 +309,26 @@ textarea:focus-visible,
   .navigation-wrapper { display: flex; align-items: center; gap: 24px; }
   .header-top { display: contents; }
   .site-name-wrapper   { order: 1; flex: 0 0 auto; margin: 0; }
-  #navigation          { order: 2; flex: 1 1 auto; }
+  #navigation          { order: 2; }
   .search              { order: 3; flex: 0 1 300px; }
   .navigation-buttons  { order: 4; flex: 0 0 auto; }
 
-  /* Shoptet rieši menu tak, že #navigation je box s pevnou výškou a
-     zoznam v ňom je absolútne polohovaný so šírkou 9999em. JavaScript ho
-     potom zmeria a položky, ktoré sa nezmestia, presunie pod tlačidlo
-     „Viac“. V riadku s flexboxom z toho vyjde nulová šírka — absolútne
-     polohovaný obsah totiž žiadnu šírku nevnucuje — a menu zmizne.
+  /* Menu nechávame tak, ako ho Shoptet rieši sám, a dávame mu len
+     priestor v riadku.
 
-     Preto ho vraciame do normálneho toku. Tým sa vypne aj to presúvanie
-     do „Viac“, čo je tu v poriadku: položiek je šesť a na širokej
-     obrazovke sa zmestia. Pod 1200 px platí Shoptetovo pôvodné správanie
-     aj s mobilným zbalením.                                              */
-  #navigation { height: auto; overflow: visible; }
-  .navigation-in {
-    position: static;
-    width: auto;
-    height: auto;
-    overflow: visible;
-  }
-  .navigation-in > ul.menu-level-1 { flex-wrap: nowrap; }
-  .menu-helper { display: none; }
+     Ich mechanizmus je takýto: #navigation je box s pevnou výškou, zoznam
+     v ňom je absolútne polohovaný so šírkou 9999em a po načítaní ho
+     JavaScript zmeria a položky, ktoré sa nezmestia, presunie pod
+     tlačidlo „Viac“. Keď som ten zoznam vrátil do normálneho toku
+     a tlačidlo „Viac“ skryl, skript nameral, že sa nezmestí nič, všetko
+     odložil do skrytého tlačidla a menu po pol sekunde zmizlo.
+
+     Stačí teda, aby #navigation mal v riadku skutočnú šírku. „flex: 1 1
+     0“ znamená, že si vezme zvyšné miesto bez ohľadu na to, že jeho
+     obsah je polohovaný absolútne a sám žiadnu šírku nevnucuje. Zvyšok
+     si skript dorieši sám, vrátane „Viac“, keby sa položky raz
+     nezmestili.                                                          */
+  #navigation { flex: 1 1 0; min-width: 0; }
 
   .navigation-in.menu { background: transparent; }
   .navigation-in > ul.menu-level-1 { display: flex; gap: 4px; }
