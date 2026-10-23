@@ -863,6 +863,9 @@ label { color: var(--rnc-ink); }
 .type-index .homepage-box,
 .type-index .welcome { padding-top: 0; margin-top: 0; }
 .type-index .welcome > div:first-child { margin-top: 0; }
+/* A hlavne: .homepage-box má vodorovné linky hore aj dole. Tá horná bola
+   ten biely prúžok — nebolo to odsadenie, ako som si dvakrát myslel. */
+.type-index .homepage-box { border-top: 0; border-bottom: 0; }
 .rnc-hero:first-child { margin-top: 0; }
 
 
@@ -1004,9 +1007,16 @@ label { color: var(--rnc-ink); }
   box-shadow: var(--rnc-shadow);
   padding: 22px 24px;
 }
-.rnc-find-nadpis { flex: 1 1 230px; min-width: 0; }
-.rnc-find-karta label { flex: 1 1 150px; min-width: 0; }
-.rnc-find-karta .rnc-btn { flex: 0 0 auto; }
+/* Nad 1100 px sa karta nezalamuje: polia sa radšej stlačia, než aby
+   tlačidlo spadlo do druhého riadku. Nadpis sa nezväčšuje, voľné miesto
+   patrí poliam. */
+.rnc-find-nadpis { flex: 0 1 220px; min-width: 0; }
+.rnc-find-karta label { flex: 1 1 130px; min-width: 0; }
+.rnc-find-karta .rnc-btn { flex: 0 0 auto; white-space: nowrap; }
+
+@media (min-width: 1101px) {
+  .rnc-find-karta { flex-wrap: nowrap; }
+}
 .rnc-find-nadpis strong {
   display: block;
   font-family: var(--rnc-display); font-weight: 600; font-size: 20px;
@@ -1028,7 +1038,7 @@ label { color: var(--rnc-ink); }
   color: var(--rnc-ink);
 }
 .rnc-find-karta select:disabled { color: var(--rnc-muted); background: var(--rnc-chip); }
-.rnc-find-karta .rnc-btn { font-size: 14px; padding: 16px 24px; }
+.rnc-find-karta .rnc-btn { font-size: 14px; padding: 16px 22px; }
 
 /* riadok pod kartou — recenzie vľavo, odkaz na mieru vpravo */
 .rnc-find-pod {
