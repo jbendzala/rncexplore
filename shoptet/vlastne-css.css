@@ -310,7 +310,7 @@ textarea:focus-visible,
   .header-top { display: contents; }
   .site-name-wrapper   { order: 1; flex: 0 0 auto; margin: 0; }
   #navigation          { order: 2; }
-  .search              { order: 3; flex: 0 1 300px; }
+  .search              { order: 3; flex: 0 1 300px; margin-left: auto; }
   .navigation-buttons  { order: 4; flex: 0 0 auto; }
 
   /* Menu v jednom riadku si vyžiada prebiť Shoptetov skript, ktorý si
@@ -331,7 +331,10 @@ textarea:focus-visible,
 
      Pod 1200 px nič z toho neplatí a mobilné zbaľovanie funguje tak,
      ako ho Shoptet navrhol.                                              */
-  #navigation { flex: 1 1 auto; min-width: 0; height: auto; overflow: visible; }
+  /* „flex: 0 0 auto“, nie „1 1“: menu si má vziať presne toľko, koľko
+     potrebuje. S „1 1“ a min-width:0 sa mohlo zmenšiť pod svoj obsah
+     a ten potom pretekal cez vyhľadávacie pole. */
+  #navigation { flex: 0 0 auto; height: auto; overflow: visible; }
   .navigation-in {
     position: static;
     width: auto;
@@ -348,7 +351,7 @@ textarea:focus-visible,
 
   .navigation-in.menu { background: transparent; }
   .navigation-in > ul.menu-level-1 { display: flex; gap: 4px; }
-  .navigation-in > ul > li > a { padding: 8px 14px; white-space: nowrap; }
+  .navigation-in > ul > li > a { padding: 8px 12px; white-space: nowrap; }
 }
 
 /* --- 7. VYHĽADÁVANIE AKO V NÁVRHU --------------------------------------
