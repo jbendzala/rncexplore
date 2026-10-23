@@ -853,10 +853,17 @@ label { color: var(--rnc-ink); }
   display: none;
 }
 
-/* Hero má nadväzovať priamo na navigáciu, bez medzery. */
+/* Hero má nadväzovať priamo na navigáciu, bez medzery. Obalov medzi
+   hlavičkou a naším obsahom je šesť a odsadenie zhora má viacero z nich
+   — stačí jeden a je z toho biely prúžok. */
+.type-index .content-wrapper,
+.type-index .content-wrapper-in,
+.type-index main.content,
 .type-index .welcome-wrapper,
-.type-index .homepage-box { padding-top: 0; margin-top: 0; }
-.welcome > div:first-child > .rnc-hero:first-child { margin-top: 0; }
+.type-index .homepage-box,
+.type-index .welcome { padding-top: 0; margin-top: 0; }
+.type-index .welcome > div:first-child { margin-top: 0; }
+.rnc-hero:first-child { margin-top: 0; }
 
 
    Celá domovská je naše HTML v úvodnej stránke — Shoptet bloky z návrhu
@@ -962,12 +969,17 @@ label { color: var(--rnc-ink); }
 .rnc-hero .rnc-cta { align-items: center; gap: 24px; margin-top: 30px; }
 
 /* Štyri výhody dole v jednom rade, s jantárovými bodkami. */
+/* Štyri body v jednom riadku. Zalomiť sa smú až pod 980 px — dovtedy
+   radšej zúžime medzeru, než aby štvrtý spadol pod ostatné. */
 .rnc-hero-body {
-  display: flex; flex-wrap: wrap; gap: 10px 40px;
+  display: flex; flex-wrap: nowrap; gap: 10px clamp(16px, 2.4vw, 40px);
   list-style: none; padding: 0; margin: 56px 0 0;
   color: #fff; font-size: 14px;
 }
-.rnc-hero-body li { display: flex; align-items: center; gap: 10px; }
+.rnc-hero-body li {
+  display: flex; align-items: center; gap: 10px;
+  white-space: nowrap;
+}
 .rnc-hero-body li::before {
   content: ""; width: 6px; height: 6px; border-radius: 50%;
   background: var(--rnc-amber); flex: 0 0 auto;
@@ -976,18 +988,25 @@ label { color: var(--rnc-ink); }
 /* Vyhľadávanie vozidla. V návrhu je to biela karta, ktorá spodkom hero
    prekrýva — preto to záporné odsadenie hore. */
 .rnc-finder { padding-bottom: 48px; }
+/* Pružný riadok, nie mriežka s pevnými stĺpcami. Mriežka mala súčet
+   šírok väčší než karta, takže tlačidlo z nej vytŕčalo von. Takto si
+   polia aj tlačidlo nájdu miesto samy a keď ho nie je dosť, zalomia sa
+   dovnútra karty. */
 .rnc-find-karta {
   position: relative;
   margin-top: -56px;
-  display: grid;
-  grid-template-columns: minmax(240px, 1fr) 180px 180px 150px auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
   gap: 16px;
-  align-items: end;
   background: var(--rnc-surface);
   border-radius: 12px;
   box-shadow: var(--rnc-shadow);
   padding: 22px 24px;
 }
+.rnc-find-nadpis { flex: 1 1 230px; min-width: 0; }
+.rnc-find-karta label { flex: 1 1 150px; min-width: 0; }
+.rnc-find-karta .rnc-btn { flex: 0 0 auto; }
 .rnc-find-nadpis strong {
   display: block;
   font-family: var(--rnc-display); font-weight: 600; font-size: 20px;
@@ -1188,13 +1207,12 @@ label { color: var(--rnc-ink); }
    zlom užší — napríklad odsadenie hero.                                */
 
 @media (max-width: 1100px) {
-  .rnc-find-karta { grid-template-columns: repeat(3, 1fr); }
-  .rnc-find-nadpis { grid-column: 1 / -1; }
-  .rnc-find-karta .rnc-btn { grid-column: 1 / -1; }
+  .rnc-find-nadpis { flex: 1 1 100%; }
   .rnc-find-istoty { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 980px) {
+  .rnc-hero-body { flex-wrap: wrap; }
   .rnc-life { grid-template-columns: 1fr; gap: 22px; }
   .rnc-cats, .rnc-prods { grid-template-columns: repeat(2, 1fr); }
   .rnc-revs, .rnc-posts { grid-template-columns: 1fr; }
@@ -1202,7 +1220,10 @@ label { color: var(--rnc-ink); }
 }
 
 @media (max-width: 680px) {
-  .rnc-find-karta { grid-template-columns: 1fr; margin-top: -32px; }
+  .rnc-find-karta { margin-top: -32px; }
+  .rnc-find-karta label,
+  .rnc-find-karta .rnc-btn { flex: 1 1 100%; }
+  .rnc-hero-body { flex-wrap: wrap; }
   .rnc-find-istoty { grid-template-columns: 1fr; }
   .rnc-hero { min-height: 420px; }
   .rnc-hero-in { padding-bottom: 64px; }
