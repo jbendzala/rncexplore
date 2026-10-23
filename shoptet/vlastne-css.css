@@ -309,11 +309,22 @@ textarea:focus-visible,
      presúvalo v stránke — jej deti sa stanú priamymi položkami riadku
      a dajú sa usporiadať spolu s menu. */
   .navigation-wrapper { display: flex; align-items: center; gap: 24px; }
+
+  /* .navigation-wrapper má clearfix ::before a ::after. Vo flexboxe sa
+     z nich stanú plnohodnotné položky s poradím 0, teda pred logom —
+     šírku majú nulovú, ale každá si vypýta medzeru 24 px. Práve tých
+     dvakrát 24 odsúvalo logo od okraja. */
+  .navigation-wrapper::before,
+  .navigation-wrapper::after { display: none; }
   .header-top { display: contents; }
-  .site-name-wrapper   { order: 1; flex: 0 0 auto; margin: 0; }
-  #navigation          { order: 2; }
-  .search              { order: 3; flex: 0 1 300px; margin-left: auto; }
-  .navigation-buttons  { order: 4; flex: 0 0 auto; }
+  /* Selektory musia byť cez „.header-top >“, inak ich prebije Shoptetovo
+     „.header-top > div { flex: 0 1 33.333333% }“ — to delí hlavičku na
+     tretiny, takže logo, vyhľadávanie aj košík dostali rovnakú šírku
+     a logo sa odsunulo od okraja. */
+  .header-top > .site-name-wrapper  { order: 1; flex: 0 0 auto; margin: 0; }
+  #navigation                       { order: 2; }
+  .header-top > .search             { order: 3; flex: 0 1 320px; margin-left: auto; }
+  .header-top > .navigation-buttons { order: 4; flex: 0 0 auto; }
 
   /* Menu v jednom riadku si vyžiada prebiť Shoptetov skript, ktorý si
      menu po načítaní prestavuje sám.
@@ -337,6 +348,12 @@ textarea:focus-visible,
      potrebuje. S „1 1“ a min-width:0 sa mohlo zmenšiť pod svoj obsah
      a ten potom pretekal cez vyhľadávacie pole. */
   #navigation { flex: 0 0 auto; height: auto; overflow: visible; }
+
+  /* Tlačidlo „Viac“ nemá nastavené poradie, takže by v riadku stálo ako
+     prvé — pred logom — a odtlačilo by ho o svoju šírku aj s medzerou.
+     Keďže vyššie rušíme skrývanie položiek, je vždy prázdne a patrí
+     preč. */
+  .menu-helper { display: none; }
   .navigation-in {
     position: static;
     width: auto;
@@ -870,6 +887,17 @@ label { color: var(--rnc-ink); }
    sekcie užšie a odsadené inak než hlavička — a práve to bolo vidieť
    na filtri. Šírku má určovať container, nič pod ním. */
 .type-index .homepage-box.welcome-wrapper { padding-inline: 0; }
+
+/* A toto bola tá pravá príčina úzkeho obsahu: Shoptet má pravidlo
+   „.welcome .h1, .welcome div { max-width: 800px; margin-inline: auto }“
+   — obmedzuje text úvodnej stránky na čitateľný stĺpec. Lenže v tom
+   stĺpci sedela celá naša domovská aj s hero a filtrom, odtiaľ tých
+   800 px namiesto 1418.
+
+   Rušíme len obmedzenie šírky. Automatické okraje nechávame tak, lebo
+   práve nimi sa .container vo vnútri pásov centruje. */
+.type-index .welcome div { max-width: none; }
+.type-index .welcome > div { margin-inline: 0; }
 .rnc-hero:first-child { margin-top: 0; }
 
 
