@@ -116,7 +116,7 @@ def hero():
     body = "".join(f"<li>{e(n)}</li>" for n, _ in VYHODY)
     return f'''
 <section class="rnc-hero" style="background-image:url('{e(FOTO["hero"])}')">
-  <div class="rnc-wrap rnc-hero-in">
+  <div class="container rnc-hero-in">
     <p class="rnc-eyebrow">RNC EXPLORE</p>
     <h2>Solárna energia<br>pre vozidlá a karavany</h2>
     <p class="rnc-lead">Vyberte produkt a prevedenie, vložte do košíka a
@@ -264,7 +264,7 @@ def clanky():
     </article>''' for a in B.newest(3))
     return f'''
 <section class="rnc-sec rnc-band rnc-band-biely">
-  <div class="rnc-wrap">
+  <div class="container">
   <div class="rnc-sec-head">
     <div>
       <p class="rnc-eyebrow">BLOG</p>
@@ -281,7 +281,7 @@ def clanky():
 def b2b():
     return '''
 <section class="rnc-band rnc-b2b">
-  <div class="rnc-wrap rnc-b2b-in">
+  <div class="container rnc-b2b-in">
     <div>
       <h2>Ste predajca alebo montážny servis?</h2>
       <p>Partnerské ceny a nákupné funkcie uvidíte po prihlásení do B2B.</p>

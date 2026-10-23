@@ -169,7 +169,6 @@ SABLONA = '''<!-- Vyhľadávanie panela podľa vozidla.
      Vyrába tools/shoptet_vyhladavanie.py — needituj tu, uprav zdroj.
      Patrí do úvodnej stránky, na miesto pásu so značkami. -->
 <section class="rnc-finder" id="rnc-finder">
-  <div class="rnc-wrap">
 
     <div class="rnc-find-karta">
       <div class="rnc-find-nadpis">
@@ -203,7 +202,6 @@ SABLONA = '''<!-- Vyhľadávanie panela podľa vozidla.
     </ul>
 
     <div id="rnc-vysledok" class="rnc-find-out" aria-live="polite"></div>
-  </div>
 </section>
 
 <script>
