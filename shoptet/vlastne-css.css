@@ -241,36 +241,33 @@ textarea:focus-visible,
 .top-navigation-menu,
 .top-navigation-contacts { background-color: transparent; }
 
-/* Hlavička je v návrhu tmavá (#141C18), nie krémová — prvý raz som ju
-   spravil svetlú, lebo som vychádzal zo starého návrhu.
+/* Hlavička je v návrhu tmavá (#141C18), nie krémová.
 
-   .navigation-wrapper je zároveň .container, teda má obmedzenú šírku.
-   Tmavý podklad by sa tak končil tam, kde končí obsah, a po bokoch by
-   zostali svetlé pruhy.
-
-   Prvý pokus to riešil tieňom s clip-path. Vyzeralo to správne, ale
-   clip-path oreže aj to, čo z prvku vytŕča — teda rozbaľovacie menu
-   pod hlavičkou. Preto je tu podložený prvok cez celú šírku: nič
-   neoreže a na rozloženie nemá vplyv.                                  */
-.header-top,
-.header-background-light { background: var(--rnc-g1); border-bottom: 0; }
-.navigation-wrapper {
-  position: relative;
-  background: transparent;
-  border-bottom: 0;
-  z-index: 20;                 /* nad hero, nech je rozbaľovacie menu vidieť */
-}
-.navigation-wrapper::before {
-  content: "";
-  position: absolute;
-  top: 0; bottom: 0; left: 50%;
-  width: 100vw;
-  margin-left: -50vw;
+   Tmavý podklad patrí na <header id="header">, nie na .navigation-wrapper
+   — ten je .container, teda má obmedzenú šírku, a podklad by sa končil
+   tam, kde končí obsah. Header je nad ním a cez celú šírku, takže netreba
+   ani tieň, ani podložený prvok. Obe predošlé riešenia mali vadu: tieň
+   s clip-path orezal rozbaľovacie menu a podložený prvok sa nezobrazil
+   vôbec.                                                                */
+#header {
   background: var(--rnc-g1);
-  z-index: -1;
+  position: relative;
+  z-index: 20;                 /* nad hero, nech je rozbalené menu vidieť */
 }
-/* Hero si kvôli prekrytiu fotky robí vlastnú vrstvu. Bez tohto by sa
-   postavilo nad rozbaľovacie menu, lebo je v stránke neskôr. */
+.navigation-wrapper,
+.header-top,
+.header-background-light { background: transparent; border-bottom: 0; }
+
+#header .site-name a,
+#header .site-name a.text-logo,
+#header .site-name .text-logo,
+#header .site-name .text-logo small { color: #fff; }
+
+.search-input { background: rgba(255, 255, 255, .08); border-color: rgba(255,255,255,.18); color: #fff; }
+.search-input::placeholder { color: var(--rnc-mist); }
+
+/* Hero si kvôli stmavenej fotke robí vlastnú vrstvu a je v stránke
+   neskôr než hlavička — bez tohto by sa postavilo nad rozbalené menu. */
 .rnc-hero { z-index: 0; }
 .menu-level-2 { z-index: 30; }
 #header .site-name a,
@@ -303,23 +300,18 @@ textarea:focus-visible,
    zbaľuje do vlastného tlačidla a do toho nehrabeme, lebo na mobile
    funguje dobre.                                                        */
 @media (min-width: 1200px) {
-  .header-top {
-    display: flex;
-    align-items: center;
-    gap: 28px;
-  }
-  .header-top .site-name-wrapper { flex: 0 0 auto; margin: 0; }
-  .header-top .search {
-    flex: 1 1 auto;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    min-width: 0;
-  }
-  .header-top .search #navigation      { order: 1; flex: 0 1 auto; }
-  .header-top .search .search-form     { order: 2; flex: 1 1 260px; max-width: 320px; margin-left: auto; }
-  .header-top .search .navigation-buttons { order: 3; flex: 0 0 auto; }
-  .header-top .menu-helper { display: none; }
+  /* Logo, menu, vyhľadávanie a košík majú byť v jednom riadku, ale nie sú
+     súrodenci: logo, vyhľadávanie a košík sú v .header-top, menu je vedľa
+     nej. „display: contents“ zruší obal .header-top bez toho, aby sa čokoľvek
+     presúvalo v stránke — jej deti sa stanú priamymi položkami riadku
+     a dajú sa usporiadať spolu s menu. */
+  .navigation-wrapper { display: flex; align-items: center; gap: 28px; }
+  .header-top { display: contents; }
+  .site-name-wrapper   { order: 1; flex: 0 0 auto; margin: 0; }
+  #navigation          { order: 2; flex: 0 1 auto; }
+  .search              { order: 3; flex: 1 1 260px; max-width: 340px; margin-left: auto; }
+  .navigation-buttons  { order: 4; flex: 0 0 auto; }
+  .menu-helper { display: none; }
 
   .navigation-in.menu { background: transparent; }
   .navigation-in > ul.menu-level-1 { display: flex; gap: 4px; }
