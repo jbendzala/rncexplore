@@ -313,22 +313,38 @@ textarea:focus-visible,
   .search              { order: 3; flex: 0 1 300px; }
   .navigation-buttons  { order: 4; flex: 0 0 auto; }
 
-  /* Menu nechávame tak, ako ho Shoptet rieši sám, a dávame mu len
-     priestor v riadku.
+  /* Menu v jednom riadku si vyžiada prebiť Shoptetov skript, ktorý si
+     menu po načítaní prestavuje sám.
 
-     Ich mechanizmus je takýto: #navigation je box s pevnou výškou, zoznam
-     v ňom je absolútne polohovaný so šírkou 9999em a po načítaní ho
-     JavaScript zmeria a položky, ktoré sa nezmestia, presunie pod
-     tlačidlo „Viac“. Keď som ten zoznam vrátil do normálneho toku
-     a tlačidlo „Viac“ skryl, skript nameral, že sa nezmestí nič, všetko
-     odložil do skrytého tlačidla a menu po pol sekunde zmizlo.
+     Ako to robia: #navigation je box s pevnou výškou, zoznam v ňom je
+     absolútne polohovaný so šírkou 9999em a po načítaní skript zmeria,
+     koľko sa zmestí. Položkám, ktoré sa podľa neho nezmestia, pridá
+     triedu „splitted“ s visibility:hidden a ich kópie dá pod tlačidlo
+     „Viac“. V našom riadku nameria málo a schová takto všetko — preto
+     sa menu na pol sekundy ukázalo a zmizlo.
 
-     Stačí teda, aby #navigation mal v riadku skutočnú šírku. „flex: 1 1
-     0“ znamená, že si vezme zvyšné miesto bez ohľadu na to, že jeho
-     obsah je polohovaný absolútne a sám žiadnu šírku nevnucuje. Zvyšok
-     si skript dorieši sám, vrátane „Viac“, keby sa položky raz
-     nezmestili.                                                          */
-  #navigation { flex: 1 1 0; min-width: 0; }
+     Vraciame teda zoznam do normálneho toku a rušíme to skrývanie.
+     Tie dve !important sú tu zámerne: prepisujeme rozhodnutie skriptu,
+     nie pravidlo šablóny, a bez nich by to skript zakaždým prebil
+     naspäť. Je to jediné miesto v celom súbore, kde ich používam inak
+     než kvôli ich vlastnému !important.
+
+     Pod 1200 px nič z toho neplatí a mobilné zbaľovanie funguje tak,
+     ako ho Shoptet navrhol.                                              */
+  #navigation { flex: 1 1 auto; min-width: 0; height: auto; overflow: visible; }
+  .navigation-in {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+  }
+  .navigation-in > ul.menu-level-1 { flex-wrap: nowrap; }
+  .navigation-in ul li.splitted,
+  .submenu-visible .navigation-in ul li.splitted {
+    visibility: visible !important;
+    display: block !important;
+  }
+  .menu-helper { display: none; }
 
   .navigation-in.menu { background: transparent; }
   .navigation-in > ul.menu-level-1 { display: flex; gap: 4px; }
