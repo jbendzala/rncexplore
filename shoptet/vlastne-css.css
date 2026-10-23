@@ -123,6 +123,8 @@
    by krémový podklad neprešiel. Je to jediné miesto, kde ho používam
    kvôli farbe — a je vynútené ich vlastným pravidlom, nie mojou
    pohodlnosťou.                                                          */
+html { overflow-x: clip; }
+
 body {
   background: var(--rnc-bg) !important;
   color: var(--rnc-ink);
@@ -674,9 +676,7 @@ input:checked + .filter-label,
 }
 .benefitBanner__picture img { max-height: 28px; width: auto; }
 
-@media (max-width: 600px) {
-  .benefitBanner.position--benefitProduct { grid-template-columns: 1fr; }
-}
+
 
 /* --- 14. ZÁLOŽKY POD PRODUKTOM ----------------------------------------
    Popis produktu generujeme my, takže sekcie a rozbaľovače v ňom sú naše
@@ -922,7 +922,13 @@ label { color: var(--rnc-ink); }
 .rnc-wrap { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
 
 /* Hero na celú šírku okna. Obsah Shoptetu je obmedzený na šírku stránky,
-   takže sa z nej musíme vymaniť — odtiaľ ten výpočet so 100vw. */
+   takže sa z nej musíme vymaniť — odtiaľ ten výpočet so 100vw.
+
+   100vw je šírka okna vrátane zvislého posuvníka, takže na stránke
+   s posuvníkom je hero o jeho šírku širšie a vznikne vodorovné
+   posúvanie. Orezanie na <html> to utne. Zámerne „clip“, nie „hidden“:
+   hidden urobí z html posuvný rám a tým by prestalo fungovať prilepenie
+   hlavičky na mobile. */
 .rnc-hero {
   position: relative;
   width: 100vw;
@@ -1048,17 +1054,8 @@ label { color: var(--rnc-ink); }
   color: var(--rnc-muted); font-size: 14px;
 }
 
-@media (max-width: 1100px) {
-  .rnc-find-karta { grid-template-columns: repeat(3, 1fr); }
-  .rnc-find-nadpis { grid-column: 1 / -1; }
-  .rnc-find-karta .rnc-btn { grid-column: 1 / -1; }
-  .rnc-find-istoty { grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 680px) {
-  .rnc-find-karta { grid-template-columns: 1fr; margin-top: -32px; }
-  .rnc-find-istoty { grid-template-columns: 1fr; }
-  .rnc-hero-in { padding-bottom: 72px; }
-}
+
+
 
 /* kategórie */
 .rnc-cats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
@@ -1167,15 +1164,8 @@ label { color: var(--rnc-ink); }
 .rnc-b2b p { color: rgba(255,255,255,.78); margin: 0; }
 .rnc-b2b .rnc-cta { margin: 0; }
 
-@media (max-width: 980px) {
-  .rnc-life { grid-template-columns: 1fr; gap: 22px; }
-  .rnc-cats, .rnc-prods { grid-template-columns: repeat(2, 1fr); }
-  .rnc-revs, .rnc-posts { grid-template-columns: 1fr; }
-  .rnc-hero-in { padding: 48px 24px; }
-}
-@media (max-width: 560px) {
-  .rnc-cats, .rnc-prods, .rnc-benefits { grid-template-columns: 1fr; }
-}
+
+
 
 /* --- 20. KOŠÍK A OBJEDNÁVKA --------------------------------------------
    Zámerne len farby a písmo. Trojkrok je pevný a prestavovať ho skriptom
@@ -1191,3 +1181,39 @@ label { color: var(--rnc-ink); }
   border-radius: var(--rnc-radius);
 }
 .cart-table th { font-family: var(--rnc-display); color: var(--rnc-muted); }
+
+/* --- 21. MENŠIE OBRAZOVKY -----------------------------------------------
+   Zoradené zostupne. Pri rovnakej špecificite rozhoduje poradie
+   v súbore, takže predtým, keď boli pomiešané, prepisoval širší
+   zlom užší — napríklad odsadenie hero.                                */
+
+@media (max-width: 1100px) {
+  .rnc-find-karta { grid-template-columns: repeat(3, 1fr); }
+  .rnc-find-nadpis { grid-column: 1 / -1; }
+  .rnc-find-karta .rnc-btn { grid-column: 1 / -1; }
+  .rnc-find-istoty { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 980px) {
+  .rnc-life { grid-template-columns: 1fr; gap: 22px; }
+  .rnc-cats, .rnc-prods { grid-template-columns: repeat(2, 1fr); }
+  .rnc-revs, .rnc-posts { grid-template-columns: 1fr; }
+  .rnc-hero-in { padding: 48px 24px; }
+}
+
+@media (max-width: 680px) {
+  .rnc-find-karta { grid-template-columns: 1fr; margin-top: -32px; }
+  .rnc-find-istoty { grid-template-columns: 1fr; }
+  .rnc-hero { min-height: 420px; }
+  .rnc-hero-in { padding-bottom: 64px; }
+}
+
+@media (max-width: 600px) {
+  .benefitBanner.position--benefitProduct { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 560px) {
+  .rnc-cats, .rnc-prods, .rnc-benefits { grid-template-columns: 1fr; }
+  .rnc-hero { min-height: 380px; }
+  .rnc-hero-in h2 { font-size: 30px; }
+}
