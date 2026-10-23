@@ -235,25 +235,44 @@ textarea:focus-visible,
 
 .top-navigation-tools--language a { font-weight: 600; }
 
+/* Shoptet dáva týmto dvom podklad --colors-surface-primary, a tú
+   premennú sme nastavili na bielu kvôli kachličkám. Na tmavej lište
+   z toho bol biely pruh cez pol šírky. */
+.top-navigation-menu,
+.top-navigation-contacts { background-color: transparent; }
+
 /* Hlavička je v návrhu tmavá (#141C18), nie krémová — prvý raz som ju
    spravil svetlú, lebo som vychádzal zo starého návrhu.
 
    .navigation-wrapper je zároveň .container, teda má obmedzenú šírku.
    Tmavý podklad by sa tak končil tam, kde končí obsah, a po bokoch by
-   zostali svetlé pruhy. Riešime to tieňom roztiahnutým cez celú
-   obrazovku, ktorý sa oreže len vodorovne: na rozloženie to nemá vplyv
-   a neprepisuje to poradie vrstiev, na rozdiel od podloženého prvku so
-   záporným z-indexom.                                                   */
+   zostali svetlé pruhy.
+
+   Prvý pokus to riešil tieňom s clip-path. Vyzeralo to správne, ale
+   clip-path oreže aj to, čo z prvku vytŕča — teda rozbaľovacie menu
+   pod hlavičkou. Preto je tu podložený prvok cez celú šírku: nič
+   neoreže a na rozloženie nemá vplyv.                                  */
 .header-top,
-.navigation-wrapper,
-.header-background-light {
-  background: var(--rnc-g1);
-  border-bottom: 0;
-}
+.header-background-light { background: var(--rnc-g1); border-bottom: 0; }
 .navigation-wrapper {
-  box-shadow: 0 0 0 100vmax var(--rnc-g1);
-  clip-path: inset(0 -100vmax);
+  position: relative;
+  background: transparent;
+  border-bottom: 0;
+  z-index: 20;                 /* nad hero, nech je rozbaľovacie menu vidieť */
 }
+.navigation-wrapper::before {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0; left: 50%;
+  width: 100vw;
+  margin-left: -50vw;
+  background: var(--rnc-g1);
+  z-index: -1;
+}
+/* Hero si kvôli prekrytiu fotky robí vlastnú vrstvu. Bez tohto by sa
+   postavilo nad rozbaľovacie menu, lebo je v stránke neskôr. */
+.rnc-hero { z-index: 0; }
+.menu-level-2 { z-index: 30; }
 #header .site-name a,
 #header .site-name a.text-logo,
 #header .site-name .text-logo,
