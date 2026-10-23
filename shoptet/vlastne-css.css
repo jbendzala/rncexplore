@@ -875,11 +875,15 @@ label { color: var(--rnc-ink); }
 .welcome { max-width: none; }
 
 .rnc-sec { padding: 56px 0; }
-.rnc-sec-alt {
-  background: var(--rnc-surface);
-  border-block: 1px solid var(--rnc-line);
-  padding-inline: 24px;
+
+/* Pásy cez celú šírku okna. V návrhu ich majú dve sekcie: blog na bielom
+   a veľkoobchod na tmavom. Ostatné sekcie stoja na krémovom podklade
+   stránky. Rovnaký spôsob vymanenia sa z containera ako pri hero. */
+.rnc-band {
+  width: 100vw;
+  margin-inline: calc(50% - 50vw);
 }
+.rnc-band-biely { background: var(--rnc-surface); }
 .rnc-sec > h2,
 .rnc-b2b h2 {
   font-size: clamp(24px, 3vw, 34px);
@@ -927,9 +931,21 @@ label { color: var(--rnc-ink); }
 .rnc-btn-ghost:hover { background: rgba(255,255,255,.12); border-color: currentColor; color: inherit; }
 .rnc-cta { display: flex; flex-wrap: wrap; gap: 12px; margin: 22px 0 0; }
 
-/* Vnútorná šírka stránky. Návrh má plátno 1440 s okrajmi 80, teda
-   obsah 1280. */
-.rnc-wrap { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+/* Šírku obsahu nechávame na Shoptete. Jeho .container má 1418 px a naše
+   sekcie sú v ňom, takže vlastná šírka ich len zúžila a odsadila od
+   okrajov inak než zvyšok obchodu. Bez max-width a bez odsadenia lícujú
+   presne s hlavičkou aj s výpisom kategórií.
+
+   Výnimkou je hero: to je cez celú šírku okna a z containera vystupuje,
+   takže si šírku aj odsadenie musí vyrobiť samo. Čísla sú Shoptetove,
+   nie vymyslené — 1418 a 20. */
+.rnc-wrap { max-width: none; margin: 0; padding: 0; }
+.rnc-hero .rnc-wrap,
+.rnc-band .rnc-wrap {
+  max-width: 1418px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
 
 /* Hero na celú šírku okna. Obsah Shoptetu je obmedzený na šírku stránky,
    takže sa z nej musíme vymaniť — odtiaľ ten výpočet so 100vw.
@@ -1182,12 +1198,15 @@ label { color: var(--rnc-ink); }
 .rnc-more { font-family: var(--rnc-display); font-weight: 600; }
 
 /* veľkoobchod */
+/* Veľkoobchodný pás. V návrhu je cez celú šírku a má vlastný odtieň
+   #1B2420 — svetlejší než pätička, aby sa od nej odlíšil. */
 .rnc-b2b {
+  background: #1B2420; color: #fff;
+  padding: 44px 0; margin: 56px 0 0;
+}
+.rnc-b2b-in {
   display: flex; flex-wrap: wrap; align-items: center;
   justify-content: space-between; gap: 20px;
-  background: var(--rnc-ink); color: #fff;
-  border-radius: var(--rnc-radius);
-  padding: 32px 36px; margin: 56px 0;
 }
 .rnc-b2b h2 { color: #fff; margin: 0 0 6px; }
 .rnc-b2b p { color: rgba(255,255,255,.78); margin: 0; }

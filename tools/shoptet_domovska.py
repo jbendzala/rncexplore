@@ -202,7 +202,7 @@ def odporucame(P):
       <p class="rnc-more">Zobraziť detail →</p>
     </a>''')
     return f'''
-<section class="rnc-sec rnc-sec-alt">
+<section class="rnc-sec">
   <div class="rnc-sec-head">
     <div>
       <p class="rnc-eyebrow">ODPORÚČAME</p>
@@ -239,7 +239,7 @@ def recenzie():
       <figcaption><strong>{e(r["who"])}</strong><span>{e(r["car"])}</span></figcaption>
     </figure>''' for r in REVIEWS)
     return f'''
-<section class="rnc-sec rnc-sec-alt">
+<section class="rnc-sec">
   <p class="rnc-eyebrow">RECENZIE</p>
   <h2>Skúsenosti zákazníkov</h2>
   <p class="rnc-sub">Zostavy na reálnych vozidlách. Recenzie z lensunsolar.com,
@@ -263,7 +263,8 @@ def clanky():
       <p><a class="rnc-more" href="{BLOG_ZAKLAD}/{e(a["slug"])}/">Čítať viac →</a></p>
     </article>''' for a in B.newest(3))
     return f'''
-<section class="rnc-sec">
+<section class="rnc-sec rnc-band rnc-band-biely">
+  <div class="rnc-wrap">
   <div class="rnc-sec-head">
     <div>
       <p class="rnc-eyebrow">BLOG</p>
@@ -273,20 +274,23 @@ def clanky():
   </div>
   <p class="rnc-sub">Návody a nápady, vďaka ktorým z techniky vyťažíte maximum.</p>
   <div class="rnc-posts">{karty}</div>
+  </div>
 </section>'''
 
 
 def b2b():
     return '''
-<section class="rnc-b2b">
-  <div>
-    <h2>Ste predajca alebo montážny servis?</h2>
-    <p>Partnerské ceny a nákupné funkcie uvidíte po prihlásení do B2B.</p>
+<section class="rnc-band rnc-b2b">
+  <div class="rnc-wrap rnc-b2b-in">
+    <div>
+      <h2>Ste predajca alebo montážny servis?</h2>
+      <p>Partnerské ceny a nákupné funkcie uvidíte po prihlásení do B2B.</p>
+    </div>
+    <p class="rnc-cta">
+      <a class="rnc-btn" href="/velkoobchod/">Registrácia partnera</a>
+      <a class="rnc-btn rnc-btn-ghost" href="/login/">Prihlásiť sa do B2B →</a>
+    </p>
   </div>
-  <p class="rnc-cta">
-    <a class="rnc-btn" href="/velkoobchod/">Registrácia partnera</a>
-    <a class="rnc-btn rnc-btn-ghost" href="/login/">Prihlásiť sa do B2B →</a>
-  </p>
 </section>'''
 
 
