@@ -82,7 +82,14 @@ ADRESY = {}                        # id produktu -> adresa v obchode
 # nevšimol. Súbory sú v shoptet-import/vzhlad/fotky.
 FOTO = {
     "hero": "/user/documents/upload/hero-tacoma.jpg",
-    "life": "/user/documents/upload/lifestyle-montaz.jpg",
+    # Lifestyle pás zámerne bez fotky. V návrhu je na tomto mieste
+    # prázdne okno s popisom „LIFESTYLE FOTO — dvojklik = nahrať“ a ten
+    # tmavo-oranžový prechod je jeho výplň, nie fotografia. Čo sme tam
+    # mali predtým (lifestyle-montaz.jpg) je detail dverí vysoký 864 px;
+    # v páse širokom cez celú obrazovku z neho zostal červený pruh.
+    # Sem patrí široký záber vozidla v teréne — keď príde, stačí ho
+    # doplniť a prekryje prechod.
+    "life": "",
 }
 
 # Video pod tlačidlom „Pozrieť video“ v lifestyle páse. Návrh je obrázok,
@@ -241,9 +248,11 @@ def benefity():
     polozky = "".join(
         f'<div class="rnc-ben"><span class="rnc-ben-ico"></span>'
         f'<strong>{e(n)}</strong><p>{e(t)}</p></div>' for n, t in VYHODY)
+    foto = (f' style="background-image:url(\'{e(FOTO["life"])}\')"'
+            if FOTO["life"] else "")
     return f'''
 <section class="rnc-life">
-  <div class="rnc-life-foto" style="background-image:url('{e(FOTO["life"])}')"></div>
+  <div class="rnc-life-foto"{foto}></div>
   <div class="container rnc-life-in">
     <div class="rnc-life-txt">
       <h2>Energia, ktorá vám dáva slobodu.</h2>

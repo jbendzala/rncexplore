@@ -1175,7 +1175,7 @@ label { color: var(--rnc-ink); }
 /* odporúčané produkty */
 .rnc-prods { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
 .rnc-prod {
-  background: var(--rnc-bg);
+  background: var(--rnc-surface);
   border: 1px solid var(--rnc-line);
   border-radius: var(--rnc-radius);
   overflow: hidden;
@@ -1218,7 +1218,11 @@ label { color: var(--rnc-ink); }
   position: relative;
   width: 100vw;
   margin-inline: calc(50% - 50vw);
-  background: #0E1512;
+  /* Výplň priamo z návrhu. Miesto na fotku je v ňom prázdne — toto je
+     jeho podklad, nie dekorácia navyše. Keď klient dodá širokú
+     lifestyle fotografiu, nastaví sa v shoptet_domovska.py a prekryje
+     prechod; dovtedy pás vyzerá ako v editore. */
+  background: linear-gradient(180deg, #2A302C 0%, #7A6048 55%, #D4A263 100%);
 }
 .rnc-life-foto {
   position: absolute; inset: 0;
@@ -1305,7 +1309,7 @@ label { color: var(--rnc-ink); }
 /* recenzie */
 .rnc-revs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 .rnc-rev {
-  margin: 0; background: var(--rnc-bg);
+  margin: 0; background: var(--rnc-surface);
   border: 1px solid var(--rnc-line);
   border-radius: var(--rnc-radius); overflow: hidden;
 }
