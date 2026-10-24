@@ -897,7 +897,11 @@ label { color: var(--rnc-ink); }
    Rušíme len obmedzenie šírky. Automatické okraje nechávame tak, lebo
    práve nimi sa .container vo vnútri pásov centruje. */
 .type-index .welcome div { max-width: none; }
-.type-index .welcome > div { margin-inline: 0; }
+/* To pravidlo dáva aj „margin-inline: auto“. V bežnom toku to nevadí,
+   ale vo flexboxe automatické okraje pohltia voľné miesto a prvok
+   vycentrujú — nadpisy sekcií tak skončili v strede namiesto vľavo.
+   Rušíme ich všade okrem .container: práve tým sa centrujú pásy. */
+.type-index .welcome div:not(.container) { margin-inline: 0; }
 .rnc-hero:first-child { margin-top: 0; }
 
 
@@ -1228,7 +1232,12 @@ label { color: var(--rnc-ink); }
    #1B2420 — svetlejší než pätička, aby sa od nej odlíšil. */
 .rnc-b2b {
   background: #1B2420; color: #fff;
-  padding: 44px 0; margin: 56px 0 0;
+  padding: 44px 0;
+  /* Zvislé okraje po jednom, nie skratkou: „margin: 56px 0 0“ by
+     prepísala aj margin-inline, ktorým sa pás rozťahuje cez celú šírku
+     okna, a pás by zostal zarovnaný s obsahom. */
+  margin-top: 56px;
+  margin-bottom: 0;
 }
 .rnc-b2b-in {
   display: flex; flex-wrap: wrap; align-items: center;
