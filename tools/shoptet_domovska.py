@@ -157,14 +157,27 @@ def vyhladavanie():
 
 
 def kategorie(P, meta):
+    """Štyri veľké dlaždice a pod nimi štítky so všetkými kategóriami.
+
+    Fotky v dlaždiciach sú naše vlastné kópie, nie odkazy na
+    cdn.shopify.com — prečo, je v tools/fotky_kategorii.py. Keď niektorá
+    chýba, dlaždica by zostala prázdna a nebolo by to na prvý pohľad
+    vidieť, tak to radšej povieme hneď.
+    """
     pocty = {c["k"]: c["n"] for c in meta["cats"]}
-    foto = {}
-    for p in P:
-        foto.setdefault(p["cat"], (p.get("img") or [""])[0])
+    fotky = os.path.join(vystup.IMPORT, "vzhlad", "fotky")
+    chyba = [s for _, _, s in KATEGORIE
+             if not os.path.exists(os.path.join(fotky, f"kategoria-{s}.jpg"))]
+    if chyba:
+        sys.exit("chýbajú fotky kategórií — spusti najprv:\n"
+                 "  python3 tools/fotky_kategorii.py\n  "
+                 + "\n  ".join(f"kategoria-{x}.jpg" for x in chyba))
+    foto = {s: f"/user/documents/upload/kategoria-{s}.jpg"
+            for _, _, s in KATEGORIE}
 
     velke = "".join(f'''
     <a class="rnc-cat" href="/{slug}/">
-      <span class="rnc-cat-img" style="background-image:url('{e(foto.get(k, ""))}')"></span>
+      <span class="rnc-cat-img" style="background-image:url('{e(foto[slug])}')"></span>
       <span class="rnc-cat-txt"><strong>{e(nazov)}</strong>
         <span>{pocty.get(k, 0)} produktov</span></span>
       <span class="rnc-cat-sip">→</span>
