@@ -72,7 +72,8 @@ VYHODY = [
      "Navrhnuté pre vietor, dážď, prach a vibrácie, na trvalé používanie vonku."),
 ]
 
-BLOG_ZAKLAD = "/nase-spravy"       # kde Shoptet drží články
+BLOG_ZAKLAD = "/blog"              # overené proti živému obchodu;
+                                   # /nase-spravy vracia 404
 ADRESY = {}                        # id produktu -> adresa v obchode
 
 # Fotografie, ktoré si do návrhu vybral grafik. Nahrávajú sa do Správcu
