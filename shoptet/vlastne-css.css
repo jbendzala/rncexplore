@@ -243,6 +243,49 @@ textarea:focus-visible,
 .top-navigation-menu,
 .top-navigation-contacts { background-color: transparent; }
 
+/* Vlastný obsah lišty. Shoptet sem dáva telefón z nastavení a položky
+   Horného menu; návrh má vľavo dva sľuby o objednávke a vpravo jazyk,
+   veľkoobchod a kontakt. Blok vkladá Zápätie — pozri
+   tools/shoptet_zapatie.py. Nástroje vpravo (prihlásenie, na mobile
+   hamburger) zostávajú, sú jediná cesta k prihláseniu. */
+.top-navigation-contacts,
+.top-navigation-menu { display: none !important; }
+.top-navigation-bar .container {
+  display: flex; align-items: center; gap: 24px;
+}
+.top-navigation-bar .container::before,
+.top-navigation-bar .container::after { display: none; }
+/* Shoptet dáva každému priamemu potomkovi lišty „display: block“
+   a „flex: 1 1 40 %“ pravidlom .top-navigation-bar .container>div,
+   prvému a poslednému ešte flex-basis 30 %. Je v ňom typový selektor
+   div, takže dve triedy naň nestačia a musí sem ísť identifikátor. */
+.top-navigation-bar .container > div#rnc-top {
+  display: flex; align-items: center; justify-content: space-between;
+  flex: 1 1 auto; gap: 24px; min-width: 0;
+  text-align: left;
+  font-size: 12px; font-weight: 500; color: var(--rnc-mist);
+}
+.rnc-top-sluby,
+.rnc-top-odkazy { display: flex; align-items: center; gap: 28px; }
+.top-navigation-bar .rnc-top a { color: var(--rnc-mist); text-decoration: none; }
+.top-navigation-bar .rnc-top a:hover { color: var(--rnc-amber); }
+.top-navigation-bar .rnc-top .rnc-top-b2b {
+  color: var(--rnc-amber); font-weight: 600;
+}
+.rnc-top-jazyk strong { color: #fff; font-weight: 600; }
+.rnc-top-jazyk span { margin: 0 7px; color: rgba(255, 255, 255, .25); }
+.top-navigation-bar .container > div.top-navigation-tools--language {
+  flex: 0 0 auto;
+}
+
+/* Pod 1200 px sa lišta zúži na jeden riadok s nástrojmi — sľuby
+   vypadnú prvé, sú to najmenej dôležité dve vety na stránke. */
+@media (max-width: 1200px) { .rnc-top-sluby { display: none; } }
+@media (max-width: 560px) {
+  .rnc-top-odkazy { gap: 16px; }
+  .rnc-top-jazyk { display: none; }
+}
+
 /* Hlavička je v návrhu tmavá (#141C18), nie krémová.
 
    Tmavý podklad patrí na <header id="header">, nie na .navigation-wrapper
@@ -397,20 +440,29 @@ textarea:focus-visible,
   background: transparent;
   border: 0;
   color: #fff;
-  padding: 11px 16px 11px 42px;
+  padding: 11px 16px 11px 46px;
   width: 100%;
 }
 .search-form .search-input::placeholder { color: var(--rnc-mist); }
 .search-form button[type="submit"],
 .search-form .btn {
   position: absolute; left: 0; top: 0; bottom: 0;
-  width: 42px; padding: 0;
+  width: 46px; padding: 0;
   background: transparent; border: 0; color: var(--rnc-mist);
   font-size: 0;                      /* text „HĽADAŤ“ preč, ostane ikona */
+  /* Zvisle na stred cez flex, nie cez výšku riadku: pole rastie
+     s veľkosťou písma a napevno dopočítaný riadok by sa rozišiel. */
+  display: flex; align-items: center; justify-content: center;
 }
+/* Lupa z ikonového písma Shoptetu. Znak „⌕“ z bežného písma mal
+   v každom fonte inú veľkosť aj výšku nad účiarou a sedel privysoko. */
 .search-form button[type="submit"]::before,
 .search-form .btn::before {
-  content: "⌕"; font-size: 20px; line-height: 1; color: var(--rnc-mist);
+  content: "\e920";
+  font-family: shoptet;
+  font-weight: 400; font-style: normal;
+  font-size: 19px; line-height: 1;
+  color: var(--rnc-mist);
 }
 .search-form button[type="submit"]:hover::before { color: var(--rnc-amber); }
 

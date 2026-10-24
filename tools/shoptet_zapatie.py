@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Pätička e-shopu podľa návrhu.
+"""Horná lišta a pätička podľa návrhu.
 
 Shoptet má v Classic šablóne pätičku prakticky prázdnu — zostane v nej
 len riadok s copyrightom a podpisom „Vytvoril Shoptet“. Štyri stĺpce
@@ -14,7 +14,18 @@ Podpis Shoptetu zostáva — má v sebe natvrdo
 „display:inline-block !important; visibility:visible !important“ a na
 skúšobnej verzii sa vypnúť nedá.
 
-Výstup: pata.html — jeden blok na vloženie do Zápätia.
+To isté pole berie aj hornú lištu. Shoptet do nej dáva telefón
+z nastavení, položky Horného menu a prihlásenie; návrh tam má vľavo
+dva sľuby o objednávke a vpravo jazyk, veľkoobchod a kontakt. Vlastný
+blok sa vloží na začiatok lišty a Shoptetove dva sa skryjú v CSS.
+Nástroje vpravo (prihlásenie a na mobile hamburger) zostávajú — sú to
+jediné miesta, kadiaľ sa dá na desktope prihlásiť.
+
+Odkazy, ktoré doteraz viseli v hornom menu — ako nakupovať, obchodné
+podmienky a ochrana osobných údajov — sú preto v spodnom riadku
+pätičky. Zmiznúť nesmú.
+
+Výstup: do-zapatia.html — jeden blok na vloženie do Zápätia.
 """
 
 import html
@@ -50,6 +61,17 @@ INFORMACIE = [
 PEREX = ("Solárna energia pre vozidlá a karavany. Panely, regulátory "
          "a vybavenie pre cestovateľov.")
 
+# Horná lišta. Vľavo dva sľuby o objednávke, vpravo jazyk a dva odkazy.
+SLUBY = ["Faktúra s QR kódom e-mailom", "Odoslanie po úhrade"]
+
+# Spodný riadok pätičky. Prvý je z návrhu, ďalšie dva sem presúvame
+# z horného menu, aby sa na ne dalo dostať aj po prerobení lišty.
+PRAVNE = [
+    ("Obchodné podmienky", "/obchodne-podmienky/"),
+    ("Ako nakupovať", "/ako-nakupovat/"),
+    ("Ochrana osobných údajov", "/podmienky-ochrany-osobnych-udajov/"),
+]
+
 
 def e(x):
     return html.escape(str(x), quote=True)
@@ -63,7 +85,17 @@ def stlpec(nadpis, odkazy):
 
 
 def blok():
-    return f'''<div id="rnc-pata" class="rnc-pata">
+    pravne = "".join(f'<a href="{e(u)}">{e(n)}</a>' for n, u in PRAVNE)
+    sluby = "".join(f'<span>{e(x)}</span>' for x in SLUBY)
+    return f'''<div id="rnc-top" class="rnc-top">
+  <div class="rnc-top-sluby">{sluby}</div>
+  <div class="rnc-top-odkazy">
+    <span class="rnc-top-jazyk"><strong>SK</strong><span>|</span>CZ</span>
+    <a class="rnc-top-b2b" href="/velkoobchod/">Veľkoobchod (B2B)</a>
+    <a href="/kontakty/">Kontakt</a>
+  </div>
+</div>
+<div id="rnc-pata" class="rnc-pata">
   <div class="container rnc-pata-in">
     <div class="rnc-pata-st rnc-pata-znacka">
       <h3>RNC EXPLORE</h3>
@@ -78,23 +110,27 @@ def blok():
     </div>
   </div>
   <div class="container rnc-pata-spodok">
-    <a href="/obchodne-podmienky/">Obchodné podmienky</a>
+    {pravne}
   </div>
 </div>
 <script>
-/* Zápätie sa vkladá pred </body>, teda pod pätičku. Presunieme blok
-   dovnútra <footer> nad riadok s copyrightom. */
+/* Zápätie sa vkladá pred </body>, teda až pod celou stránkou. Oba
+   bloky preto presunieme tam, kam patria. Skript beží hneď, nie na
+   DOMContentLoaded — oba ciele sú v stránke dávno pred ním. */
 (function () {{
-  var p = document.getElementById("rnc-pata"),
-      f = document.getElementById("footer");
-  if (p && f) {{ f.insertBefore(p, f.firstChild); }}
+  var f = document.getElementById("footer"),
+      p = document.getElementById("rnc-pata"),
+      t = document.getElementById("rnc-top"),
+      l = document.querySelector(".top-navigation-bar .container");
+  if (f && p) {{ f.insertBefore(p, f.firstChild); }}
+  if (l && t) {{ l.insertBefore(t, l.firstChild); }}
 }})();
 </script>'''
 
 
 def main():
     kod = blok()
-    cesta = vystup.kam(vystup.IMPORT, "vzhlad", "pata.html")
+    cesta = vystup.kam(vystup.IMPORT, "vzhlad", "do-zapatia.html")
     with open(cesta, "w", encoding="utf-8") as f:
         f.write(kod)
     print("vložiť do Vzhľad a obsah → Editor → HTML kód → Zápätie")
