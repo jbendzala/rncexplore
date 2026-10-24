@@ -233,8 +233,8 @@ SABLONA = '''<!-- Vyhľadávanie panela podľa vozidla.
     return '<div class="rnc-prods">' + zoznam.map(function (x) {
       return '<a class="rnc-prod" href="' + x.u + '">' +
         '<span class="rnc-prod-img" style="background-image:url(\\'' + x.i + '\\')"></span>' +
-        '<h3>' + x.n + '</h3>' +
-        '<p class="rnc-prod-cena">od <strong>' + cena(x.c) + '</strong> <span>s DPH</span></p>' +
+        '<span class="rnc-prod-n">' + x.n + '</span>' +
+        '<span class="rnc-prod-cena">od <strong>' + cena(x.c) + '</strong> <span>s DPH</span></span>' +
         '</a>';
     }).join("") + "</div>";
   }

@@ -910,6 +910,20 @@ label { color: var(--rnc-ink); }
    ju tools/shoptet_domovska.py, štýluje sa tu.                           */
 .welcome { max-width: none; }
 
+/* Šablóna podčiarkuje každý odkaz v obsahu domovskej pravidlom
+   „.welcome-wrapper a“. Dlaždice, karty aj tlačidlá tým dostali
+   podčiarknutie, ktoré návrh nemá — podčiarknuté sú v ňom len dva
+   textové odkazy, „Panely na mieru“ a „Nenašli ste vozidlo“.
+   Prvý selektor musí byť teda aspoň taký špecifický ako ten ich. */
+.welcome-wrapper .rnc-btn,
+.welcome-wrapper .rnc-cat,
+.welcome-wrapper .rnc-prod,
+.welcome-wrapper .rnc-play,
+.welcome-wrapper .rnc-more,
+.welcome-wrapper .rnc-chips a,
+.welcome-wrapper .rnc-post h3 a,
+.welcome-wrapper .rnc-b2b a { text-decoration: none; }
+
 .rnc-sec { padding: 56px 0; }
 
 /* Pásy cez celú šírku okna. V návrhu ich majú dve sekcie: blog na bielom
@@ -1167,33 +1181,126 @@ label { color: var(--rnc-ink); }
   overflow: hidden;
 }
 .rnc-prod-img { display: block; aspect-ratio: 4/3; background: var(--rnc-surface) center/cover; }
-.rnc-prod { display: block; text-decoration: none; color: inherit; }
+/* Karta je zvnútra len zo spanov — pozri komentár v shoptet_domovska.py.
+   Riadkovanie im preto musí dať CSS, nie prehliadač. Stĺpec s medzerou
+   navyše drží „Zobraziť detail“ dole, nech majú karty rovnakú výšku. */
+.rnc-prod {
+  display: flex; flex-direction: column;
+  text-decoration: none; color: inherit;
+}
 .rnc-prod:hover { border-color: var(--rnc-line-2); box-shadow: var(--rnc-shadow); }
-.rnc-prod h3 { font-size: 15px; margin: 14px 16px 2px; line-height: 1.35; color: var(--rnc-head); }
-.rnc-prod-kat { margin: 0 16px 8px; font-size: 13px; color: var(--rnc-muted); }
-.rnc-prod .rnc-more { margin: 0 16px 16px; font-size: 14px; color: var(--rnc-tint); }
-.rnc-prod-cena { margin: 0 16px 16px; color: var(--rnc-muted); font-size: 14px; }
+.rnc-prod-n {
+  display: block; margin: 14px 16px 2px;
+  font-family: var(--rnc-display); font-weight: 600;
+  font-size: 15px; line-height: 1.35; color: var(--rnc-head);
+}
+.rnc-prod-kat { display: block; margin: 0 16px 8px; font-size: 13px; color: var(--rnc-muted); }
+.rnc-prod .rnc-more { display: block; margin: 0 16px 16px; font-size: 14px; color: var(--rnc-tint); }
+.rnc-prod-cena {
+  /* „auto“ hore odtlačí cenu aj odkaz pod ňou na spodok karty. */
+  display: block; margin: auto 16px 16px;
+  color: var(--rnc-muted); font-size: 14px;
+}
 .rnc-prod-cena strong {
   font-family: var(--rnc-display); font-size: 19px; color: var(--rnc-head);
 }
 
-/* lifestyle — fotka vľavo, výhody vpravo, ako to má návrh */
+/* --- lifestyle pás -----------------------------------------------------
+   V návrhu ide cez celú šírku okna a je rozdelený na dve časti: vľavo
+   fotka stmavená prechodom s nadpisom a odkazom na video, vpravo tmavý
+   panel so štyrmi výhodami pod sebou.
+
+   Fotka leží na pozadí celého pásu a panel ju vpravo prekryje. Deliaca
+   čiara tak vyjde presne na okraj stĺpca v .container, a výhody sú
+   zarovnané s obsahom ostatných sekcií. Keby mala fotka vlastnú šírku
+   v percentách okna, predel by s obsahom nesedel. */
 .rnc-life {
-  display: grid;
-  grid-template-columns: 5fr 7fr;
-  gap: 36px;
-  align-items: center;
+  position: relative;
+  width: 100vw;
+  margin-inline: calc(50% - 50vw);
+  background: #0E1512;
 }
 .rnc-life-foto {
-  aspect-ratio: 4/3;
-  background: var(--rnc-chip) center/cover;
-  border-radius: var(--rnc-radius);
+  position: absolute; inset: 0;
+  background-position: center; background-size: cover;
+}
+/* Prechod je z návrhu, len prepočítaný: tam končí na 66 % fotky širokej
+   840 z 1440 px, čiže na 39 % celého pásu. */
+.rnc-life-foto::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(90deg, rgba(14,21,18,.92) 0%,
+              rgba(14,21,18,.72) 20%, rgba(14,21,18,0) 39%);
+}
+.rnc-life-in {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr minmax(320px, 520px);
+  min-height: 400px;
+}
+/* .container má clearfix cez ::before a ::after. V mriežke z nich budú
+   plnohodnotné bunky, takže text aj panel odskočia o stĺpec a spadnú
+   pod seba. Rovnaká pasca ako kedysi v hlavičke. */
+.rnc-life-in::before,
+.rnc-life-in::after { display: none; }
+.rnc-life-txt {
+  align-self: center;
+  padding: 56px 48px 56px 0;
+  color: #fff;
+}
+.rnc-life-txt h2 {
+  color: #fff; margin: 0 0 16px;
+  font-size: clamp(28px, 3vw, 40px); font-weight: 600;
+  line-height: 1.12; letter-spacing: -.02em; max-width: 520px;
+}
+.rnc-life-txt p {
+  color: rgba(255, 255, 255, .72); margin: 0;
+  font-size: 16px; line-height: 1.6; max-width: 420px;
+}
+.rnc-play {
+  display: inline-flex; align-items: center; gap: 16px;
+  margin-top: 32px; color: #fff; text-decoration: none;
+  font-family: var(--rnc-display); font-weight: 600; font-size: 14px;
+}
+.rnc-play-ico {
+  flex: 0 0 auto; width: 44px; height: 44px; border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, .7);
+  background: rgba(14, 21, 18, .6);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; transition: background .18s, border-color .18s;
+}
+.rnc-play:hover .rnc-play-ico {
+  background: var(--rnc-amber); color: var(--rnc-head); border-color: transparent;
 }
 
-/* benefity */
-.rnc-benefits { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
-.rnc-benefits strong { display: block; font-family: var(--rnc-display); color: var(--rnc-head); margin-bottom: 6px; }
-.rnc-benefits p { color: var(--rnc-muted); margin: 0; font-size: 14px; line-height: 1.6; }
+/* Panel s výhodami. Pozadie musí dobehnúť až po okraj okna, na to je ten
+   pseudoprvok — samotný panel končí tam, kde obsah stránky. */
+.rnc-life-panel {
+  position: relative;
+  background: #1B2420;
+  padding: 40px 0 40px 48px;
+}
+.rnc-life-panel::after {
+  content: ""; position: absolute; top: 0; bottom: 0;
+  left: 100%; width: 100vw; background: #1B2420;
+}
+.rnc-ben {
+  display: grid; grid-template-columns: 28px 1fr;
+  column-gap: 24px; padding: 14px 0;
+}
+.rnc-ben + .rnc-ben { border-top: 1px solid rgba(255, 255, 255, .1); }
+.rnc-ben-ico {
+  grid-row: 1 / span 2; align-self: start; margin-top: 2px;
+  width: 28px; height: 28px; border-radius: 8px;
+  border: 2px solid var(--rnc-amber);
+}
+.rnc-ben strong {
+  grid-column: 2; color: #fff;
+  font-family: var(--rnc-display); font-weight: 600; font-size: 16px;
+}
+.rnc-ben p {
+  grid-column: 2; margin: 4px 0 0;
+  color: #B9BDB6; font-size: 14px; line-height: 1.55;
+}
 
 /* recenzie */
 .rnc-revs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
@@ -1277,7 +1384,21 @@ label { color: var(--rnc-ink); }
 
 @media (max-width: 980px) {
   .rnc-hero-body { flex-wrap: wrap; }
-  .rnc-life { grid-template-columns: 1fr; gap: 22px; }
+  /* Pod seba: fotka s textom hore, panel s výhodami pod ňou. Panel sa
+     tu musí rozťahovať na obe strany, preto pribudne aj ::before. */
+  .rnc-life-in { grid-template-columns: 1fr; min-height: 0; }
+  /* Text je tu cez celú šírku, tak aj stmavenie — prechod doprava by
+     mu posledné riadky nechal na svetlej fotke. */
+  .rnc-life-foto::after {
+    background: linear-gradient(180deg, rgba(14,21,18,.9) 0%,
+                rgba(14,21,18,.74) 100%);
+  }
+  .rnc-life-txt { padding: 48px 0 40px; }
+  .rnc-life-panel { padding: 8px 0 24px; }
+  .rnc-life-panel::before {
+    content: ""; position: absolute; top: 0; bottom: 0;
+    right: 100%; width: 100vw; background: #1B2420;
+  }
   .rnc-cats, .rnc-prods { grid-template-columns: repeat(2, 1fr); }
   .rnc-revs, .rnc-posts { grid-template-columns: 1fr; }
   .rnc-hero-in { padding: 48px 24px; }
@@ -1298,7 +1419,7 @@ label { color: var(--rnc-ink); }
 }
 
 @media (max-width: 560px) {
-  .rnc-cats, .rnc-prods, .rnc-benefits { grid-template-columns: 1fr; }
+  .rnc-cats, .rnc-prods { grid-template-columns: 1fr; }
   .rnc-hero { min-height: 380px; }
   .rnc-hero-in h2 { font-size: 30px; }
 }

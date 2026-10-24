@@ -85,6 +85,12 @@ FOTO = {
     "life": "/user/documents/upload/lifestyle-montaz.jpg",
 }
 
+# Video pod tlačidlom „Pozrieť video“ v lifestyle páse. Návrh je obrázok,
+# odkaz v ňom nie je, tak sem ide to z katalógu, ktoré je najvšeobecnejšie
+# — montáž flexibilného panela, visí pri štyroch produktoch. Keď klient
+# natočí vlastné, stačí vymeniť adresu tu.
+VIDEO = "https://www.youtube.com/watch?v=k20-KXD_x_k"
+
 
 def e(x):
     return html.escape(str(x), quote=True)
@@ -192,14 +198,20 @@ def odporucame(P):
     for pid in ODPORUCAME:
         p = by[pid]
         kat = dict((k, n) for k, n, _ in KATEGORIE).get(p["cat"], "")
+            # Vnútri odkazu sú zámerne len <span>, žiadne <h3> a <p>.
+        # Editor Shoptetu si z vloženého HTML robí svoje: keď v <a>
+        # nájde blokový prvok, odkaz okolo neho rozdelí a prázdny
+        # zvyšok zahodí. Na ostrej stránke tak zo štyroch kariet
+        # zostali holé texty bez fotky a bez prekliku. Dlaždice
+        # kategórií to prežili práve preto, že majú len spany.
         karty.append(f'''
     <a class="rnc-prod" href="{e(ADRESY[p["id"]])}">
       <span class="rnc-prod-img" style="background-image:url('{e((p.get("img") or [""])[0])}')"></span>
-      <h3>{e(p["n"]["sk"])}</h3>
-      <p class="rnc-prod-kat">{e(kat)}</p>
-      <p class="rnc-prod-cena">od <strong>{cena(od_ceny(p))}</strong>
-         <span>s DPH</span></p>
-      <p class="rnc-more">Zobraziť detail →</p>
+      <span class="rnc-prod-n">{e(p["n"]["sk"])}</span>
+      <span class="rnc-prod-kat">{e(kat)}</span>
+      <span class="rnc-prod-cena">od <strong>{cena(od_ceny(p))}</strong>
+         <span>s DPH</span></span>
+      <span class="rnc-more">Zobraziť detail →</span>
     </a>''')
     return f'''
 <section class="rnc-sec">
@@ -217,16 +229,29 @@ def odporucame(P):
 
 
 def benefity():
-    polozky = "".join(f'<div><strong>{e(n)}</strong><p>{e(t)}</p></div>'
-                      for n, t in VYHODY)
+    """Lifestyle pás podľa návrhu.
+
+    V návrhu ide cez celú šírku okna: vľavo fotka stmavená prechodom,
+    v nej nadpis, veta a odkaz na video, vpravo tmavý panel so štyrmi
+    výhodami pod sebou, oddelenými tenkou linkou. Fotka je na pozadí
+    celého pásu a panel ju vpravo prekrýva — vďaka tomu sa predel medzi
+    nimi trafí presne tam, kde končí obsah stránky, a výhody sú
+    zarovnané s ostatnými sekciami.
+    """
+    polozky = "".join(
+        f'<div class="rnc-ben"><span class="rnc-ben-ico"></span>'
+        f'<strong>{e(n)}</strong><p>{e(t)}</p></div>' for n, t in VYHODY)
     return f'''
-<section class="rnc-sec rnc-life">
+<section class="rnc-life">
   <div class="rnc-life-foto" style="background-image:url('{e(FOTO["life"])}')"></div>
-  <div class="rnc-life-txt">
-    <h2>Energia, ktorá vám dáva slobodu</h2>
-    <p class="rnc-sub">Pre dlhšie cesty, vzdialenejšie miesta a väčšiu
-       nezávislosť.</p>
-    <div class="rnc-benefits">{polozky}</div>
+  <div class="container rnc-life-in">
+    <div class="rnc-life-txt">
+      <h2>Energia, ktorá vám dáva slobodu.</h2>
+      <p>Pre dlhšie cesty, vzdialenejšie miesta a väčšiu nezávislosť.</p>
+      <a class="rnc-play" href="{e(VIDEO)}" target="_blank" rel="noopener">
+        <span class="rnc-play-ico">▶</span><span>Pozrieť video</span></a>
+    </div>
+    <div class="rnc-life-panel">{polozky}</div>
   </div>
 </section>'''
 
