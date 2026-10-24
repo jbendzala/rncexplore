@@ -501,6 +501,59 @@ textarea:focus-visible,
   box-shadow: var(--rnc-shadow);
 }
 
+/* Rozbalené Produkty pod seba.
+
+   Shoptet z nich skladá štvorstĺpcovú ponuku: každej položke dá 25 %
+   šírky a obrázok naľavo od názvu. Počíta pritom so širokou ponukou,
+   lenže tá je u nás široká presne ako menu — 439 px. Na stĺpec tak
+   vyšlo 110 px, kým obrázok má sám 116 px, a na text zostalo
+   calc(100% - 116px), teda nula. Názvy sa orezali na „Na kr ko“
+   a obrázky preliezali do susednej položky.
+
+   Jeden stĺpec to rieši bez boja so šírkou a pri siedmich kategóriách
+   sa aj lepšie číta. Selektory kopírujú tie Shoptetove aj s potomkami,
+   inak by neprebili ich špecificitu. */
+.navigation-in > ul > li.ext { position: relative; }
+.navigation-in > ul > li.ext > ul.menu-level-2 {
+  width: 320px;
+  left: 0;
+  padding: 8px;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: stretch;
+}
+.navigation-in > ul > li.ext > ul > li {
+  flex-basis: auto;
+  width: 100%;
+  min-height: 0;
+  border-radius: 10px;
+}
+.navigation-in > ul > li.ext > ul > li:hover { background: var(--rnc-chip); }
+.navigation-in > ul > li.ext > ul > li > a.menu-image {
+  width: 68px;
+  padding: 8px;
+}
+.navigation-in > ul > li.ext > ul > li > a img {
+  max-width: 52px; max-height: 40px;
+  border-radius: 6px;
+}
+.navigation-in > ul > li.ext > ul > li > div {
+  width: calc(100% - 68px);
+}
+.navigation-in > ul > li.ext > ul > li > div > a {
+  padding: 12px 14px 12px 0;
+  font-family: var(--rnc-display);
+  font-weight: 600; font-size: 14px;
+  color: var(--rnc-ink);
+}
+.navigation-in > ul > li.ext > ul > li > div > a:hover { color: var(--rnc-amber); }
+/* Tretia úroveň — trinásť značiek pod Panelmi na kapotu. Shoptet ich
+   vypisuje za sebou oddelené čiarkou a odreže na dva riadky, takže
+   z toho zostalo „Land Rover, Dacia, Fiat, Ford, Ineos, Isuzu, Jeep,“
+   aj s čiarkou na konci. Do úzkej ponuky sa nezmestia a na stránke
+   kategórie sú aj tak v mriežke s logami. */
+.navigation-in > ul > li.ext > ul > li > div > ul { display: none; }
+
 /* --- 9. KOŠÍK -------------------------------------------- */
 .search-form,
 .search-input {
