@@ -142,6 +142,29 @@ def blok():
   if (f && p) {{ f.insertBefore(p, f.firstChild); }}
   if (l && t) {{ l.insertBefore(t, l.firstChild); }}
 
+  /* Výpis kategórie. Návrh má nad nadpisom riadok so zaradením.
+     Berieme ho z omrvinkovej navigácie — predposledná položka, teda
+     nadradená kategória. Na nej samej by bol ten istý text ako
+     v nadpise, čo nemá zmysel, tak ho vtedy vynechávame. */
+  var n = document.querySelectorAll(".breadcrumbs a");
+  var t = document.querySelector(".category-title");
+  if (t && !t.previousElementSibling) {{
+    /* Posledný odkaz v omrvinkách býva samotná kategória, teda to isté,
+       čo je v nadpise. Berieme preto posledný, ktorý sa od nadpisu
+       líši — nadradenú kategóriu. */
+    var nadpis = t.textContent.trim(), r = "";
+    for (var x = 0; x < n.length; x++) {{
+      var v = n[x].textContent.trim();
+      if (v && v !== nadpis) {{ r = v; }}
+    }}
+    if (r) {{
+      var u = document.createElement("p");
+      u.className = "rnc-eyebrow";
+      u.textContent = r;
+      t.parentNode.insertBefore(u, t);
+    }}
+  }}
+
   /* Detail produktu. Návrh má v pravom stĺpci najprv zaradenie,
      nadpis a štítok, až potom popis a cenu; Shoptet dáva nadpis nad
      oba stĺpce. Poradie zvyšku vyrieši CSS cez order, ale nadpis

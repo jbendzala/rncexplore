@@ -1630,6 +1630,166 @@ label { color: var(--rnc-ink); }
 
 
 
+/* --- 19a. VÝPIS KATEGÓRIE ---------------------------------------------
+   Návrh má vľavo kartu s filtrami, vpravo mriežku kariet, ktorá sa
+   prispôsobuje šírke okna. Shoptet stavia mriežku na plávajúcich
+   stĺpcoch s pevnou tretinou, takže na širokej obrazovke sú karty
+   obrovské a na úzkej tesné.                                          */
+
+.type-category .category-title {
+  margin: 0 0 8px;
+  font-size: clamp(28px, 3vw, 40px); letter-spacing: -.01em;
+}
+
+/* Podkategórie ako štítky. Shoptet ich dáva do mriežky so zástupným
+   obrázkom priečinka — ten je k ničomu, značky vlastný obrázok
+   kategórie nemajú. */
+.type-category .subcategories {
+  display: flex; flex-wrap: wrap; gap: 12px;
+  list-style: none; padding: 0; margin: 24px 0 0;
+}
+.type-category .subcategories > li { width: auto; float: none; padding: 0; }
+.type-category .subcategories li a .image { display: none; }
+.type-category .subcategories li a {
+  display: inline-flex; align-items: center; height: 40px;
+  padding: 0 16px; width: auto;
+  border: 1px solid var(--rnc-line-2); border-radius: 999px;
+  background: var(--rnc-surface);
+  font-family: var(--rnc-display); font-weight: 600; font-size: 14px;
+  color: var(--rnc-ink); text-decoration: none;
+}
+/* Text značky šablóna sadzí na 75 % šírky dlaždice a zvyšok oreže
+   s trojbodkou — v štítku z toho zostalo „D…“ a „Is…“. Šípku vpravo
+   kreslí pseudoprvkom, v štítku nemá čo robiť. */
+.type-category .subcategories.with-image li a .text {
+  width: auto; max-height: none; padding-left: 0;
+  overflow: visible; text-overflow: clip; white-space: nowrap;
+}
+.type-category .subcategories li a::before,
+.type-category .subcategories li a::after { display: none; }
+.type-category .subcategories li a:hover {
+  border-color: var(--rnc-amber); color: var(--rnc-amber);
+}
+
+/* Bočný panel: každá skupina je karta, nie riadok oddelený linkou. */
+.type-category .sidebar-inner > div {
+  background: var(--rnc-surface);
+  border: 1px solid var(--rnc-line);
+  border-radius: var(--rnc-radius);
+  border-bottom-style: solid;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+}
+.type-category .sidebar .pageElement__heading {
+  margin: 0 0 12px;
+  font-family: var(--rnc-display); font-weight: 600; font-size: 18px;
+  color: var(--rnc-head);
+}
+
+/* Mriežka produktov. auto-fill namiesto pevného počtu stĺpcov: karta
+   si drží rozumnú šírku a počet v rade sa dorátava zo šírky okna. */
+.type-category .products.products-block {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 24px;
+  margin: 24px 0 0;
+}
+.type-category .products.products-block > .product {
+  width: auto; float: none; padding: 0; margin: 0;
+}
+.type-category .products.products-block::before,
+.type-category .products.products-block::after { display: none; }
+
+.type-category .products-block .p {
+  height: 100%;
+  display: flex; flex-direction: column;
+  background: var(--rnc-surface);
+  border-radius: var(--rnc-radius);
+  box-shadow: var(--rnc-shadow);
+  padding: 12px;
+}
+.type-category .products-block .p > a.image {
+  display: block; position: relative;
+  aspect-ratio: 6/5; border-radius: 8px;
+  background: #fff; overflow: hidden;
+}
+.type-category .products-block .p > a.image img {
+  width: 100%; height: 100%; object-fit: contain; padding: 8px;
+}
+.type-category .products-block .p-in,
+.type-category .products-block .p-in-in {
+  display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 0;
+}
+.type-category .products-block .p-in { padding: 16px 8px 8px; }
+/* Názvu šablóna dáva pevných 45 px a oreže ho na dva riadky — dlhšie
+   názvy tak končia uprostred slova. V návrhu sa zalamuje voľne, karty
+   si výšku dorovnajú mriežkou. Päť tried preto, že ich pravidlo so
+   stĺpcami na mobile má štyri a menej by neprešlo. */
+.type-category .products.products-block > div .p .name {
+  font-family: var(--rnc-display); font-weight: 600;
+  font-size: 16px; line-height: 1.35;
+  color: var(--rnc-head); text-decoration: none;
+  display: block; height: auto; overflow: visible;
+  -webkit-line-clamp: none; margin-bottom: 0;
+  text-wrap: balance;
+}
+.type-category .products-block .name:hover { color: var(--rnc-amber); }
+/* Krátky popis dáva šablóna až pod tlačidlo; v návrhu je hneď pod
+   názvom. Poradie stačí prehodiť, presúvať nič netreba. */
+.type-category .products-block .p-in { }
+.type-category .products-block .p-desc {
+  order: -1; margin: 0;
+  font-size: 14px; color: var(--rnc-muted);
+}
+.type-category .products-block .p-bottom { order: 1; margin-top: auto; }
+.type-category .products-block .ratings-wrapper { font-size: 13px; }
+.type-category .products-block .stars-placeholder { display: none; }
+.type-category .products-block .price-final strong {
+  font-family: var(--rnc-display); font-weight: 600; font-size: 18px;
+  color: var(--rnc-head);
+}
+.type-category .products-block .price-final small {
+  font-weight: 400; font-size: 14px; color: var(--rnc-muted);
+}
+/* „Detail“ je v návrhu textový odkaz, nie tlačidlo. */
+.type-category .products-block .p-tools .btn.btn-primary {
+  background: none; border: 0; box-shadow: none;
+  padding: 4px 0; height: auto; min-height: 0;
+  justify-content: flex-start;
+  font-family: var(--rnc-display); font-weight: 600; font-size: 14px;
+  color: var(--rnc-tint);
+}
+.type-category .products-block .p-tools .btn.btn-primary::after { content: " →"; }
+.type-category .products-block .p-tools .btn.btn-primary:hover {
+  background: none; color: var(--rnc-amber); text-decoration: underline;
+}
+
+/* Riadok s radením a počtom položiek */
+.type-category .category-header {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 16px;
+  border-bottom: 1px solid var(--rnc-line); padding-bottom: 12px;
+}
+.type-category .listSorting__controls {
+  display: flex; flex-wrap: wrap; gap: 4px; list-style: none; padding: 0; margin: 0;
+}
+.type-category .listSorting__control {
+  background: none; border: 0; border-radius: 999px;
+  padding: 8px 14px; cursor: pointer;
+  font-family: var(--rnc-display); font-weight: 600; font-size: 14px;
+  color: var(--rnc-muted);
+}
+.type-category .listSorting__control:hover { color: var(--rnc-ink); background: var(--rnc-chip); }
+.type-category .listSorting__control--current { color: var(--rnc-amber); background: var(--rnc-chip); }
+.type-category .listItemsTotal,
+.type-category .itemsTotal {
+  font-family: var(--rnc-display); font-weight: 600; color: var(--rnc-head);
+}
+
+@media (max-width: 991px) {
+  .type-category .sidebar { width: 100%; }
+}
+
 /* --- 19b. DETAIL PRODUKTU ----------------------------------------------
    Návrh má dva stĺpce cez celú šírku: vľavo galéria, vpravo nákupný
    panel, ktorý sa pri posúvaní drží. Shoptet dáva detailu bočný
