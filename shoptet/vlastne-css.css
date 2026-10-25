@@ -27,7 +27,12 @@
    Prevzaté z návrhu. Všetko ostatné sa odvoláva sem, takže zmena farby je
    zmena na jednom riadku.                                                  */
 :root {
-  --rnc-ink:        #0E1512;   /* text a tmavé plochy */
+  --rnc-ink:        #0E1512;   /* text */
+  /* Tmavá plocha, ktorá sa neprepína: lišta, pätička a text na
+     jantárovom tlačidle. Keby to bola tá istá premenná ako text,
+     v tmavej palete by z pätičky bola krémová a z písma na tlačidle
+     tiež — teda svetlé na svetlom. */
+  --rnc-tma:        #0E1512;   /* tmavé plochy, vždy rovnaké */
   --rnc-head:       #141C18;   /* nadpisy */
   --rnc-amber:      #F0A830;   /* akcent — do košíka, dôležité odkazy */
   --rnc-amber-dark: #D9921A;   /* stlačené */
@@ -118,6 +123,75 @@
   --colors-forms-positive:                  #168455;
 }
 
+/* --- 2b. TMAVÁ PALETA MIMO DOMOVSKEJ -------------------------------------
+   Návrh má druhú sadu farieb — tmavozelený podklad s krémovým textom.
+   Ide o hlavný vzhľad obchodu; domovská zostáva krémová, tam si ju
+   klient odsúhlasil takú. Domovská je jediná stránka s triedou
+   type-index, takže stačí ju vynechať.
+
+   Prepisujú sa len premenné, žiadne pravidlá. Naše aj Shoptetove —
+   tie ich sú dôležitejšie, lebo nimi je zafarbená väčšina šablóny,
+   na ktorú vlastné pravidlá nesiahajú (košík, filtre, diskusia).    */
+body:not(.type-index) {
+  --rnc-bg:         #0E1512;
+  --rnc-surface:    #141C18;
+  --rnc-line:       #26312B;
+  --rnc-line-2:     #34413A;
+  --rnc-ink:        #F1EFE8;
+  --rnc-head:       #FFFFFF;
+  --rnc-muted:      #A3ABA4;
+  --rnc-tint:       #F0A830;
+  --rnc-chip:       #1B2420;
+  --rnc-ok:         #4CC38A;
+  --rnc-shadow:     0 8px 30px rgba(0, 0, 0, .4);
+
+  --color-header-background:                #141C18;
+  --color-tertiary:                         #F0A830;
+  --color-tertiary-h:                       38;
+  --color-tertiary-s:                       86%;
+  --color-tertiary-l:                       56%;
+  --colors-surface-primary:                 #141C18;
+  --colors-surface-white:                   #141C18;
+  --colors-surface-secondary:               #0E1512;
+  --colors-surface-subtle:                  #1B2420;
+  --colors-surface-tertiary:                #34413A;
+  --colors-foregrounds-content-primary:     #F1EFE8;
+  --colors-foregrounds-content-secondary:   #A3ABA4;
+  --colors-foregrounds-content-tertiary:    #8C938C;
+  --colors-foregrounds-content-quaternary:  #8C938C;
+  --colors-foregrounds-headlines-primary:   #FFFFFF;
+  --colors-foregrounds-borders-primary:     #34413A;
+  --colors-foregrounds-borders-secondary:   #26312B;
+  --colors-foregrounds-icons-primary:       #A3ABA4;
+  --colors-focus-primary:                   #F0A830;
+  --colors-forms-background:                #1B2420;
+  --colors-forms-border:                    #34413A;
+  --colors-forms-activated:                 #F0A830;
+  --colors-state-success:                   #4CC38A;
+  --colors-forms-positive:                  #4CC38A;
+}
+
+/* --- 2c. FOTKY A KÓDY NA TMAVOM --------------------------------------
+   Väčšina fotiek od dodávateľa je vyfotená na bielom pozadí. Na tmavej
+   stránke z nich boli biele obdĺžniky s ostrými rohmi, čo vyzeralo ako
+   chyba. Biela plocha je preto zámerná dlaždica so zaoblením — tak to
+   čítať ako súčasť karty.                                              */
+body:not(.type-index) .p .image,
+body:not(.type-index) .p-image {
+  background: #fff;
+  border-radius: var(--rnc-radius);
+  overflow: hidden;
+}
+
+/* Kód produktu šablóna kladie nad fotku. Na bielej bol svetlosivý text
+   na bielom, teda neviditeľný. Tmavý prúžok drží v oboch paletách. */
+.p .p-code {
+  background: rgba(14, 21, 18, .72);
+  color: #F1EFE8;
+  border-radius: 999px;
+  padding: 3px 10px;
+}
+
 /* --- 3. ZÁKLAD -----------------------------------------------------------
    body má v šablóne „background: #fff !important“, takže bez !important
    by krémový podklad neprešiel. Je to jediné miesto, kde ho používam
@@ -182,7 +256,7 @@ textarea:focus-visible,
 .btn.add-to-cart-button {
   background: var(--rnc-amber);
   border-color: var(--rnc-amber);
-  color: var(--rnc-ink);
+  color: var(--rnc-tma);
 }
 .btn.btn-conversion:hover,
 .btn.add-to-cart-button:hover,
@@ -190,12 +264,12 @@ textarea:focus-visible,
 .btn.add-to-cart-button:focus {
   background: var(--rnc-amber-dark);
   border-color: var(--rnc-amber-dark);
-  color: var(--rnc-ink);
+  color: var(--rnc-tma);
 }
 
 .btn.btn-primary {
-  background: var(--rnc-ink);
-  border-color: var(--rnc-ink);
+  background: var(--rnc-tma);
+  border-color: var(--rnc-tma);
   color: #fff;
 }
 .btn.btn-primary:hover { background: #000; border-color: #000; color: #fff; }
@@ -222,7 +296,7 @@ textarea:focus-visible,
    V návrhu je nad logom tmavý pásik s prepínačom jazyka, odkazom na
    veľkoobchod a kontaktom.                                                */
 .top-navigation-bar {
-  background: var(--rnc-ink);
+  background: var(--rnc-tma);
   color: rgba(255, 255, 255, .86);
   font-size: 13px;
   border: 0;
@@ -568,7 +642,7 @@ textarea:focus-visible,
 
 .cart-count {
   background: var(--rnc-amber);
-  color: var(--rnc-ink);
+  color: var(--rnc-tma);
   font-weight: 700;
 }
 .cart-price { font-family: var(--rnc-display); font-weight: 600; }
@@ -636,7 +710,7 @@ input:checked + .filter-label,
 .param-price-filter .ui-slider-range { background: var(--rnc-amber); }
 .param-price-filter .ui-slider-handle {
   background: var(--rnc-surface);
-  border: 2px solid var(--rnc-ink);
+  border: 2px solid var(--rnc-amber);
   border-radius: 999px;
 }
 .slider-content .from,
@@ -941,7 +1015,7 @@ input:checked + .filter-label,
 /* --- 17. PÄTIČKA -------------------------------------------------------- */
 .footer,
 #footer {
-  background: var(--rnc-ink);
+  background: var(--rnc-tma);
   color: rgba(255, 255, 255, .78);
   border: 0;
 }
@@ -996,7 +1070,7 @@ input:checked + .filter-label,
   transition: background .18s, color .18s;
 }
 #footer .rnc-btn-ghost-amber:hover {
-  background: var(--rnc-amber); color: var(--rnc-head);
+  background: var(--rnc-amber); color: var(--rnc-tma);
 }
 .rnc-pata-jazyk { margin-top: 18px !important; }
 .rnc-pata-jazyk strong { color: #fff; font-weight: 600; }
@@ -1153,7 +1227,7 @@ label { color: var(--rnc-ink); }
 .rnc-btn {
   display: inline-flex; align-items: center; justify-content: center;
   background: var(--rnc-amber);
-  color: var(--rnc-ink);
+  color: var(--rnc-tma);
   font-family: var(--rnc-display);
   font-weight: 700;
   padding: 15px 28px;
@@ -1168,7 +1242,7 @@ label { color: var(--rnc-ink); }
   text-decoration: underline; text-underline-offset: 4px;
 }
 .rnc-link-light:hover { color: var(--rnc-amber); }
-.rnc-btn:hover { background: var(--rnc-amber-dark); border-color: var(--rnc-amber-dark); color: var(--rnc-ink); }
+.rnc-btn:hover { background: var(--rnc-amber-dark); border-color: var(--rnc-amber-dark); color: var(--rnc-tma); }
 .rnc-btn-ghost { background: transparent; border-color: currentColor; color: inherit; }
 .rnc-btn-ghost:hover { background: rgba(255,255,255,.12); border-color: currentColor; color: inherit; }
 .rnc-cta { display: flex; flex-wrap: wrap; gap: 12px; margin: 22px 0 0; }
@@ -1361,7 +1435,7 @@ label { color: var(--rnc-ink); }
   padding: 7px 14px; color: var(--rnc-ink); text-decoration: none;
   font-family: var(--rnc-display); font-weight: 600; font-size: 14px;
 }
-.rnc-chips a:hover { background: var(--rnc-amber); }
+.rnc-chips a:hover { background: var(--rnc-amber); color: var(--rnc-tma); }
 .rnc-chips span { color: var(--rnc-muted); font-weight: 400; }
 
 /* odporúčané produkty */
@@ -1465,7 +1539,7 @@ label { color: var(--rnc-ink); }
   font-size: 12px; transition: background .18s, border-color .18s;
 }
 .rnc-play:hover .rnc-play-ico {
-  background: var(--rnc-amber); color: var(--rnc-head); border-color: transparent;
+  background: var(--rnc-amber); color: var(--rnc-tma); border-color: transparent;
 }
 
 /* Panel s výhodami. Pozadie musí dobehnúť až po okraj okna, na to je ten
