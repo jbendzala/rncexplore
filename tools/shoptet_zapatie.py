@@ -61,6 +61,15 @@ INFORMACIE = [
 PEREX = ("Solárna energia pre vozidlá a karavany. Panely, regulátory "
          "a vybavenie pre cestovateľov.")
 
+# Istoty pod tlačidlom na detaile produktu. Sú to naše skutočné
+# podmienky, nie sľuby navyše — tie isté vety sú na domovskej aj
+# v obchodných podmienkach.
+ISTOTY = [
+    "Faktúru s QR kódom pošleme e-mailom po objednaní.",
+    "Tovar odošleme po úhrade.",
+    "Montáž bez vŕtania, návod ku každému produktu.",
+]
+
 # Horná lišta. Vľavo dva sľuby o objednávke, vpravo jazyk a dva odkazy.
 SLUBY = ["Faktúra s QR kódom e-mailom", "Odoslanie po úhrade"]
 
@@ -85,6 +94,8 @@ def stlpec(nadpis, odkazy):
 
 
 def blok():
+    istoty = ('<ul class="rnc-istoty">'
+              + "".join(f"<li>{e(x)}</li>" for x in ISTOTY) + "</ul>")
     pravne = "".join(f'<a href="{e(u)}">{e(n)}</a>' for n, u in PRAVNE)
     sluby = "".join(f'<span>{e(x)}</span>' for x in SLUBY)
     return f'''<div id="rnc-top" class="rnc-top">
@@ -118,12 +129,61 @@ def blok():
    bloky preto presunieme tam, kam patria. Skript beží hneď, nie na
    DOMContentLoaded — oba ciele sú v stránke dávno pred ním. */
 (function () {{
+  /* Poistka proti dvojitému behu. Keby sa pole zápätia vykreslilo
+     dvakrát, mali by sme na stránke dve pätičky a na detaile dva
+     nadpisy — a nebolo by hneď jasné prečo. */
+  if (document.documentElement.dataset.rncZapatie) {{ return; }}
+  document.documentElement.dataset.rncZapatie = "1";
+
   var f = document.getElementById("footer"),
       p = document.getElementById("rnc-pata"),
       t = document.getElementById("rnc-top"),
       l = document.querySelector(".top-navigation-bar .container");
   if (f && p) {{ f.insertBefore(p, f.firstChild); }}
   if (l && t) {{ l.insertBefore(t, l.firstChild); }}
+
+  /* Detail produktu. Návrh má v pravom stĺpci najprv zaradenie,
+     nadpis a štítok, až potom popis a cenu; Shoptet dáva nadpis nad
+     oba stĺpce. Poradie zvyšku vyrieši CSS cez order, ale nadpis
+     treba preniesť — cez stĺpce to CSS nevie. */
+  var i = document.querySelector(".p-info-wrapper");
+  if (!i) {{ return; }}
+
+  var hlava = document.createElement("div");
+  hlava.className = "rnc-pd-hlava";
+
+  /* Zaradenie berieme z omrvinkovej navigácie, z prvej kategórie za
+     Produktmi — teda „Panely na kapotu“, nie „Dacia“. Keby sa
+     omrvinky zmenili, riadok proste nebude, nič sa nerozbije. */
+  var k = document.querySelector("#navigation-2 a [itemprop=name]");
+  if (k && k.textContent.trim()) {{
+    var e = document.createElement("p");
+    e.className = "rnc-eyebrow";
+    e.textContent = k.textContent.trim();
+    hlava.appendChild(e);
+  }}
+  var h = document.querySelector(".p-detail-inner-header h1");
+  if (h) {{ hlava.appendChild(h); }}
+  var d = document.querySelector(".p-detail-info");
+  if (d) {{ hlava.appendChild(d); }}
+  if (hlava.children.length) {{ i.insertBefore(hlava, i.firstChild); }}
+
+  /* Cena je bez poznámky o dani. Dopĺňame ju do značky, nie cez CSS,
+     nech sa dá označiť aj preložiť. */
+  var c = i.querySelector(".price-final");
+  if (c && !c.querySelector(".rnc-dph")) {{
+    var s = document.createElement("span");
+    s.className = "rnc-dph";
+    s.textContent = "s DPH";
+    c.appendChild(s);
+  }}
+
+  var z = document.createElement("div");
+  z.className = "rnc-pd-pata";
+  z.innerHTML = {istoty!r}
+    + '<p class="rnc-pd-b2b">Ste predajca alebo montážny servis? '
+    + '<a href="/velkoobchod/">Veľkoobchod (B2B)</a></p>';
+  i.appendChild(z);
 }})();
 </script>'''
 

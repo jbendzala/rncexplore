@@ -821,7 +821,13 @@ input:checked + .filter-label,
 
 .tab-content { background: transparent; border: 0; padding-top: 24px; }
 
-.description-inner,
+/* Strop šírky patrí textu, nie obalu: .description-inner je u Shoptetu
+   pružný riadok s dvoma stĺpcami a 68ch na ňom zúžilo celý popis na
+   polovicu stránky. Na stĺpcoch samotných strop zmysel má — riadok
+   dlhý cez celú obrazovku sa zle číta. */
+.description-inner {
+  font-size: 16px; line-height: 1.7; color: var(--rnc-ink);
+}
 .basic-description,
 .extended-description {
   font-size: 16px;
@@ -1549,6 +1555,215 @@ label { color: var(--rnc-ink); }
 
 
 
+
+/* --- 19b. DETAIL PRODUKTU ----------------------------------------------
+   Návrh má dva stĺpce cez celú šírku: vľavo galéria, vpravo nákupný
+   panel, ktorý sa pri posúvaní drží. Shoptet dáva detailu bočný
+   stĺpec s kategóriami a TOP 10 a nadpis roztiahne nad oba stĺpce.
+   Nadpis presúva skript v zápätí, zvyšok poradia je tu cez order.    */
+
+.type-detail .sidebar { display: none; }
+.type-detail .content.narrow,
+.type-detail #content { width: 100%; max-width: none; }
+
+.type-detail .product-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: 48px;
+  align-items: start;
+}
+.type-detail .product-top > div { width: auto; float: none; padding: 0; }
+/* Prvý stĺpec riadku je obal pre štítky a hviezdičky. Tie sú už
+   v pravom paneli, takže zostal prázdny. */
+.type-detail .product-top > .col-xs-12:not(.col-lg-6) { display: none; }
+.type-detail .product-top::before,
+.type-detail .product-top::after { display: none; }
+
+/* galéria */
+.type-detail .p-image { border-radius: var(--rnc-radius); overflow: hidden; }
+.type-detail .p-image,
+.type-detail .p-main-image { display: block; width: 100%; max-width: none; }
+.type-detail .p-main-image img { width: 100%; height: auto; display: block; }
+.type-detail .p-thumbnails-wrapper { margin-top: 12px; }
+.type-detail .p-thumbnails img { border-radius: 8px; }
+.type-detail .p-thumbnails-inner a {
+  border: 2px solid transparent; border-radius: 10px; overflow: hidden;
+}
+.type-detail .p-thumbnails-inner a:hover { border-color: var(--rnc-line-2); }
+
+/* nákupný panel */
+.type-detail .p-info-wrapper {
+  position: sticky; top: 16px;
+  gap: 20px;
+}
+.type-detail .rnc-pd-hlava { order: -1; }
+.type-detail .p-info-wrapper > p[data-testid="productCardDescr"] { order: 8; }
+.type-detail .rnc-pd-pata { order: 6; }
+
+.type-detail .rnc-pd-hlava h1 {
+  margin: 8px 0 0;
+  font-size: clamp(26px, 2.4vw, 32px); font-weight: 600;
+  line-height: 1.2; letter-spacing: -.01em;
+}
+.type-detail .p-detail-info {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 8px 16px;
+  margin-top: 14px; font-size: 13px; color: var(--rnc-muted);
+}
+.type-detail .p-short-description { color: var(--rnc-muted); }
+.type-detail .p-short-description p { margin: 0 0 10px; }
+
+/* Riadok „Tvarovaný na …“ chodí z importu v krátkom popise. V návrhu
+   je to prúžok s odfajknutím a odkazom na panely na mieru. */
+.rnc-fit {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px;
+  background: var(--rnc-chip); border-radius: 12px;
+  padding: 12px 16px; font-size: 14px; color: var(--rnc-ink);
+}
+.rnc-fit::before {
+  content: "✓"; color: var(--rnc-ok); font-weight: 700; flex: 0 0 auto;
+}
+.rnc-fit a { margin-left: auto; font-weight: 600; white-space: nowrap; }
+
+.type-detail .p-final-price-wrapper { margin: 0; }
+.type-detail .price-final {
+  display: flex; align-items: baseline; flex-wrap: wrap; gap: 10px;
+  font-family: var(--rnc-display); font-size: 32px; font-weight: 600;
+  color: var(--rnc-head); font-variant-numeric: tabular-nums;
+}
+.type-detail .price-final .rnc-dph {
+  font-family: var(--rnc-body); font-size: 14px; font-weight: 400;
+  color: var(--rnc-muted);
+}
+.type-detail .availability-value { font-size: 14px; color: var(--rnc-muted); }
+
+/* Výber variantu. Shoptet ho stavia ako tabuľku s jedným riadkom.
+
+   Pozor na rozsah: triedu .detail-parameters má aj tabuľka
+   dodatočných parametrov v popise. Keď tieto pravidlá platili na obe,
+   rozpadla sa tá druhá — názov a hodnota skončili pod sebou, každý
+   s kúskom linky. Preto je vo všetkých selektoroch nákupný panel. */
+.type-detail .p-info-wrapper .detail-parameters,
+.type-detail .p-info-wrapper .detail-parameters tbody,
+.type-detail .p-info-wrapper .detail-parameters tr { width: 100%; display: block; border: 0; background: none; }
+.type-detail .p-info-wrapper .detail-parameters th,
+.type-detail .p-info-wrapper .detail-parameters td {
+  display: block; width: auto; padding: 0; border: 0; text-align: left;
+}
+.type-detail .p-info-wrapper .detail-parameters th {
+  font-family: var(--rnc-display); font-weight: 600; font-size: 14px;
+  color: var(--rnc-ink); padding-bottom: 10px;
+}
+.type-detail .p-info-wrapper .detail-parameters select {
+  /* Šablóna výber variantu zužuje na 440 px; v návrhu ide cez celú
+     šírku panela, tak treba zrušiť aj ten strop, nielen nastaviť šírku. */
+  width: 100%; max-width: none;
+  height: 52px; padding: 0 16px;
+  border: 1.5px solid var(--rnc-line-2); border-radius: 12px;
+  background: var(--rnc-surface);
+}
+
+/* Množstvo a tlačidlo do košíka */
+.type-detail .add-to-cart { display: flex; gap: 12px; align-items: stretch; }
+.type-detail .add-to-cart .quantity {
+  display: flex; align-items: center; height: 52px;
+  border: 1.5px solid var(--rnc-line-2); border-radius: 999px;
+  background: var(--rnc-surface); overflow: hidden;
+}
+.type-detail .add-to-cart .quantity input {
+  border: 0; background: none; width: 44px; text-align: center;
+  font-weight: 600; height: 100%;
+}
+.type-detail .add-to-cart-button {
+  flex: 1; height: 52px; border-radius: 999px;
+  font-family: var(--rnc-display); font-weight: 700; font-size: 16px;
+}
+
+.rnc-istoty {
+  display: grid; gap: 10px; list-style: none; margin: 0; padding: 0;
+  font-size: 14px; color: var(--rnc-muted);
+}
+.rnc-istoty li { display: flex; gap: 10px; align-items: flex-start; }
+.rnc-istoty li::before {
+  content: "✓"; color: var(--rnc-ok); font-weight: 700; flex: 0 0 auto;
+}
+.rnc-pd-b2b {
+  margin: 16px 0 0; padding-top: 16px;
+  border-top: 1px solid var(--rnc-line);
+  font-size: 14px; color: var(--rnc-muted);
+}
+.rnc-pd-b2b a { font-weight: 600; color: var(--rnc-ink); }
+
+.type-detail .social-buttons-wrapper { border-top: 1px solid var(--rnc-line); padding-top: 16px; }
+.type-detail .link-icons { gap: 24px; }
+
+/* Štyri výhody pod detailom. Shoptet na ne má vlastné miesto
+   (Konkurenčné výhody), takže text si klient mení v administrácii
+   a nie je zadrôtovaný v kóde. V návrhu majú jantárovú linku hore. */
+.type-detail .benefitBanner.position--benefitProduct {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px; margin-top: 72px; border: 0; background: none; padding: 0;
+}
+.type-detail .benefitBanner.position--benefitProduct > * {
+  border-top: 2px solid var(--rnc-amber);
+  padding: 16px 0 0; background: none; text-align: left;
+}
+
+/* Záložky s popisom a diskusiou */
+.type-detail .shp-tabs-wrapper { margin-top: 72px; }
+.type-detail .shp-tabs {
+  border-bottom: 1px solid var(--rnc-line); background: transparent;
+}
+.type-detail .shp-tab-link {
+  font-family: var(--rnc-display); font-weight: 600;
+  color: var(--rnc-muted); background: transparent; border: 0;
+}
+.type-detail .shp-tab.active .shp-tab-link {
+  color: var(--rnc-head); box-shadow: inset 0 -2px 0 var(--rnc-amber);
+}
+/* Popis a dodatočné parametre vedľa seba. Riadok robí už šablóna,
+   stačí stĺpcom povedať pomer a dovoliť im zúžiť sa pod obsah. */
+.type-detail .description-inner { padding-top: 32px; align-items: flex-start; }
+.type-detail .basic-description { flex: 1.3 1 0; min-width: 0; max-width: none; }
+.type-detail .extended-description { flex: 1 1 0; min-width: 0; max-width: none; }
+.type-detail .description-inner h2 {
+  font-size: 26px; margin: 32px 0 16px;
+}
+.type-detail .description-inner h3 { font-size: 18px; margin: 24px 0 12px; }
+.type-detail .description-inner table {
+  width: 100%; border-collapse: collapse; font-size: 14px;
+}
+.type-detail .description-inner table th,
+.type-detail .description-inner table td {
+  text-align: left; padding: 14px 0;
+  border-bottom: 1px solid var(--rnc-line); vertical-align: top;
+}
+.type-detail .description-inner table th {
+  width: 38%; padding-right: 16px;
+  font-weight: 500; color: var(--rnc-muted);
+}
+.type-detail .description-inner table td { font-weight: 600; }
+
+@media (max-width: 1023px) {
+  .type-detail .product-top { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  .type-detail .p-info-wrapper { position: static; }
+  .type-detail .shp-tabs-wrapper { margin-top: 48px; }
+  .type-detail .description-inner { flex-wrap: wrap; gap: 32px; }
+  .type-detail .basic-description,
+  .type-detail .extended-description { flex-basis: 100%; }
+  .type-detail .benefitBanner.position--benefitProduct {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  /* Odkaz na mieru sa na úzkej obrazovke zmestiť nemusí; keď zostane
+     na jednom riadku, vytlačí stránku do šírky. */
+  .rnc-fit a { margin-left: 0; white-space: normal; }
+  .type-detail .p-detail-info { font-size: 12px; gap: 6px 10px; }
+  .type-detail .benefitBanner.position--benefitProduct {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
 
 /* --- 20. KOŠÍK A OBJEDNÁVKA --------------------------------------------
    Zámerne len farby a písmo. Trojkrok je pevný a prestavovať ho skriptom
