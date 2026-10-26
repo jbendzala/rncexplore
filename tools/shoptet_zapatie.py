@@ -165,6 +165,48 @@ def blok():
     }}
   }}
 
+  /* Typy panelov ako štítky nad výpisom. Návrh ich má nad všetkým,
+     nie v bočnom stĺpci — vľavo zostávajú len filtre. Skladáme ich
+     zo stromu kategórií, ktorý Shoptet aj tak vykresľuje, takže keď
+     klient kategóriu pridá alebo premenuje, štítky idú s ním. */
+  var strom = document.querySelector("#categories .categories");
+  if (strom && t) {{
+    var rad = document.createElement("div");
+    rad.className = "rnc-typy";
+    var cesta = location.pathname;
+
+    function stitok(odkaz, text, aktivny) {{
+      var a = document.createElement("a");
+      a.href = odkaz;
+      a.textContent = text;
+      if (aktivny) {{ a.className = "aktivny"; }}
+      rad.appendChild(a);
+    }}
+
+    var koren = strom.querySelector(".topic a");
+    if (koren) {{
+      stitok(koren.getAttribute("href"), "Všetko",
+             koren.getAttribute("href") === cesta);
+    }}
+    var polozky = strom.querySelectorAll(":scope > ul > li");
+    for (var y = 0; y < polozky.length; y++) {{
+      var o = polozky[y].querySelector("a");
+      if (!o) {{ continue; }}
+      /* Aktívny je aj vtedy, keď sme o úroveň nižšie — napríklad na
+         značke Dacia pod Panelmi na kapotu. Netrafiť sa na triedu je
+         ľahké: Shoptet dá „active“ až tej značke a nadradenej vetve
+         len „expandable“. Preto hľadáme adresu medzi všetkými
+         odkazmi v položke, nie v triedach. */
+      var je = false, vn = polozky[y].querySelectorAll("a");
+      for (var z = 0; z < vn.length; z++) {{
+        if (vn[z].getAttribute("href") === cesta) {{ je = true; break; }}
+      }}
+      stitok(o.getAttribute("href"),
+             o.textContent.replace(/\s+/g, " ").trim(), je);
+    }}
+    if (rad.children.length > 1) {{ t.parentNode.insertBefore(rad, t.nextSibling); }}
+  }}
+
   /* Detail produktu. Návrh má v pravom stĺpci najprv zaradenie,
      nadpis a štítok, až potom popis a cenu; Shoptet dáva nadpis nad
      oba stĺpce. Poradie zvyšku vyrieši CSS cez order, ale nadpis

@@ -1671,6 +1671,58 @@ label { color: var(--rnc-ink); }
   border-color: var(--rnc-amber); color: var(--rnc-amber);
 }
 
+/* Typy panelov ako štítky nad výpisom. Vkladá ich skript v zápätí
+   zo stromu kategórií — v návrhu sú nad všetkým a vľavo zostávajú
+   len filtre. */
+.rnc-typy {
+  display: flex; flex-wrap: wrap; gap: 12px; margin: 24px 0 0;
+}
+.rnc-typy a {
+  display: inline-flex; align-items: center; height: 40px; padding: 0 18px;
+  border: 1px solid var(--rnc-line-2); border-radius: 999px;
+  background: var(--rnc-surface);
+  font-family: var(--rnc-display); font-weight: 600; font-size: 14px;
+  color: var(--rnc-ink); text-decoration: none;
+  transition: border-color .15s, color .15s;
+}
+.rnc-typy a:hover { border-color: var(--rnc-amber); color: var(--rnc-amber); }
+.rnc-typy a.aktivny {
+  background: var(--rnc-amber); border-color: var(--rnc-amber);
+  color: var(--rnc-tma);
+}
+
+/* Strom kategórií v bočnom stĺpci je teraz hore ako štítky. */
+.type-category .box-categories { display: none; }
+
+/* Filtre nechať rozbalené.
+
+   Shoptet schováva všetko okrem ceny a príznakov za odkaz „Rozbaliť
+   filter“ — teda práve výkon a značku vozidla, kvôli ktorým sme to
+   celé robili. V návrhu je panel otvorený. */
+.type-category #category-filter-hover { display: block; }
+.type-category .filter-section-button { display: none; }
+
+/* Nadpis panela. Shoptet dáva nadpis kategóriám aj platbám, filtrom
+   nie — doplníme ho, nech sa panel volá ako v návrhu. */
+.type-category .box-filters::before {
+  content: "Filtre";
+  display: block; margin-bottom: 12px;
+  font-family: var(--rnc-display); font-weight: 600; font-size: 18px;
+  color: var(--rnc-head);
+}
+
+/* Voľby, ktoré by vrátili nula výsledkov, Shoptet nechá zobrazené
+   a len ich zošedí. V paneli tak visí „Akcia 0 · Novinka 0 · Tip 0“,
+   na čo sa nedá kliknúť. Preč s nimi. */
+.type-category .filter-sections div:has(> .filter-label.disabled) { display: none; }
+
+/* Filter podľa výrobcu má jedinú hodnotu — LensunSolar pri všetkých
+   103 produktoch. Filtrovať podľa niečoho, čo majú všetky, nemá
+   zmysel. Keď raz pribudne druhá značka, selektor ho sám ukáže. */
+.type-category .filter-section-manufacturer:not(:has(fieldset > div:nth-of-type(2))) {
+  display: none;
+}
+
 /* Bočný panel: každá skupina je karta, nie riadok oddelený linkou. */
 .type-category .sidebar-inner > div {
   background: var(--rnc-surface);
