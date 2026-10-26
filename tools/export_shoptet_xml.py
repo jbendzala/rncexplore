@@ -250,7 +250,15 @@ def shopitem(p, kategoria):
     # Parametre na úrovni produktu. PARAMETERS tu nesmie byť — schéma ho
     # pripúšťa len vnútri prevedenia, kde určuje jeho kombináciu. Pre údaje
     # o celom produkte má Shoptet INFORMATION_PARAMETERS.
-    par = [("Výkon", f"{p['w']} W")] if p.get("w") else []
+    # Výkon tu zámerne nie je, hoci by sa sem hodil.
+    #
+    # Shoptet si z informačných parametrov založí hodnoty filtra. Pri
+    # výkone to znamenalo 38 hodnôt — 36 W, 40 W, 45 W, 46 W… — a vo
+    # výpise z toho bol zoznam 25 políčok v náhodnom poradí, v ktorom
+    # sa nedá nič nájsť. Výkon preto do filtra ide osobitne v pásmach
+    # (tools/filtre_csv.py) a presné wattáže zostávajú v tabuľke
+    # technických údajov v popise, kam patria.
+    par = []
     if p.get("b"):
         par.append(("Značka vozidla", p["b"]))
     if par:
