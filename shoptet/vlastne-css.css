@@ -679,27 +679,43 @@ textarea:focus-visible,
   color: var(--rnc-head);
 }
 
-.filter-label {
-  background: var(--rnc-chip);
-  border: 1px solid transparent;
-  border-radius: 999px;
-  padding: 4px 12px;
-  color: var(--rnc-ink);
-  cursor: pointer;
-  transition: background-color .15s, border-color .15s;
+/* Voľba je riadok, nie štítok: políčko, text a počet vpravo. Mal som
+   tu kedysi podklad a oblé rohy, lenže návrh má filtre ako holý
+   zoznam — podklad z nich robil tlačidlá, ktorými nie sú. */
+/* Dve triedy, lebo šablóna robí zo všetkých návestí pri zaškrtávacom
+   políčku „inline-block“ selektorom input[type=checkbox]+label a ten
+   je špecifickejší než samotná trieda. Bez toho sa počet neodsunie
+   doprava a lepí sa na text: „Z recenzie2“. */
+.filter-sections .filter-label,
+.filter-section .filter-label {
+  display: flex; align-items: center; gap: 10px;
+  min-height: 34px;
+  /* Zľava výplň nenastavujeme. Šablóna si tam necháva miesto na
+     zaškrtávacie políčko, ktoré kreslí pseudoprvkom na ľavom okraji
+     — skratka „padding: 4px 0“ to miesto zobrala a políčko potom
+     ležalo na texte: „Z recenzie“ sa čítalo ako „recenzie“. */
+  padding-top: 4px; padding-bottom: 4px; padding-right: 0;
+  background: none; border: 0; border-radius: 0;
+  color: var(--rnc-ink); cursor: pointer;
+  transition: color .15s;
 }
-.filter-label:hover { border-color: var(--rnc-line-2); }
+.filter-label:hover { color: var(--rnc-amber); }
 .filter-label.disabled { opacity: .45; cursor: default; }
 
-/* zaškrtnutý filter — jantárový rám, nie výplň, aby to neprekričalo cenu */
 input:checked + .filter-label,
 .filter-label.active {
-  background: var(--rnc-surface);
-  border-color: var(--rnc-amber);
+  background: none;
+  color: var(--rnc-head);
   font-weight: 600;
 }
 
-.filter-count { color: var(--rnc-muted); font-weight: 400; }
+/* Počet má od šablóny vlastný podklad vo farbe kariet. Na tmavom je
+   z neho obdĺžnik okolo každého čísla. */
+.filter-count {
+  margin-left: auto;
+  background: none; padding: 0; border-radius: 0;
+  color: var(--rnc-muted); font-weight: 400; font-size: 13px;
+}
 
 .toggle-filters { color: var(--rnc-tint); font-weight: 600; }
 
@@ -1841,6 +1857,45 @@ label { color: var(--rnc-ink); }
 @media (max-width: 991px) {
   .type-category .sidebar { width: 100%; }
 }
+
+/* --- 19a1. HLAVIČKA VÝPISU CEZ CELÚ ŠÍRKU ------------------------------
+   Návrh má zaradenie, nadpis, vetu a štítky kategórií hore cez celú
+   šírku a až pod nimi dvojicu filtre + karty. Shoptet dáva nadpis
+   dovnútra #content, teda vedľa bočného stĺpca, takže začínal až za
+   filtrami.
+
+   Riešené mriežkou na obale a „display: contents“ na #content: tým sa
+   jeho obsah stane priamym obsahom mriežky a hlavička môže siahnuť
+   cez oba stĺpce. Presúvať nič netreba.                               */
+.type-category .content-wrapper-in {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 0 32px;
+  align-items: start;
+  /* .container tu nemá odsadenie, hoci v hlavičke áno. Bez tohto by
+     nadpis začínal o 20 px vľavo od loga a od kariet. */
+  padding-inline: 20px;
+}
+/* Bočný panel odsadzoval karty ešte raz, takže filtre nezačínali
+   tam, kde nadpis. */
+.type-category .sidebar-inner { padding: 0; }
+.type-category #content { display: contents; }
+.type-category .category-top {
+  grid-column: 1 / -1; grid-row: 1;
+  margin-bottom: 32px;
+}
+.type-category .sidebar { grid-column: 1; grid-row: 2; width: auto; }
+.type-category .category-content-wrapper {
+  grid-column: 2; grid-row: 2; width: auto;
+}
+
+/* Značky vozidiel tu boli ako štítky pod nadpisom. Odkedy je Značka
+   vozidla filter, je to tá istá vec dvakrát na jednej obrazovke. */
+.type-category .subcategories { display: none; }
+
+/* Cenový posuvník siahal po okraje karty — vlastné odsadenie, lebo
+   .slider-wrapper má od šablóny „padding: 10px 0“. */
+.type-category .slider-wrapper { padding-left: 8px; padding-right: 8px; }
 
 /* --- 19b. DETAIL PRODUKTU ----------------------------------------------
    Návrh má dva stĺpce cez celú šírku: vľavo galéria, vpravo nákupný
