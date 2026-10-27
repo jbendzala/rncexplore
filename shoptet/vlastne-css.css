@@ -2041,6 +2041,16 @@ body:not(.type-index) .breadcrumbs-wrapper { padding-inline: 20px; }
    Nadpis presúva skript v zápätí, zvyšok poradia je tu cez order.    */
 
 .type-detail .sidebar { display: none; }
+
+/* Odsadenie od omrviniek, nech sa obsah na ne nelepí — rovnako ako
+   vo výpise kategórie. */
+.type-detail .p-detail { padding-top: 24px; }
+
+/* Kód produktu vľavo hore. Nadpis z tejto hlavičky presúva skript do
+   pravého stĺpca a zostal v nej len kód, ktorý v návrhu nie je.
+   Skrývame kód, nie celú hlavičku — bez skriptu by s ňou zmizol aj
+   nadpis. */
+.type-detail .p-detail-inner-header .p-code { display: none; }
 .type-detail .content.narrow,
 .type-detail #content { width: 100%; max-width: none; }
 

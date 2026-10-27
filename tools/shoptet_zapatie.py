@@ -72,6 +72,10 @@ KATEGORIE = {
 # panely a deky sa nemontujú vôbec.
 PRILEPENE = {"hood", "flexible", "rooftent", "tonneau", "rv"}
 
+# Rám, do ktorého Shoptet vykresľuje hlavnú fotku na detaile. Menšie
+# fotky nezväčšuje, len ich doplní bielou — odtiaľ tá obruba.
+RAM_DETAILU = 1024
+
 # Adresy sú overené proti živému obchodu, nie odhadnuté. Dve sa od
 # predpokladu líšia: články sú na /blog/ (nie /nase-spravy/) a kontakt
 # na /kontakty/ (nie /kontakt/).
@@ -140,6 +144,7 @@ def udaje_kariet():
     P = json.loads(re.search(r"window\.PRODUCTS=(\[.*\]);", s, re.S).group(1))
 
     kam = adresy_produktov(P)
+    rozmery = foto_rozmery()
     t = {}
     for p in P:
         a = kam.get(p["id"])
@@ -152,8 +157,29 @@ def udaje_kariet():
             stitky.append("Bez vŕtania")
         if p.get("b"):
             stitky.append("Na mieru")
-        t[a] = [KATEGORIE.get(p["cat"], ""), stitky]
+        riadok = [KATEGORIE.get(p["cat"], ""), stitky]
+        # Tretia položka je priblíženie hlavnej fotky, a to len keď ho
+        # fotka naozaj potrebuje. Číslo je presné: rám delený šírkou
+        # zdroja presne pokryje bielu obrubu a nič neoreže.
+        w = rozmery.get(p["id"])
+        if w and w < RAM_DETAILU:
+            riadok.append(round(RAM_DETAILU / w, 3))
+        t[a] = riadok
     return t
+
+
+def foto_rozmery():
+    """Šírky hlavných fotiek, zmerané tools/foto_rozmery.py.
+
+    Keď súbor chýba, priblíženie sa jednoducho nedoplní — fotky budú
+    mať bielu obrubu ako doteraz, ale nič sa nerozbije.
+    """
+    cesta = os.path.join(KOREN, "data", "foto-rozmery.json")
+    if not os.path.exists(cesta):
+        print("   pozor: chýba data/foto-rozmery.json, fotky zostanú "
+              "s bielou obrubou (spusti tools/foto_rozmery.py)")
+        return {}
+    return json.load(open(cesta, encoding="utf-8"))
 
 
 def adresy_produktov(P):
@@ -398,9 +424,19 @@ def skript():
   var r = document.createElement("div");
   r.className = "rnc-varianty";
 
-  for (var n = 0; n < v.options.length; n++) {{
-    var o = v.options[n];
-    if (!o.value) {{ continue; }}          /* „Zvoľte variant“ */
+  /* Zoradené od najlacnejšieho. Shoptet ich dáva v poradí, v akom
+     prišli z importu, čo zákazníkovi nič nehovorí. */
+  var zoz = [];
+  for (var q = 0; q < v.options.length; q++) {{
+    if (v.options[q].value) {{ zoz.push(v.options[q]); }}
+  }}
+  zoz.sort(function (a, b) {{
+    return (parseFloat(a.getAttribute("data-customerprice")) || 0)
+         - (parseFloat(b.getAttribute("data-customerprice")) || 0);
+  }});
+
+  for (var n = 0; n < zoz.length; n++) {{
+    var o = zoz[n];
 
     var t = o.textContent.replace(/\s+/g, " ").trim();
     var cena = "";
@@ -417,7 +453,7 @@ def skript():
     i.type = "radio";
     i.name = "rnc-variant";
     i.value = o.value;
-    if (o.selected) {{ i.checked = true; }}
+    if (n === 0) {{ i.checked = true; }}   /* predvolený je najlacnejší */
     l.appendChild(i);
     var b = document.createElement("b");
     b.textContent = t;
@@ -439,6 +475,13 @@ def skript():
   }});
   v.parentNode.insertBefore(r, v);
   v.parentNode.className += " rnc-ma-varianty";
+
+  /* Predvolenú voľbu musí dostať aj pôvodný zoznam, inak by na nej
+     stál prepínač, ale cena a tlačidlo do košíka by čakali na výber. */
+  if (zoz.length) {{
+    v.value = zoz[0].value;
+    v.dispatchEvent(new Event("change", {{bubbles: true}}));
+  }}
 }})();
 
 /* Karty vo výpise: kategória pod názvom a štítky pod ňou.
@@ -488,6 +531,20 @@ def skript():
      Sledujeme preto obal výpisu a dopĺňame znova; poistka proti
      opakovaniu je v samotnej funkcii, pozerá sa, či karta doplnok
      už nemá. */
+  /* Hlavná fotka na detaile. Shoptet ju vykresľuje do rámu 1024 px
+     a menšie nezväčšuje, len doplní bielou — obruba je preto pri
+     každom produkte iná. Priblíženie je presne rám delený šírkou
+     zdroja, takže bielu pokryje a z fotky neodreže nič. */
+  var d = U[location.pathname];
+  if (d && d[2]) {{
+    var f = document.querySelector(".p-main-image img");
+    if (f) {{
+      f.style.transform = "scale(" + d[2] + ")";
+      var o = f.closest(".p-image");
+      if (o) {{ o.style.overflow = "hidden"; }}
+    }}
+  }}
+
   var obal = document.querySelector(".products-block");
   if (obal && window.MutationObserver) {{
     new MutationObserver(dopln).observe(obal.parentNode || obal,
