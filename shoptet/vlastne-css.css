@@ -724,10 +724,17 @@ input:checked + .filter-label,
    zdroji stránky nenájdu. Nemazať preto, že „tam nie sú“. */
 .param-price-filter { background: var(--rnc-chip); border: 0; }
 .param-price-filter .ui-slider-range { background: var(--rnc-amber); }
-.param-price-filter .ui-slider-handle {
-  background: var(--rnc-surface);
-  border: 2px solid var(--rnc-amber);
+/* Posúvač ceny. Rám okolo gombíka nerobíme orámovaním, ale tieňom:
+   gombík má 20 px a biela bodka v ňom sedí na „left: 5px; top: 5px“,
+   čo je stred len dovtedy, kým nemá rám. Dvojpixelový rám jej ubral
+   z plochy a bodka sa posunula o tie dva pixely doprava a dole.
+   Tieň rozmery nemení, takže bodka zostane v strede. */
+.param-price-filter .ui-slider-handle,
+.slider-content .ui-slider-handle {
+  background: var(--rnc-amber);
+  border: 0;
   border-radius: 999px;
+  box-shadow: 0 0 0 2px var(--rnc-bg);
 }
 .slider-content .from,
 .slider-content .to {
