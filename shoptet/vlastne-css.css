@@ -1766,9 +1766,15 @@ label { color: var(--rnc-ink); }
 
 /* Mriežka produktov. auto-fill namiesto pevného počtu stĺpcov: karta
    si drží rozumnú šírku a počet v rade sa dorátava zo šírky okna. */
+/* Tri karty v rade, ako má návrh.
+
+   Predtým tu bolo auto-fill s najmenšou šírkou 240 px — to je to isté
+   pravidlo ako v návrhu, lenže ten je kreslený na stránku širokú
+   1280 px a nám zostáva na výpis o 130 px viac, takže sa zmestila
+   štvrtá. Počet preto určujeme priamo. */
 .type-category .products.products-block {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 24px;
   margin: 24px 0 0;
 }
@@ -1950,6 +1956,16 @@ label { color: var(--rnc-ink); }
 
 @media (max-width: 991px) {
   .type-category .sidebar { width: 100%; }
+  .type-category .products.products-block {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .type-category .products.products-block {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
 }
 
 /* Obal obsahu a omrvinky majú od šablóny podklad --colors-surface-primary,
