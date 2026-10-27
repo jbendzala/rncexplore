@@ -1786,14 +1786,27 @@ label { color: var(--rnc-ink); }
   box-shadow: var(--rnc-shadow);
   padding: 12px;
 }
+/* Dlaždica má pomer 4:3 — v tom Shoptet fotky do výpisu zmenšuje
+   (423 × 318). Pri inom pomere by k bielym okrajom v samotnom súbore
+   pribudli ešte ďalšie od orezania.
+
+   Mierne priblíženie zje tú bielu obrubu, ktorú Shoptet dorobil
+   štvorcovým fotkám pri prepočte na 4:3. Zámerne len o kúsok —
+   väčšie by už odrezalo kraj panela. */
 .type-category .products-block .p > a.image {
   display: block; position: relative;
-  aspect-ratio: 6/5; border-radius: 8px;
+  aspect-ratio: 4/3; border-radius: 8px;
   background: #fff; overflow: hidden;
 }
 .type-category .products-block .p > a.image img {
-  width: 100%; height: 100%; object-fit: contain; padding: 8px;
+  width: 100%; height: 100%; object-fit: cover;
+  transform: scale(1.12);
 }
+
+/* Kód produktu nad fotkou vo výpise nie je — zákazník ho pri výbere
+   nepotrebuje a na karte prekrýval obrázok. Na detaile zostáva. */
+.type-category .products-block .p-code,
+.type-category .products-inline .p-code { display: none; }
 .type-category .products-block .p-in,
 .type-category .products-block .p-in-in {
   display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 0;
