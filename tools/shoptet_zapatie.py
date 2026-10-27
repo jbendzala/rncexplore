@@ -384,6 +384,63 @@ def skript():
   r.className += " rnc-ma-zoradit";
 }})();
 
+/* Varianty ako prepínače, nie rozbaľovací zoznam.
+
+   Zoznam nemažeme a ani neobchádzame — prepínač len nastaví jeho
+   hodnotu a vyvolá na ňom zmenu, takže všetko ostatné (cena,
+   dostupnosť, odomknutie tlačidla do košíka) si ďalej rieši Shoptet
+   svojím kódom. Keby sme to prepisovali sami, rozišlo by sa to s ním
+   pri prvej zmene na ich strane. */
+(function () {{
+  var v = document.querySelector("#simple-variants-select");
+  if (!v || document.querySelector(".rnc-varianty")) {{ return; }}
+
+  var r = document.createElement("div");
+  r.className = "rnc-varianty";
+
+  for (var n = 0; n < v.options.length; n++) {{
+    var o = v.options[n];
+    if (!o.value) {{ continue; }}          /* „Zvoľte variant“ */
+
+    var t = o.textContent.replace(/\s+/g, " ").trim();
+    var cena = "";
+    /* Cena je v poslednej zátvorke s číslicou; názvy prevedení majú
+       zátvorky tiež, preto odzadu. */
+    var m = t.match(/\(([^()]*\d[^()]*)\)\s*$/);
+    if (m) {{ cena = m[1]; t = t.slice(0, m.index); }}
+    t = t.replace(/[-\u2013\u2014]\s*Momentálne nedostupné\s*$/i, "");
+    t = t.replace(/^Prevedenie:\s*/i, "").replace(/[\s\u00b7-]+$/, "").trim();
+
+    var l = document.createElement("label");
+    l.className = "rnc-variant";
+    var i = document.createElement("input");
+    i.type = "radio";
+    i.name = "rnc-variant";
+    i.value = o.value;
+    if (o.selected) {{ i.checked = true; }}
+    l.appendChild(i);
+    var b = document.createElement("b");
+    b.textContent = t;
+    l.appendChild(b);
+    if (cena) {{
+      var c = document.createElement("span");
+      c.className = "rnc-variant-cena";
+      c.textContent = cena;
+      l.appendChild(c);
+    }}
+    r.appendChild(l);
+  }}
+  if (!r.children.length) {{ return; }}
+
+  r.addEventListener("change", function (e) {{
+    if (!e.target.value) {{ return; }}
+    v.value = e.target.value;
+    v.dispatchEvent(new Event("change", {{bubbles: true}}));
+  }});
+  v.parentNode.insertBefore(r, v);
+  v.parentNode.className += " rnc-ma-varianty";
+}})();
+
 /* Karty vo výpise: kategória pod názvom a štítky pod ňou.
 
    Shoptet do výpisu posiela len názov, cenu, dostupnosť, kód, popis
