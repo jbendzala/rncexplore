@@ -1809,11 +1809,37 @@ label { color: var(--rnc-ink); }
    názvom. Poradie stačí prehodiť, presúvať nič netreba. */
 .type-category .products-block .p-in { }
 .type-category .products-block .p-desc {
-  order: -1; margin: 0;
+  order: -1; margin-bottom: 12px !important;
   font-size: 14px; color: var(--rnc-muted);
+  /* Šablóna popis reže na pevných 76 px, takže vetu utne uprostred
+     slova. Dva riadky s trojbodkou sú čitateľnejšie. */
+  max-height: none; display: -webkit-box; -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2; overflow: hidden;
 }
+/* Spodok karty pod seba: cena na vlastnom riadku a pod ňou odkaz na
+   detail. Šablóna ich kladie vedľa seba — riadok s „flex-basis:
+   calc(50% - 5px)“ na oboch. Stačí ten riadok prepnúť na blokový tok
+   a položky sa poskladajú pod seba samy. */
 .type-category .products-block .p-bottom { order: 1; margin-top: auto; }
+/* Cena, odkaz na detail aj popis sú spolu v jednom riadku vnútri
+   .p-bottom — šablóna im dáva „flex-basis: calc(50% - 5px)“, takže
+   stoja vedľa seba, a „align-items: flex-end“, čo ich v stĺpci tlačí
+   doprava. Prepneme ten riadok na stĺpec zarovnaný doľava. */
+.type-category .products-block .p-bottom > div {
+  display: flex; flex-direction: column; align-items: stretch;
+  flex-wrap: nowrap; gap: 4px;
+}
+.type-category .products-block .p-bottom .prices,
+.type-category .products-block .p-bottom .p-tools,
+.type-category .products-block .p-bottom .p-desc {
+  flex: 0 0 auto; width: auto; margin: 0;
+  text-align: left; float: none;
+}
+/* Dostupnosť je v návrhu na karte nie je, ale je to skutočný údaj —
+   necháme ju, len tichšie, hneď pod názvom. */
 .type-category .products-block .ratings-wrapper { font-size: 13px; }
+.type-category .products-block .availability { font-size: 13px; text-align: left; }
+.type-category .products-block .ratings-wrapper { text-align: left; }
 .type-category .products-block .stars-placeholder { display: none; }
 .type-category .products-block .price-final strong {
   font-family: var(--rnc-display); font-weight: 600; font-size: 18px;
