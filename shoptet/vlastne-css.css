@@ -1870,6 +1870,11 @@ body:not(.type-index) #content-wrapper,
 body:not(.type-index) .breadcrumbs-wrapper,
 body:not(.type-index) .breadcrumbs { background: transparent; }
 
+/* Omrvinky začínali o 20 px vľavo od loga aj od nadpisu. Ich obal je
+   .container, lenže ten v obsahu stránky odsadenie nemá — na rozdiel
+   od hlavičky, kde ho má. Rovnaká pasca ako pri mriežke výpisu. */
+body:not(.type-index) .breadcrumbs-wrapper { padding-inline: 20px; }
+
 /* --- 19a1. HLAVIČKA VÝPISU CEZ CELÚ ŠÍRKU ------------------------------
    Návrh má zaradenie, nadpis, vetu a štítky kategórií hore cez celú
    šírku a až pod nimi dvojicu filtre + karty. Shoptet dáva nadpis
@@ -1894,8 +1899,15 @@ body:not(.type-index) .breadcrumbs { background: transparent; }
 .type-category #content { display: contents; }
 .type-category .category-top {
   grid-column: 1 / -1; grid-row: 1;
+  padding-top: 24px;
   margin-bottom: 32px;
 }
+/* Veta pod nadpisom — „Horný popis kategórie“ z administrácie. */
+.type-category .category-perex {
+  margin: 0; max-width: 62ch;
+  color: var(--rnc-muted); font-size: 16px; line-height: 1.6;
+}
+.type-category .category-perex p { margin: 0 0 8px; }
 .type-category .sidebar { grid-column: 1; grid-row: 2; width: auto; }
 .type-category .category-content-wrapper {
   grid-column: 2; grid-row: 2; width: auto;

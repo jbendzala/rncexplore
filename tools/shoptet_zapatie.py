@@ -208,7 +208,11 @@ def blok():
       stitok(o.getAttribute("href"),
              o.textContent.replace(/\s+/g, " ").trim(), je);
     }}
-    if (rad.children.length > 1) {{ t.parentNode.insertBefore(rad, t.nextSibling); }}
+    /* Horný popis kategórie vykresľuje Shoptet až za podkategóriami,
+       teda pod štítky. V návrhu je veta nad nimi, tak sa vešiame za
+       ňu, nie za nadpis. */
+    var za = t.parentNode.querySelector(".category-perex") || t;
+    if (rad.children.length > 1) {{ za.parentNode.insertBefore(rad, za.nextSibling); }}
   }}
 
   /* Detail produktu. Návrh má v pravom stĺpci najprv zaradenie,
