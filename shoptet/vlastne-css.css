@@ -1740,7 +1740,10 @@ label { color: var(--rnc-ink); }
 }
 
 /* Bočný panel: každá skupina je karta, nie riadok oddelený linkou. */
-.type-category .sidebar-inner > div {
+/* „div.box“ a nie len „div“: šablóna dáva karte filtrov padding
+   pravidlom .box.box-sm.box-filters a to sú tri triedy — dve by na
+   ne nestačili a nadpis „Filtre“ by sedel na okraji karty. */
+.type-category .sidebar-inner > div.box {
   background: var(--rnc-surface);
   border: 1px solid var(--rnc-line);
   border-radius: var(--rnc-radius);
@@ -1857,6 +1860,15 @@ label { color: var(--rnc-ink); }
 @media (max-width: 991px) {
   .type-category .sidebar { width: 100%; }
 }
+
+/* Obal obsahu a omrvinky majú od šablóny podklad --colors-surface-primary,
+   čo je v tmavej palete #141C18. Na stránke z toho bol svetlejší
+   obdĺžnik cez celú šírku, v ktorom ležal nadpis aj výpis. Návrh má
+   všade jednu tmavú plochu a karty sú to jediné, čo z nej vystupuje.
+   Domovská sa toho netýka, tá má krémový pás zámerne. */
+body:not(.type-index) #content-wrapper,
+body:not(.type-index) .breadcrumbs-wrapper,
+body:not(.type-index) .breadcrumbs { background: transparent; }
 
 /* --- 19a1. HLAVIČKA VÝPISU CEZ CELÚ ŠÍRKU ------------------------------
    Návrh má zaradenie, nadpis, vetu a štítky kategórií hore cez celú

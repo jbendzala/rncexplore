@@ -155,8 +155,12 @@ def blok():
     var nadpis = t.textContent.trim(), r = "";
     for (var x = 0; x < n.length; x++) {{
       var v = n[x].textContent.trim();
-      if (v && v !== nadpis) {{ r = v; }}
+      /* Domov preskakujeme. Na koreni katalógu je to jediný odkaz,
+         ktorý sa od nadpisu líši, a nad nadpisom potom svietilo
+         „Domov“ namiesto zaradenia. */
+      if (v && v !== nadpis && n[x].getAttribute("href") !== "/") {{ r = v; }}
     }}
+    if (!r) {{ r = "Katalóg"; }}
     if (r) {{
       var u = document.createElement("p");
       u.className = "rnc-eyebrow";
