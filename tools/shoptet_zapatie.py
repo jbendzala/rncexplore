@@ -25,15 +25,52 @@ Odkazy, ktoré doteraz viseli v hornom menu — ako nakupovať, obchodné
 podmienky a ochrana osobných údajov — sú preto v spodnom riadku
 pätičky. Zmiznúť nesmú.
 
-Výstup: do-zapatia.html — jeden blok na vloženie do Zápätia.
+Vznikajú dva súbory, rovnako ako pri vzhľade:
+
+    rnc-skript.js      nahrať do Vzhľad a obsah → Správca súborov
+    do-zapatia.html    vložiť do Zápätia (značky a odkaz na skript)
+
+Prečo oddelene: pole Zápätia berie najviac 8192 znakov a samotný skript
+sa doň prestal zmestať, keď k nemu pribudla tabuľka s údajmi pre karty
+produktov. Značky tam zostávajú — pätička má šestnásť odkazov a tie
+majú byť v zdroji stránky, nie dorábané skriptom.
+
+Za adresou skriptu je ?v= s odtlačkom obsahu, nech si prehliadače
+stiahnu novú verziu hneď po zmene.
 """
 
+import hashlib
 import html
+import json
 import os
+import re
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import vystup                                          # noqa: E402
+from shoptet_vyhladavanie import adresy, bez_diakritiky  # noqa: E402
+
+KOREN = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+SUBOR = "rnc-skript.js"             # ako sa bude volať v Správcovi súborov
+CESTA = "/user/documents/upload"    # kam ukladá Správca súborov
+STROP = 8192                        # koľko znakov znesie pole Zápätia
+
+# Názvy kategórií tak, ako ich má vidieť zákazník na karte. Kľúče sú
+# naše vnútorné kódy z data/products.js.
+KATEGORIE = {
+    "hood":     "Panely na kapotu",
+    "flexible": "Flexibilné panely",
+    "rooftent": "Pre strešné stany",
+    "foldable": "Skladacie panely",
+    "blanket":  "Solárne deky",
+    "rv":       "Karavany a prívesy",
+    "tonneau":  "Na kryty korby",
+}
+
+# Čo sa lepí na povrch — tie dostanú štítok „Bez vŕtania“. Skladacie
+# panely a deky sa nemontujú vôbec.
+PRILEPENE = {"hood", "flexible", "rooftent", "tonneau", "rv"}
 
 # Adresy sú overené proti živému obchodu, nie odhadnuté. Dve sa od
 # predpokladu líšia: články sú na /blog/ (nie /nase-spravy/) a kontakt
@@ -86,6 +123,52 @@ def e(x):
     return html.escape(str(x), quote=True)
 
 
+def udaje_kariet():
+    """Tabuľka adresa produktu -> kategória a štítky.
+
+    Karta vo výpise nenesie ani kategóriu, ani parametre — má len
+    názov, cenu, dostupnosť, kód, popis a fotku. Overené na značke
+    stránky, slovo „param“ v nej nie je. Jediné, čím sa karta dá
+    spoľahlivo priradiť k produktu, je adresa v odkaze; kód sa ukazuje
+    tiež, ale len pre jedno prevedenie a dá sa v nastaveniach vypnúť.
+
+    Tabuľka sa prepočítava pri každom behu z data/products.js, takže
+    sa neudržiava ručne — rovnako ako vyhľadávanie vozidla.
+    """
+    zdroj = os.path.join(KOREN, "data", "products.js")
+    s = open(zdroj, encoding="utf-8").read()
+    P = json.loads(re.search(r"window\.PRODUCTS=(\[.*\]);", s, re.S).group(1))
+
+    kam = adresy_produktov(P)
+    t = {}
+    for p in P:
+        a = kam.get(p["id"])
+        if not a:
+            continue
+        stitky = []
+        if p.get("w"):
+            stitky.append(f'{p["w"]} W')
+        if p["cat"] in PRILEPENE:
+            stitky.append("Bez vŕtania")
+        if p.get("b"):
+            stitky.append("Na mieru")
+        t[a] = [KATEGORIE.get(p["cat"], ""), stitky]
+    return t
+
+
+def adresy_produktov(P):
+    """Adresy produktov v obchode, z mapy stránok obchodu.
+
+    Rovnaký zdroj ako pri vyhľadávaní vozidla a domovskej stránke —
+    nie odhad, ako si Shoptet preloží názov do adresy. Keď produkt
+    v mape nie je, kartu proste nedoplníme; spadnúť kvôli tomu by
+    bolo prehnané, vzhľad zostane funkčný aj bez štítkov.
+    """
+    mapa = adresy()
+    return {p["id"]: "/" + mapa[bez_diakritiky(p["n"]["sk"])] + "/"
+            for p in P if bez_diakritiky(p["n"]["sk"]) in mapa}
+
+
 def stlpec(nadpis, odkazy):
     polozky = "".join(f'<li><a href="{e(u)}">{e(n)}</a></li>'
                       for n, u in odkazy)
@@ -94,8 +177,6 @@ def stlpec(nadpis, odkazy):
 
 
 def blok():
-    istoty = ('<ul class="rnc-istoty">'
-              + "".join(f"<li>{e(x)}</li>" for x in ISTOTY) + "</ul>")
     pravne = "".join(f'<a href="{e(u)}">{e(n)}</a>' for n, u in PRAVNE)
     sluby = "".join(f'<span>{e(x)}</span>' for x in SLUBY)
     return f'''<div id="rnc-top" class="rnc-top">
@@ -123,8 +204,20 @@ def blok():
   <div class="container rnc-pata-spodok">
     {pravne}
   </div>
-</div>
-<script>
+</div>'''
+
+
+def skript():
+    """Telo rnc-skript.js.
+
+    To isté, čo doteraz sedelo v Zápätí, plus doplnenie kariet. Do
+    poľa sa to prestalo zmestať, keď k tomu pribudla tabuľka údajov.
+    """
+    istoty = ('<ul class="rnc-istoty">'
+              + "".join(f"<li>{e(x)}</li>" for x in ISTOTY) + "</ul>")
+    udaje = json.dumps(udaje_kariet(), ensure_ascii=False,
+                       separators=(",", ":"))
+    return f'''
 /* Zápätie sa vkladá pred </body>, teda až pod celou stránkou. Oba
    bloky preto presunieme tam, kam patria. Skript beží hneď, nie na
    DOMContentLoaded — oba ciele sú v stránke dávno pred ním. */
@@ -258,22 +351,96 @@ def blok():
     + '<a href="/velkoobchod/">Veľkoobchod (B2B)</a></p>';
   i.appendChild(z);
 }})();
-</script>'''
+
+/* Karty vo výpise: kategória pod názvom a štítky pod ňou.
+
+   Shoptet do výpisu posiela len názov, cenu, dostupnosť, kód, popis
+   a fotku — žiadne kategórie ani parametre, hoci ich v databáze má.
+   Údaje preto nesieme so sebou a kartu k produktu priraďujeme podľa
+   adresy v odkaze. Tabuľku prepočítava tools/shoptet_zapatie.py pri
+   každom behu z data/products.js, needituje sa ručne. */
+(function () {{
+  var U = {udaje};
+
+  function dopln() {{
+  var karty = document.querySelectorAll(".products-block .p");
+  for (var n = 0; n < karty.length; n++) {{
+    var k = karty[n], o = k.querySelector("a.name") || k.querySelector("a.image");
+    if (!o) {{ continue; }}
+    var u = U[o.getAttribute("href")];
+    if (!u || k.querySelector(".rnc-karta-kat")) {{ continue; }}
+
+    var meno = k.querySelector("a.name");
+    if (!meno) {{ continue; }}
+    var po = meno;
+
+    if (u[0]) {{
+      var kat = document.createElement("p");
+      kat.className = "rnc-karta-kat";
+      kat.textContent = u[0];
+      po.parentNode.insertBefore(kat, po.nextSibling);
+      po = kat;
+    }}
+    if (u[1] && u[1].length) {{
+      var r = document.createElement("div");
+      r.className = "rnc-karta-stitky";
+      for (var m = 0; m < u[1].length; m++) {{
+        var x = document.createElement("span");
+        x.textContent = u[1][m];
+        r.appendChild(x);
+      }}
+      po.parentNode.insertBefore(r, po.nextSibling);
+    }}
+  }}
+  }}
+
+  dopln();
+  /* Po filtrovaní Shoptet výpis prekreslí a naše doplnky by zmizli.
+     Sledujeme preto obal výpisu a dopĺňame znova; poistka proti
+     opakovaniu je v samotnej funkcii, pozerá sa, či karta doplnok
+     už nemá. */
+  var obal = document.querySelector(".products-block");
+  if (obal && window.MutationObserver) {{
+    new MutationObserver(dopln).observe(obal.parentNode || obal,
+                                        {{childList: true, subtree: true}});
+  }}
+}})();
+'''
 
 
 def main():
-    kod = blok()
-    cesta = vystup.kam(vystup.IMPORT, "vzhlad", "do-zapatia.html")
-    with open(cesta, "w", encoding="utf-8") as f:
+    js = skript().strip() + "\n"
+    cesta_js = vystup.kam(vystup.IMPORT, "vzhlad", SUBOR)
+    with open(cesta_js, "w", encoding="utf-8") as f:
+        f.write(js)
+    odtlacok = hashlib.sha1(js.encode("utf-8")).hexdigest()[:8]
+
+    kod = (
+        "<!-- rncexplore.com — horná lišta a pätička podľa návrhu.\n"
+        "\n"
+        f"     1. {SUBOR} nahraj do Vzhľad a obsah → Správca súborov\n"
+        "     2. toto vlož do Vzhľad a obsah → Editor → HTML kód → Zápätie\n"
+        "\n"
+        "     Zdroj je tools/shoptet_zapatie.py v repozitári. Needituj tu\n"
+        "     ani v nahranom súbore — uprav zdroj a spusti ten skript. -->\n"
+        + blok().strip() + "\n"
+        f'<script src="{CESTA}/{SUBOR}?v={odtlacok}"></script>\n')
+
+    cesta_z = vystup.kam(vystup.IMPORT, "vzhlad", "do-zapatia.html")
+    with open(cesta_z, "w", encoding="utf-8") as f:
         f.write(kod)
-    print("vložiť do Vzhľad a obsah → Editor → HTML kód → Zápätie")
-    print(f"   {cesta}")
+
+    print("1. nahrať do Správcu súborov")
+    print(f"   {cesta_js}")
+    print(f"   {len(js):>6} znakov · {len(udaje_kariet())} produktov v tabuľke")
+    print("2. vložiť do Vzhľad a obsah → Editor → HTML kód → Zápätie")
+    print(f"   {cesta_z}")
     znakov = len(kod)
-    print(f"   {znakov:>6} znakov · strop 8192 · "
-          + ("zmestí sa, zostáva %d" % (8192 - znakov) if znakov <= 8192
+    print(f"   {znakov:>6} znakov · strop {STROP} · "
+          + (f"zmestí sa, zostáva {STROP - znakov}" if znakov <= STROP
              else "PRESAHUJE, treba skrátiť"))
     print(f"   odkazov: {len(PRODUKTY) + len(INFORMACIE) + 2}")
-    if znakov > 8192:
+    if znakov > STROP:
         sys.exit(1)
 
 

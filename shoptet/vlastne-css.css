@@ -1808,6 +1808,22 @@ label { color: var(--rnc-ink); }
 /* Krátky popis dáva šablóna až pod tlačidlo; v návrhu je hneď pod
    názvom. Poradie stačí prehodiť, presúvať nič netreba. */
 .type-category .products-block .p-in { }
+/* Kategória a štítky pod názvom. Vkladá ich rnc-skript.js, lebo
+   Shoptet do výpisu posiela len názov, cenu, dostupnosť, kód, popis
+   a fotku — kategóriu ani parametre nie. */
+.type-category .products-block .rnc-karta-kat {
+  margin: 0; font-size: 14px; color: var(--rnc-muted);
+}
+.type-category .products-block .rnc-karta-stitky {
+  display: flex; flex-wrap: wrap; gap: 6px; margin: 0;
+}
+.type-category .products-block .rnc-karta-stitky span {
+  background: var(--rnc-chip); border-radius: 999px;
+  padding: 4px 10px;
+  font-family: var(--rnc-display); font-weight: 600; font-size: 12px;
+  color: var(--rnc-ink);
+}
+
 /* Popis na karte nie je. Patrí na detail produktu, kde je naňho
    miesto; vo výpise z neho šablóna aj tak urobila dva orezané riadky,
    ktoré sa končili uprostred vety. */
