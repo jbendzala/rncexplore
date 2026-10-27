@@ -1808,13 +1808,25 @@ label { color: var(--rnc-ink); }
 /* Krátky popis dáva šablóna až pod tlačidlo; v návrhu je hneď pod
    názvom. Poradie stačí prehodiť, presúvať nič netreba. */
 .type-category .products-block .p-in { }
-.type-category .products-block .p-desc {
-  order: -1; margin-bottom: 12px !important;
-  font-size: 14px; color: var(--rnc-muted);
-  /* Šablóna popis reže na pevných 76 px, takže vetu utne uprostred
-     slova. Dva riadky s trojbodkou sú čitateľnejšie. */
-  max-height: none; display: -webkit-box; -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2; overflow: hidden;
+/* Popis na karte nie je. Patrí na detail produktu, kde je naňho
+   miesto; vo výpise z neho šablóna aj tak urobila dva orezané riadky,
+   ktoré sa končili uprostred vety. */
+.type-category .products-block .p-desc { display: none; }
+
+/* Dostupnosť tiež nie. Pri všetkých produktoch je dnes „Momentálne
+   nedostupné“, lebo sklad ešte nie je natiahnutý, a červený riadok na
+   každej karte je horší než žiadny. Keď sklad pribudne, stačí tento
+   jeden riadok zmazať. */
+.type-category .products-block .ratings-wrapper { display: none; }
+
+/* Namiesto ceny „Cena podľa variantu“. Každý náš produkt má
+   prevedenia s rôznou cenou a cenu určuje až výber na detaile. */
+.type-category .products-block .prices > * { display: none; }
+.type-category .products-block .prices::before {
+  content: "Cena podľa variantu";
+  display: block;
+  font-family: var(--rnc-display); font-weight: 600; font-size: 18px;
+  color: var(--rnc-head);
 }
 /* Spodok karty pod seba: cena na vlastnom riadku a pod ňou odkaz na
    detail. Šablóna ich kladie vedľa seba — riadok s „flex-basis:
@@ -1838,9 +1850,6 @@ label { color: var(--rnc-ink); }
 /* Dostupnosť je v návrhu na karte nie je, ale je to skutočný údaj —
    necháme ju, len tichšie, hneď pod názvom. */
 .type-category .products-block .ratings-wrapper { font-size: 13px; }
-.type-category .products-block .availability { font-size: 13px; text-align: left; }
-.type-category .products-block .ratings-wrapper { text-align: left; }
-.type-category .products-block .stars-placeholder { display: none; }
 .type-category .products-block .price-final strong {
   font-family: var(--rnc-display); font-weight: 600; font-size: 18px;
   color: var(--rnc-head);
