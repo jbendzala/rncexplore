@@ -609,8 +609,14 @@ textarea:focus-visible,
   width: 68px;
   padding: 8px;
 }
+/* Obrázok kategórie je štvorcový, ale Shoptet ho do ponuky dopĺňa
+   na rám 140 × 100 a po stranách vyplní bielou — presne ako pri
+   kartách vo výpise. Štvorcové miesto s orezaním ukáže stredných
+   100 × 100, teda pôvodnú fotku bez dorobených okrajov. */
 .navigation-in > ul > li.ext > ul > li > a img {
-  max-width: 52px; max-height: 40px;
+  width: 52px; height: 52px;
+  max-width: none; max-height: none;
+  object-fit: cover;
   border-radius: 6px;
 }
 .navigation-in > ul > li.ext > ul > li > div {
