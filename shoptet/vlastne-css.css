@@ -1899,6 +1899,26 @@ label { color: var(--rnc-ink); }
   flex-wrap: wrap; gap: 16px;
   border-bottom: 1px solid var(--rnc-line); padding-bottom: 12px;
 }
+/* Keď skript postaví rozbaľovací zoznam, pôvodné tlačidlá skryjeme.
+   Trieda sa pridáva až vtedy, takže bez skriptu zostane radenie
+   funkčné — len v pôvodnej podobe. */
+.type-category .listSorting.rnc-ma-zoradit .listSorting__controls { display: none; }
+.rnc-zoradit {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 14px; color: var(--rnc-muted);
+}
+.rnc-zoradit select {
+  height: 40px; padding: 0 12px;
+  border: 1px solid var(--rnc-line-2); border-radius: 10px;
+  background: var(--rnc-surface); color: var(--rnc-ink);
+  font-family: var(--rnc-display); font-weight: 600; font-size: 14px;
+}
+
+/* Návrh má naľavo počet položiek a napravo radenie; šablóna to má
+   opačne. Prehodenie cez order, nie cez row-reverse — pri reverse sa
+   mení aj to, ku ktorému okraju sa položky tlačia. */
+.type-category .listItemsTotal { order: -1; text-align: left; }
+
 .type-category .listSorting__controls {
   display: flex; flex-wrap: wrap; gap: 4px; list-style: none; padding: 0; margin: 0;
 }

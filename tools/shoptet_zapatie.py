@@ -352,6 +352,38 @@ def skript():
   i.appendChild(z);
 }})();
 
+/* Radenie ako rozbaľovací zoznam.
+
+   Shoptet ho vykresľuje ako štyri tlačidlá vedľa seba; návrh má
+   jeden zoznam s popisom „Zoradiť“. Tlačidlá nemažeme, len ich
+   v CSS skryjeme — keby skript nezbehol, zostane funkčné radenie
+   namiesto prázdneho miesta. */
+(function () {{
+  var r = document.querySelector(".listSorting");
+  if (!r || r.querySelector(".rnc-zoradit")) {{ return; }}
+  var t = r.querySelectorAll(".listSorting__control");
+  if (t.length < 2) {{ return; }}
+
+  var obal = document.createElement("label");
+  obal.className = "rnc-zoradit";
+  obal.appendChild(document.createTextNode("Zoradiť"));
+
+  var v = document.createElement("select");
+  for (var n = 0; n < t.length; n++) {{
+    var o = document.createElement("option");
+    o.value = t[n].getAttribute("data-url") || "";
+    o.textContent = t[n].textContent.replace(/\s+/g, " ").trim();
+    if (/--current/.test(t[n].className)) {{ o.selected = true; }}
+    v.appendChild(o);
+  }}
+  v.addEventListener("change", function () {{
+    if (this.value) {{ location.href = this.value; }}
+  }});
+  obal.appendChild(v);
+  r.appendChild(obal);
+  r.className += " rnc-ma-zoradit";
+}})();
+
 /* Karty vo výpise: kategória pod názvom a štítky pod ňou.
 
    Shoptet do výpisu posiela len názov, cenu, dostupnosť, kód, popis
