@@ -438,7 +438,9 @@ textarea:focus-visible,
      „.header-top > div { flex: 0 1 33.333333% }“ — to delí hlavičku na
      tretiny, takže logo, vyhľadávanie aj košík dostali rovnakú šírku
      a logo sa odsunulo od okraja. */
-  .header-top > .site-name-wrapper  { order: 1; flex: 0 0 auto; margin: 0; }
+  /* Medzera za logom. Donedávna ju robil prázdny pás v samotnom
+     súbore loga — po jeho orezaní sa menu nalepilo na logo. */
+  .header-top > .site-name-wrapper  { order: 1; flex: 0 0 auto; margin: 0 36px 0 0; }
   #navigation                       { order: 2; }
   .header-top > .search             { order: 3; flex: 0 1 320px; margin-left: auto; }
   .header-top > .navigation-buttons { order: 4; flex: 0 0 auto; }
@@ -514,7 +516,7 @@ textarea:focus-visible,
   background: transparent;
   border: 0;
   color: #fff;
-  padding: 11px 16px 11px 46px;
+  padding: 8px 16px 8px 46px;
   width: 100%;
 }
 .search-form .search-input::placeholder { color: var(--rnc-mist); }
@@ -629,16 +631,10 @@ textarea:focus-visible,
 .navigation-in > ul > li.ext > ul > li > div > ul { display: none; }
 
 /* --- 9. KOŠÍK -------------------------------------------- */
-.search-form,
-.search-input {
-  border-radius: 10px;
-}
-.search-input {
-  background: var(--rnc-surface);
-  border: 1px solid var(--rnc-line-2);
-  color: var(--rnc-ink);
-}
-.search-input::placeholder { color: var(--rnc-muted); }
+/* Tu kedysi stálo „.search-form, .search-input { border-radius: 10px }“
+   a svetlé pole do bielej hlavičky. Zostalo to z prvej verzie vzhľadu
+   a keďže je to v súbore nižšie než oddiel 7, prebíjalo to oválny
+   tvar poľa — rovnaká špecificita, rozhoduje poradie. Preč s tým. */
 
 .cart-count {
   background: var(--rnc-amber);
