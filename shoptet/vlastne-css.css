@@ -1792,21 +1792,25 @@ label { color: var(--rnc-ink); }
   box-shadow: var(--rnc-shadow);
   padding: 12px;
 }
-/* Dlaždica má pomer 4:3 — v tom Shoptet fotky do výpisu zmenšuje
-   (423 × 318). Pri inom pomere by k bielym okrajom v samotnom súbore
-   pribudli ešte ďalšie od orezania.
+/* Dlaždica je štvorcová a fotka ju vypĺňa orezaním.
 
-   Mierne priblíženie zje tú bielu obrubu, ktorú Shoptet dorobil
-   štvorcovým fotkám pri prepočte na 4:3. Zámerne len o kúsok —
-   väčšie by už odrezalo kraj panela. */
+   Naše fotky sú štvorcové — overených všetkých 157, štvorcových je
+   151 a zvyšných šesť má pomer medzi 0,89 a 1,30. Shoptet ich do
+   výpisu dopĺňa na 423 × 318, teda pomer 4:3, a chýbajúce miesto po
+   stranách vyplní bielou. Orezávať odmieta, vždy len dopĺňa — tak to
+   má v nastaveniach napísané.
+
+   Štvorcová dlaždica s orezaním tú obrubu odstráni sama: z obrázka
+   423 × 318 vidno stredných 318 × 318, čo je presne pôvodná štvorcová
+   fotka bez dorobených okrajov. Funguje to aj bez zásahu do
+   nastavení obchodu. */
 .type-category .products-block .p > a.image {
   display: block; position: relative;
-  aspect-ratio: 4/3; border-radius: 8px;
+  aspect-ratio: 1/1; border-radius: 8px;
   background: #fff; overflow: hidden;
 }
 .type-category .products-block .p > a.image img {
   width: 100%; height: 100%; object-fit: cover;
-  transform: scale(1.12);
 }
 
 /* Kód produktu nad fotkou vo výpise nie je — zákazník ho pri výbere
