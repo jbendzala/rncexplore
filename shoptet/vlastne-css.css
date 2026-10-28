@@ -2052,6 +2052,12 @@ body:not(.type-index) .breadcrumbs-wrapper { padding-inline: 20px; }
 }
 .type-posts-listing .content-inner,
 .type-posts-detail .content-inner { padding-top: 24px; }
+
+/* Šablóna dáva obsahu strop 800 px, čo je rozumné pre text stránky,
+   ale výpis článkov je mriežka kariet — tri karty sa do toho zmestili
+   len ako úzke prúžky. Na detaile článku strop necháme, tam drží
+   riadok textu čitateľný. */
+.type-posts-listing .content-inner { max-width: none; }
 .type-posts-listing .sectionDescription p {
   margin: 0 0 8px; max-width: 62ch;
   color: var(--rnc-muted); font-size: 16px; line-height: 1.6;
