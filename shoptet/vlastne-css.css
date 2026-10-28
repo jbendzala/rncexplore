@@ -2094,7 +2094,11 @@ body:not(.type-index) .breadcrumbs-wrapper { padding-inline: 20px; }
   gap: 24px;
   margin-top: 32px;
 }
-.news-item {
+/* Šablóna skladá článok do riadku: obrázok vľavo s pevnou šírkou
+   370 px a text vedľa neho. V karte širokej okolo 340 px z toho
+   obrázok trčal von. Preto stĺpec a šírka podľa karty — a selektory
+   musia mať obal .news-wrapper, inak ich tá pevná šírka prebije. */
+.news-wrapper .news-item {
   display: flex; flex-direction: column;
   background: var(--rnc-surface);
   border-radius: var(--rnc-radius);
@@ -2102,24 +2106,27 @@ body:not(.type-index) .breadcrumbs-wrapper { padding-inline: 20px; }
   padding: 12px;
   margin: 0; border: 0;
 }
-.news-item .image,
-.news-item > a:first-child {
-  display: block; aspect-ratio: 4/3;
+.news-wrapper .news-item .image {
+  display: block; width: auto; margin: 0; flex: 0 0 auto;
+  aspect-ratio: 4/3;
   border-radius: 8px; overflow: hidden; background: #fff;
 }
-.news-item .image img,
-.news-item > a:first-child img {
-  width: 100%; height: 100%; object-fit: cover;
+.news-wrapper .news-item .image a { display: block; width: 100%; height: 100%; }
+.news-wrapper .news-item .image img {
+  width: 100%; height: 100%; max-width: none; max-height: none;
+  object-fit: cover;
 }
-.news-item .text { padding: 16px 8px 8px; display: grid; gap: 8px; }
-.news-item .title {
+.news-wrapper .news-item .text {
+  padding: 16px 8px 8px; display: grid; gap: 8px; flex: 1;
+}
+.news-wrapper .news-item .title {
   font-family: var(--rnc-display); font-weight: 600;
-  font-size: 17px; line-height: 1.35;
+  font-size: 17px; line-height: 1.35; margin: 0;
   color: var(--rnc-head); text-decoration: none;
 }
-.news-item .title:hover { color: var(--rnc-amber); }
-.news-item .description,
-.news-item .description p {
+.news-wrapper .news-item .title:hover { color: var(--rnc-amber); }
+.news-wrapper .news-item .description,
+.news-wrapper .news-item .description p {
   margin: 0; color: var(--rnc-muted);
   font-size: 14px; line-height: 1.6;
 }
