@@ -25,8 +25,18 @@ def e(x):
 
 
 def telo(clanok, i):
-    """i = 0 slovensky, 1 česky."""
-    c = []
+    """i = 0 slovensky, 1 česky.
+
+    Telo začína perexom a za ním značkou konca stránky. Shoptet totiž
+    samostatné pole pre perex nemá — do náhľadu vo výpise rubriky
+    berie buď prvých x znakov tela, alebo všetko po značku
+    „<!-- pagebreak -->“. Bez nej si text odreže sám a keďže telá
+    predtým začínali nadpisom, vo výpise svietilo „Preč…“ a „Para…“.
+
+    Perex je zároveň aj úvodným odsekom článku, kam patrí — článok,
+    ktorý začína rovno nadpisom, čitateľa hodí do deja bez rozbehu.
+    """
+    c = ["<p>" + e(clanok["lead"][i]) + "</p>", "<!-- pagebreak -->"]
     if clanok.get("video"):
         c.append(f'<p><iframe width="560" height="315" '
                  f'src="https://www.youtube.com/embed/{clanok["video"]}" '

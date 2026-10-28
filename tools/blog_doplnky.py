@@ -1,21 +1,14 @@
 #!/usr/bin/env python3
-"""Perexy a fotografie k článkom, pripravené na doplnenie v Shoptete.
+"""Fotografie k článkom, pripravené na nahratie do Shoptetu.
 
-Články sú v obchode vložené, ale chýbajú im dve veci a obe sú vidieť
-na prvý pohľad.
+V pokynoch bola pri každom článku uvedená adresa obrázka, lenže
+Shoptet k článku prijíma nahratý súbor, nie odkaz. Preto nemá fotku
+ani jeden článok — ani vo výpise, ani na domovskej.
 
-Perex: v Shoptete zostalo pole „Popis“ prázdne, takže si ho dopočítal
-sám z tela článku — a keďže telá začínajú nadpisom <h2>, zobral z neho
-len prvé slovo a oreže ho. Vo výpise rubriky tak pod každým názvom
-svieti „Preč…“, „Para…“, „Podk…“. Perexy pritom napísané máme, len sa
-do obchodu nedostali.
-
-Fotografia: v pokynoch bola uvedená adresa obrázka, lenže Shoptet
-k článku prijíma nahratý súbor, nie odkaz. Preto nemá fotku ani jeden
-článok — ani vo výpise, ani na domovskej.
-
-Tento nástroj teda stiahne obrázky a vypíše perexy tak, aby sa dali
-kopírovať pole po poli.
+Perex sa dopĺňať nemusí: samostatné pole preň Shoptet nemá a do
+náhľadu berie text po značku „<!-- pagebreak -->“. Tú aj s perexom
+dáva na začiatok tela tools/export_blog.py, takže stačí znova vložiť
+obsah článku.
 
 Spustenie:  python3 tools/blog_doplnky.py
 """
@@ -56,16 +49,20 @@ def main():
 
     priecinok = vystup.kam(vystup.VLOZIT, "blog", "fotky")
     riadky = [
-        "PEREXY A FOTOGRAFIE K ČLÁNKOM",
+        "FOTOGRAFIE A PEREXY K ČLÁNKOM",
         "=" * 70,
         "",
-        "Vzhľad a obsah → Články → otvor článok.",
+        "Vzhľad a obsah → Články → otvor článok. Pri každom dve veci:",
         "",
-        "  Popis     vlož perex odtiaľto (je to pole nad obsahom)",
-        "  Obrázok   nahraj súbor z priečinka fotky/",
+        "  Obsah     cez Nástroje → Zdrojový kód vlož nanovo obsah zo",
+        "            súboru <adresa>.html. Začína perexom a značkou",
+        "            konca stránky — práve po ňu berie Shoptet text do",
+        "            náhľadu vo výpise rubriky.",
+        "  Obrázok   tlačidlom Nahrať pod editorom nahraj súbor",
+        "            z priečinka fotky/ (Shoptet berie súbor, nie odkaz)",
         "",
-        "Perex nie je ozdoba: bez neho si ho Shoptet dopočíta z tela",
-        "článku a keďže telá začínajú nadpisom, vyjde z toho „Preč…“.",
+        "Samostatné pole pre perex v Shoptete nie je — preto je perex",
+        "prvým odsekom článku a hneď za ním stojí tá značka.",
         "",
     ]
     hotovo = chyba = 0
@@ -105,12 +102,13 @@ def main():
             nazov,
             f"  adresa    {adresa}",
             f"  obrázok   fotky/{meno}",
-            "  perex     " + lead,
+            f"  obsah     {adresa}.html",
+            "  náhľad    " + lead,
             "",
         ]
         print(f"   {adresa:<42} {stav}")
 
-    cesta_txt = vystup.kam(vystup.VLOZIT, "blog", "_PEREXY-A-FOTKY.txt")
+    cesta_txt = vystup.kam(vystup.VLOZIT, "blog", "_FOTKY-A-PEREXY.txt")
     with open(cesta_txt, "w", encoding="utf-8") as f:
         f.write("\n".join(riadky) + "\n")
 
