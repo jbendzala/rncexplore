@@ -570,11 +570,17 @@ textarea:focus-visible,
   box-shadow: inset 0 -2px 0 var(--rnc-amber);
 }
 
-.menu-level-2 {
-  background: var(--rnc-surface);
-  border: 1px solid var(--rnc-line);
+/* Rozbalená ponuka visí z tmavej hlavičky, takže je tmavá na každej
+   stránke. Farby sú preto napevno, nie cez premenné: tie sa na
+   domovskej prepínajú na svetlú paletu a ponuka z nej presvitala
+   bielou, hoci hlavička nad ňou zostala tmavá. */
+/* Selektor kopíruje ten Shoptetov („.navigation-in ul.menu-level-2“),
+   inak podklad neprebije — ich pravidlo má dve triedy a značku. */
+.navigation-in ul.menu-level-2 {
+  background-color: #141C18;
+  border: 1px solid #26312B;
   border-radius: var(--rnc-radius);
-  box-shadow: var(--rnc-shadow);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, .4);
 }
 
 /* Rozbalené Produkty pod seba.
@@ -604,7 +610,7 @@ textarea:focus-visible,
   min-height: 0;
   border-radius: 10px;
 }
-.navigation-in > ul > li.ext > ul > li:hover { background: var(--rnc-chip); }
+.navigation-in > ul > li.ext > ul > li:hover { background: #1B2420; }
 .navigation-in > ul > li.ext > ul > li > a.menu-image {
   width: 68px;
   padding: 8px;
@@ -626,7 +632,7 @@ textarea:focus-visible,
   padding: 12px 14px 12px 0;
   font-family: var(--rnc-display);
   font-weight: 600; font-size: 14px;
-  color: var(--rnc-ink);
+  color: #F1EFE8;
 }
 .navigation-in > ul > li.ext > ul > li > div > a:hover { color: var(--rnc-amber); }
 /* Tretia úroveň — trinásť značiek pod Panelmi na kapotu. Shoptet ich
