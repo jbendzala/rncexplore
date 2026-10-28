@@ -76,6 +76,20 @@ PRILEPENE = {"hood", "flexible", "rooftent", "tonneau", "rv"}
 # fotky nezväčšuje, len ich doplní bielou — odtiaľ tá obruba.
 RAM_DETAILU = 1024
 
+# Rubrika blogu -> jej adresa v obchode. Kľúče sú naše vnútorné kódy
+# z tools/blog_content.py.
+RUBRIKY = {
+    "kapota":   "solarny-panel-na-kapotu",
+    "montaz":   "skusenosti-z-montaze",
+    "prenosne": "prenosne-panely",
+    "technika": "technika",
+}
+
+# Koľko najnovších článkov ukázať na stránke Blog. Rubrika Blog
+# vlastné články nemá — všetky sú v jej štyroch podrubrikách a Shoptet
+# ich do nadradenej rubriky nepreberá.
+CLANKOV_NA_BLOGU = 9
+
 # Adresy sú overené proti živému obchodu, nie odhadnuté. Dve sa od
 # predpokladu líšia: články sú na /blog/ (nie /nase-spravy/) a kontakt
 # na /kontakty/ (nie /kontakt/).
@@ -182,6 +196,31 @@ def foto_rozmery():
     return json.load(open(cesta, encoding="utf-8"))
 
 
+def clanky():
+    """Najnovšie články pre stránku Blog.
+
+    Obrázky článkov sedia v obchode pod adresou odvodenou od adresy
+    článku, lebo tak sa volajú súbory, ktoré pripravuje
+    tools/blog_doplnky.py. Keby ich niekto nahral pod iným názvom,
+    karta sa vykreslí bez fotky — nerozbije sa.
+    """
+    from blog_content import POSTS, CAT
+    zoz = sorted(POSTS, key=lambda p: p["date"], reverse=True)
+    r = []
+    for p in zoz[:CLANKOV_NA_BLOGU]:
+        rub = RUBRIKY.get(p["cat"])
+        if not rub:
+            continue
+        r.append([
+            f'/{rub}/{p["slug"]}/',
+            p["title"][0],
+            p["lead"][0],
+            f'/user/articles/images/{p["slug"]}.jpg',
+            CAT[p["cat"]][0],
+        ])
+    return r
+
+
 def adresy_produktov(P):
     """Adresy produktov v obchode, z mapy stránok obchodu.
 
@@ -243,6 +282,7 @@ def skript():
               + "".join(f"<li>{e(x)}</li>" for x in ISTOTY) + "</ul>")
     udaje = json.dumps(udaje_kariet(), ensure_ascii=False,
                        separators=(",", ":"))
+    posty = json.dumps(clanky(), ensure_ascii=False, separators=(",", ":"))
     return f'''
 /* Zápätie sa vkladá pred </body>, teda až pod celou stránkou. Oba
    bloky preto presunieme tam, kam patria. Skript beží hneď, nie na
@@ -408,6 +448,54 @@ def skript():
   obal.appendChild(v);
   r.appendChild(obal);
   r.className += " rnc-ma-zoradit";
+}})();
+
+/* Najnovšie články na stránke Blog.
+
+   Rubrika Blog vlastné články nemá — všetky sú v jej štyroch
+   podrubrikách a Shoptet ich do nadradenej rubriky nepreberá, takže
+   stránka hlásila „Záznamy neboli nájdené“. Vypisujeme ich teda sami,
+   v tej istej podobe ako výpis rubriky. */
+(function () {{
+  var o = document.querySelector(".type-posts-listing .content-inner");
+  if (!o || o.querySelector(".news-wrapper") || o.querySelector(".rnc-clanky")) {{ return; }}
+
+  var C = {posty};
+  if (!C.length) {{ return; }}
+
+  var h = document.createElement("h2");
+  h.className = "rnc-clanky-nadpis";
+  h.textContent = "Najnovšie články";
+
+  var r = document.createElement("div");
+  r.className = "news-wrapper rnc-clanky";
+  for (var n = 0; n < C.length; n++) {{
+    var c = C[n];
+    var k = document.createElement("div");
+    k.className = "news-item";
+    k.innerHTML =
+      '<div class="image"><a href="' + c[0] + '"><img src="' + c[3]
+        + '" alt="" loading="lazy"></a></div>'
+      + '<div class="text">'
+      + '<a class="title" href="' + c[0] + '"></a>'
+      + '<p class="rnc-clanok-rubrika"></p>'
+      + '<div class="description"><p></p></div>'
+      + '</div>';
+    /* Texty cez textContent, nie do innerHTML — názvy a perexy sú
+       naše, ale aj tak sa to tak má robiť. */
+    k.querySelector(".title").textContent = c[1];
+    k.querySelector(".rnc-clanok-rubrika").textContent = c[4];
+    k.querySelector(".description p").textContent = c[2];
+    /* Keď fotka nie je nahraná, dlaždica by zostala prázdna a biela. */
+    var i = k.querySelector("img");
+    i.onerror = function () {{
+      var d = this.closest(".image");
+      if (d) {{ d.parentNode.removeChild(d); }}
+    }};
+    r.appendChild(k);
+  }}
+  o.appendChild(h);
+  o.appendChild(r);
 }})();
 
 /* Varianty ako prepínače, nie rozbaľovací zoznam.

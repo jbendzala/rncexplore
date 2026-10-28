@@ -2087,6 +2087,19 @@ body:not(.type-index) .breadcrumbs-wrapper { padding-inline: 20px; }
    čitateľa zmätie — články tam sú, len o úroveň nižšie. */
 .type-posts-listing .content-inner > .subcategories ~ p { display: none; }
 
+/* Najnovšie články na stránke Blog — vypisuje ich rnc-skript.js,
+   lebo Shoptet články z podrubrík do nadradenej rubriky nepreberá. */
+.rnc-clanky-nadpis {
+  margin: 48px 0 0;
+  font-family: var(--rnc-display); font-weight: 600; font-size: 24px;
+  color: var(--rnc-head);
+}
+.news-wrapper .news-item .rnc-clanok-rubrika {
+  margin: 0; order: -1;
+  font-size: 12px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--rnc-tint);
+}
+
 /* Výpis článkov ako karty */
 .news-wrapper {
   display: grid;
