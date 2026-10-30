@@ -130,9 +130,10 @@ SLUBY = ["Faktúra s QR kódom e-mailom", "Odoslanie po úhrade"]
 
 # Spodný riadok pätičky. Prvý je z návrhu, ďalšie dva sem presúvame
 # z horného menu, aby sa na ne dalo dostať aj po prerobení lišty.
+# „Ako nakupovať“ tu bývalo tiež, ale tú stránku sme zrušili — jej
+# obsah pokrývajú obchodné podmienky. Odkaz by viedol na 404.
 PRAVNE = [
     ("Obchodné podmienky", "/obchodne-podmienky/"),
-    ("Ako nakupovať", "/ako-nakupovat/"),
     ("Ochrana osobných údajov", "/podmienky-ochrany-osobnych-udajov/"),
 ]
 
