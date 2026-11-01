@@ -157,6 +157,20 @@ def main():
     with open(ciel, "w", encoding="utf-8") as f:
         f.write(h)
 
+    # To isté ako samostatná stránka. V menu má byť položka „Podľa
+    # vozidla“ a tá musí niekam viesť — domovská na to nestačí, lebo
+    # vyhľadávanie je na nej až pod hero. Stránka sa vkladá cez
+    # Vzhľad a obsah → Stránky, preto ide do iného priečinka než
+    # vzhľad a bez hlavičkového komentára pre úvodnú stránku.
+    uvod = ('<p>Vyberte značku, model a rok výroby. Zobrazíme panely, '
+            'ktoré sú tvarované presne na vaše vozidlo — a pod nimi aj '
+            'tie, pri ktorých výrobca roky neuvádza.</p>\n')
+    bez = re.sub(r"^<!--.*?-->\s*", "", h, flags=re.S)
+    cesta = vystup.kam(vystup.VLOZIT, "stranky", "podla-vozidla.html")
+    with open(cesta, "w", encoding="utf-8") as f:
+        f.write(uvod + bez)
+    print(f"{len(uvod) + len(bez):>6} znakov -> {cesta}")
+
     znacky = sorted({x["b"] for x in polozky})
     print(f"{len(h):>6} znakov -> {ciel}")
     print(f"  vozidiel: {len(polozky)} · značiek: {len(znacky)} · "
