@@ -96,7 +96,9 @@
   --color-tertiary-hover-s:     100%;
   --color-tertiary-hover-l:     22%;
 
-  --color-header-background:    #F7F5F0;
+  /* Hlavička je tmavá na každej stránke vrátane domovskej, takže aj
+     táto premenná — Shoptet ňou farbí mobilný pás s logom. */
+  --color-header-background:    #141C18;
   --template-font:              Inter;
   --template-headings-font:     Manrope;
 
@@ -355,6 +357,17 @@ textarea:focus-visible,
 /* Pod 1200 px sa lišta zúži na jeden riadok s nástrojmi — sľuby
    vypadnú prvé, sú to najmenej dôležité dve vety na stránke. */
 @media (max-width: 1200px) { .rnc-top-sluby { display: none; } }
+
+/* Pod 768 px je horná lišta mobilný pás Shoptetu: logo, lupa, košík
+   a hamburger na päťdesiatich pixeloch. Logo v ňom visí absolútne na
+   ľavom okraji, takže nám cez naše odkazy preliezalo. Na mobile ich
+   teda nedávame — veľkoobchod aj kontakt sú v menu pod hamburgerom
+   a v pätičke. */
+@media (max-width: 767px) {
+  /* Identifikátor aj tu — blok si ho vyššie vyžiadal, aby prebil
+     Shoptetove „.container>div“, a bez neho by sa skrytie nechytilo. */
+  .top-navigation-bar .container > div#rnc-top { display: none; }
+}
 @media (max-width: 560px) {
   .rnc-top-odkazy { gap: 16px; }
   .rnc-top-jazyk { display: none; }
@@ -368,10 +381,27 @@ textarea:focus-visible,
    ani tieň, ani podložený prvok. Obe predošlé riešenia mali vadu: tieň
    s clip-path orezal rozbaľovacie menu a podložený prvok sa nezobrazil
    vôbec.                                                                */
-#header {
-  background: var(--rnc-g1);
-  position: relative;
-  z-index: 20;                 /* nad hero, nech je rozbalené menu vidieť */
+#header { background: var(--rnc-g1); }
+
+/* Prilepenie a vrstvenie len na širokých obrazovkách.
+
+   Pod 768 px si Shoptet robí vlastnú mobilnú hlavičku: pás s logom
+   je „position: fixed“ a logo v ňom visí absolútne na „top: -50px“
+   voči #header. Naše „position: relative“ mu zmenilo bod, od ktorého
+   sa to počíta — logo spadlo o 50 px nižšie, prekrylo obsah a pod
+   lištou zostal prázdny pruh. */
+@media (min-width: 768px) {
+  #header {
+    position: relative;
+    z-index: 20;               /* nad hero, nech je rozbalené menu vidieť */
+  }
+}
+
+/* Logo v mobilnej lište. Šablóna mu dáva strop 50 px, ale vlastným
+   pravidlom „#header .site-name a img“ si ho vzápätí prebije na 60 —
+   a o tých desať pixelov potom vytŕča z pásu. */
+@media (max-width: 767px) {
+  #header .site-name a img { max-height: 50px; }
 }
 .navigation-wrapper,
 .header-top,
@@ -502,6 +532,14 @@ textarea:focus-visible,
   #navigation { margin-right: 24px; }
 }
 
+/* Zvislé čiarky medzi položkami menu. Rušili sme ich len nad 1200 px,
+   lenže vodorovné menu sa ukazuje už od 768 — na tablete na výšku tak
+   zostali svietiť jantárovou. Pod 768 sa menu zbaľuje pod hamburger a
+   tam sú z nich vodorovné linky medzi riadkami, ktoré dávajú zmysel. */
+@media (min-width: 768px) {
+  .navigation-in > ul > li { border: 0; }
+}
+
 /* --- 7. VYHĽADÁVANIE AKO V NÁVRHU --------------------------------------
    Oválne pole na tmavom podklade, bez samostatného tlačidla HĽADAŤ —
    to sa zmení na ikonu lupy vnútri poľa.                                */
@@ -595,52 +633,59 @@ textarea:focus-visible,
    Jeden stĺpec to rieši bez boja so šírkou a pri siedmich kategóriách
    sa aj lepšie číta. Selektory kopírujú tie Shoptetove aj s potomkami,
    inak by neprebili ich špecificitu. */
-.navigation-in > ul > li.ext { position: relative; }
-.navigation-in > ul > li.ext > ul.menu-level-2 {
-  width: 320px;
-  left: 0;
-  padding: 8px;
-  flex-direction: column;
-  flex-wrap: nowrap;
-  align-items: stretch;
+/* Toto rozloženie platí len na širokých obrazovkách. Pod 1200 px si
+   Shoptet menu zbaľuje do vysúvacieho panela a naša pevná šírka 320 px
+   aj absolútne polohovanie mu v ňom trčali von — dokument bol na
+   telefóne široký 980 px namiesto 500 a stránka sa dala posúvať
+   nabok. */
+@media (min-width: 1200px) {
+  .navigation-in > ul > li.ext { position: relative; }
+  .navigation-in > ul > li.ext > ul.menu-level-2 {
+    width: 320px;
+    left: 0;
+    padding: 8px;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+  }
+  .navigation-in > ul > li.ext > ul > li {
+    flex-basis: auto;
+    width: 100%;
+    min-height: 0;
+    border-radius: 10px;
+  }
+  .navigation-in > ul > li.ext > ul > li:hover { background: #1B2420; }
+  .navigation-in > ul > li.ext > ul > li > a.menu-image {
+    width: 68px;
+    padding: 8px;
+  }
+  /* Obrázok kategórie je štvorcový, ale Shoptet ho do ponuky dopĺňa
+     na rám 140 × 100 a po stranách vyplní bielou — presne ako pri
+     kartách vo výpise. Štvorcové miesto s orezaním ukáže stredných
+     100 × 100, teda pôvodnú fotku bez dorobených okrajov. */
+  .navigation-in > ul > li.ext > ul > li > a img {
+    width: 52px; height: 52px;
+    max-width: none; max-height: none;
+    object-fit: cover;
+    border-radius: 6px;
+  }
+  .navigation-in > ul > li.ext > ul > li > div {
+    width: calc(100% - 68px);
+  }
+  .navigation-in > ul > li.ext > ul > li > div > a {
+    padding: 12px 14px 12px 0;
+    font-family: var(--rnc-display);
+    font-weight: 600; font-size: 14px;
+    color: #F1EFE8;
+  }
+  .navigation-in > ul > li.ext > ul > li > div > a:hover { color: var(--rnc-amber); }
+  /* Tretia úroveň — trinásť značiek pod Panelmi na kapotu. Shoptet ich
+     vypisuje za sebou oddelené čiarkou a odreže na dva riadky, takže
+     z toho zostalo „Land Rover, Dacia, Fiat, Ford, Ineos, Isuzu, Jeep,“
+     aj s čiarkou na konci. Do úzkej ponuky sa nezmestia a na stránke
+     kategórie sú aj tak v mriežke s logami. */
+  .navigation-in > ul > li.ext > ul > li > div > ul { display: none; }
 }
-.navigation-in > ul > li.ext > ul > li {
-  flex-basis: auto;
-  width: 100%;
-  min-height: 0;
-  border-radius: 10px;
-}
-.navigation-in > ul > li.ext > ul > li:hover { background: #1B2420; }
-.navigation-in > ul > li.ext > ul > li > a.menu-image {
-  width: 68px;
-  padding: 8px;
-}
-/* Obrázok kategórie je štvorcový, ale Shoptet ho do ponuky dopĺňa
-   na rám 140 × 100 a po stranách vyplní bielou — presne ako pri
-   kartách vo výpise. Štvorcové miesto s orezaním ukáže stredných
-   100 × 100, teda pôvodnú fotku bez dorobených okrajov. */
-.navigation-in > ul > li.ext > ul > li > a img {
-  width: 52px; height: 52px;
-  max-width: none; max-height: none;
-  object-fit: cover;
-  border-radius: 6px;
-}
-.navigation-in > ul > li.ext > ul > li > div {
-  width: calc(100% - 68px);
-}
-.navigation-in > ul > li.ext > ul > li > div > a {
-  padding: 12px 14px 12px 0;
-  font-family: var(--rnc-display);
-  font-weight: 600; font-size: 14px;
-  color: #F1EFE8;
-}
-.navigation-in > ul > li.ext > ul > li > div > a:hover { color: var(--rnc-amber); }
-/* Tretia úroveň — trinásť značiek pod Panelmi na kapotu. Shoptet ich
-   vypisuje za sebou oddelené čiarkou a odreže na dva riadky, takže
-   z toho zostalo „Land Rover, Dacia, Fiat, Ford, Ineos, Isuzu, Jeep,“
-   aj s čiarkou na konci. Do úzkej ponuky sa nezmestia a na stránke
-   kategórie sú aj tak v mriežke s logami. */
-.navigation-in > ul > li.ext > ul > li > div > ul { display: none; }
 
 /* --- 9. KOŠÍK -------------------------------------------- */
 /* Tu kedysi stálo „.search-form, .search-input { border-radius: 10px }“
