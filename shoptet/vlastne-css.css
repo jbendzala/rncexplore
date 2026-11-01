@@ -343,6 +343,9 @@ textarea:focus-visible,
 }
 .rnc-top-sluby,
 .rnc-top-odkazy { display: flex; align-items: center; gap: 28px; }
+/* Odkazy vpravo — tam, kde predtým stálo prihlásenie. Sľuby
+   o objednávke z lišty odišli, takže vľavo nezostáva nič. */
+.top-navigation-bar .container > div#rnc-top { justify-content: flex-end; }
 .top-navigation-bar .rnc-top a { color: var(--rnc-mist); text-decoration: none; }
 .top-navigation-bar .rnc-top a:hover { color: var(--rnc-amber); }
 .top-navigation-bar .rnc-top .rnc-top-b2b {
@@ -350,7 +353,10 @@ textarea:focus-visible,
 }
 .rnc-top-jazyk strong { color: #fff; font-weight: 600; }
 .rnc-top-jazyk span { margin: 0 7px; color: rgba(255, 255, 255, .25); }
-.top-navigation-bar .container > div.top-navigation-tools--language {
+/* Bez modifikátora --language: Shoptet ho na tom prvku už nemá, a náš
+   selektor sa tak prestal chytať — nástroje si potom vzali 30 %
+   lišty a naše odkazy nemali kam dôjsť doprava. */
+.top-navigation-bar .container > div.top-navigation-tools {
   flex: 0 0 auto;
 }
 
@@ -538,6 +544,57 @@ textarea:focus-visible,
    tam sú z nich vodorovné linky medzi riadkami, ktoré dávajú zmysel. */
 @media (min-width: 768px) {
   .navigation-in > ul > li { border: 0; }
+}
+
+/* Ikony v hlavičke: účet a košík.
+
+   Prihlásenie sem presúva skript z hornej lišty — nerobíme nové
+   tlačidlo, lebo na tom pôvodnom visí Shoptetov obsluhovač, ktorý
+   otvára prihlasovacie okno. Ikony sú z ikonového písma šablóny,
+   rovnako ako lupa vo vyhľadávaní. */
+#header .navigation-buttons { display: flex; align-items: center; gap: 4px; }
+#header .navigation-buttons .btn.cart-count,
+#header .navigation-buttons .rnc-ucet {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px; padding: 0;
+  background: none; border: 0; border-radius: 999px;
+  color: #fff; position: relative;
+}
+#header .navigation-buttons .btn.cart-count:hover,
+#header .navigation-buttons .rnc-ucet:hover { color: var(--rnc-amber); }
+/* Text „Prázdny košík“ preč — v návrhu je pri košíku len ikona
+   a číslo. Počet vykresľuje Shoptet sám do vnoreného <i>.
+
+   !important je tu kvôli ich vlastnému: text nesie bootstrapovskú
+   triedu .visible-lg-inline-block s „display: inline-block!important“,
+   ktorú bez toho isté slovo neprebijem. */
+#header .navigation-buttons .cart-price { display: none !important; }
+#header .navigation-buttons .btn.cart-count::before { font-size: 22px; }
+#header .navigation-buttons .rnc-ucet > span { display: none; }
+#header .navigation-buttons .rnc-ucet::before {
+  content: "\e922";
+  font-family: shoptet; font-weight: 400; font-style: normal;
+  font-size: 22px; line-height: 1;
+}
+
+/* Menu sa pri posúvaní nadol skryje a pri posúvaní nahor vráti.
+   Triedu prepína skript v zápätí.
+
+   Na širokých obrazovkách musí byť hlavička najprv prilepená — inak
+   by nebolo čo skrývať. Pod 768 px ju aj s horným pásom prilepuje
+   Shoptet sám, tam sa len posúvajú obe. */
+@media (min-width: 768px) {
+  #header { position: sticky; top: 0; transition: transform .25s; }
+  body.rnc-skryte-menu #header { transform: translateY(-100%); }
+}
+@media (max-width: 767px) {
+  .top-navigation-bar,
+  #header { transition: transform .25s; }
+  body.rnc-skryte-menu .top-navigation-bar,
+  body.rnc-skryte-menu #header { transform: translateY(-110%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .top-navigation-bar, #header { transition: none; }
 }
 
 /* --- 7. VYHĽADÁVANIE AKO V NÁVRHU --------------------------------------

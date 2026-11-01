@@ -126,7 +126,10 @@ ISTOTY = [
 ]
 
 # Horná lišta. Vľavo dva sľuby o objednávke, vpravo jazyk a dva odkazy.
-SLUBY = ["Faktúra s QR kódom e-mailom", "Odoslanie po úhrade"]
+# Horná lišta má podľa klienta len jazyk, veľkoobchod a kontakt,
+# zarovnané doprava. Sľuby o objednávke z nej odišli — tie isté vety
+# sú v hero aj v istotách na detaile produktu.
+SLUBY = []
 
 # Spodný riadok pätičky. Prvý je z návrhu, ďalšie dva sem presúvame
 # z horného menu, aby sa na ne dalo dostať aj po prerobení lišty.
@@ -301,6 +304,39 @@ def skript():
       l = document.querySelector(".top-navigation-bar .container");
   if (f && p) {{ f.insertBefore(p, f.firstChild); }}
   if (l && t) {{ l.insertBefore(t, l.firstChild); }}
+
+  /* Prihlásenie z hornej lišty medzi ikony v hlavičke. Tlačidlo
+     presúvame, nerobíme nové — visí na ňom Shoptetov obsluhovač,
+     ktorý otvára prihlasovacie okno. */
+  var u = document.querySelector(".top-nav-button-login"),
+      ik = document.querySelector("#header .navigation-buttons");
+  if (u && ik) {{
+    u.className += " rnc-ucet";
+    ik.insertBefore(u, ik.firstChild);
+  }}
+
+  /* Menu sa pri posúvaní nadol skryje a pri posúvaní nahor vráti.
+     Prah 120 px, nech sa hlavička nestráca hneď pri prvom pohybe;
+     pri otvorenom mobilnom menu alebo hľadaní sa neskrýva vôbec. */
+  (function () {{
+    var kde = window.pageYOffset || 0, prah = 120, caka = false;
+    function prepocitaj() {{
+      caka = false;
+      var n = window.pageYOffset || 0, b = document.body;
+      if (b.classList.contains("navigation-window-visible")
+          || b.classList.contains("search-window-visible")) {{
+        b.classList.remove("rnc-skryte-menu");
+      }} else if (n > prah && n > kde + 4) {{
+        b.classList.add("rnc-skryte-menu");
+      }} else if (n < kde - 4 || n <= prah) {{
+        b.classList.remove("rnc-skryte-menu");
+      }}
+      kde = n;
+    }}
+    window.addEventListener("scroll", function () {{
+      if (!caka) {{ caka = true; window.requestAnimationFrame(prepocitaj); }}
+    }}, {{passive: true}});
+  }})();
 
   /* Výpis kategórie. Návrh má nad nadpisom riadok so zaradením.
      Berieme ho z omrvinkovej navigácie — predposledná položka, teda
