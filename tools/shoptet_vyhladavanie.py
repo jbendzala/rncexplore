@@ -186,34 +186,13 @@ SABLONA = '''<!-- Vyhľadávanie panela podľa vozidla.
 
     <div class="rnc-find-karta">
       <div class="rnc-find-nadpis">
-        <strong>Nájdi panel pre svoje vozidlo</strong>
-        <span>Vyber značku, model a rok a zobrazíme ti kompatibilné produkty.</span>
+        <strong>Nájdi produkt pre svoje vozidlo</strong>
       </div>
-      <label>Značka
-        <select id="rnc-b"><option value="">Vyberte značku</option></select>
-      </label>
-      <label>Model
-        <select id="rnc-m" disabled><option value="">Najprv značku</option></select>
-      </label>
-      <label>Rok výroby
-        <select id="rnc-r" disabled><option value="">Najprv model</option></select>
-      </label>
-      <a class="rnc-btn" href="#rnc-vysledok" id="rnc-go">Zobraziť kompatibilné produkty →</a>
+      <select id="rnc-b" aria-label="Značka"><option value="">Značka</option></select>
+      <select id="rnc-m" aria-label="Model" disabled><option value="">Najskôr vyber značku</option></select>
+      <select id="rnc-r" aria-label="Rok výroby" disabled><option value="">Najskôr vyber model</option></select>
+      <a class="rnc-btn" href="#rnc-vysledok" id="rnc-go">Zobraziť kompatibilné produkty</a>
     </div>
-
-    <div class="rnc-find-pod">
-      <p class="rnc-find-rec">Z recenzií zákazníkov: Dacia Duster 3 ·
-         Toyota Land Cruiser 100 · Jeep</p>
-      <p class="rnc-find-mieru"><a href="/na-mieru/">Nenašli ste vozidlo?
-         Panel na mieru</a></p>
-    </div>
-
-    <ul class="rnc-find-istoty">
-      <li>Slovensko a Česko (SK / CZ)</li>
-      <li>Faktúra s QR kódom e-mailom</li>
-      <li>Odoslanie po úhrade</li>
-      <li>Montáž a poradenstvo</li>
-    </ul>
 
     <div id="rnc-vysledok" class="rnc-find-out" aria-live="polite"></div>
 </section>
@@ -253,14 +232,14 @@ SABLONA = '''<!-- Vyhľadávanie panela podľa vozidla.
     }).join("") + "</div>";
   }
 
-  naplň(zb, jedinečné(V.map(function (x) { return x.b; })), "Vyberte značku");
+  naplň(zb, jedinečné(V.map(function (x) { return x.b; })), "Značka");
 
   zb.addEventListener("change", function () {
     var b = zb.value;
     naplň(zm, b ? jedinečné(V.filter(function (x) { return x.b === b; })
                              .map(function (x) { return x.m; })) : [],
-          b ? "Vyberte model" : "Najprv značku");
-    naplň(zr, [], "Najprv model");
+          b ? "Model" : "Najskôr vyber značku");
+    naplň(zr, [], "Najskôr vyber model");
     ukáž();
   });
 
@@ -276,7 +255,7 @@ SABLONA = '''<!-- Vyhľadávanie panela podľa vozidla.
       var b = p.length ? Math.max.apply(null, p.map(function (x) { return x.do; })) : DO;
       for (var r = b; r >= a; r--) roky.push(String(r));
     }
-    naplň(zr, roky, m ? "Vyberte rok" : "Najprv model");
+    naplň(zr, roky, m ? "Rok výroby" : "Najskôr vyber model");
     zr.disabled = !m;
     ukáž();
   });

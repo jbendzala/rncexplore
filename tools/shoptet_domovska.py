@@ -58,19 +58,27 @@ ODPORUCAME = [
     "lensunsolar-300w-solar-panel-blanket-with-controller",
 ]
 
+# Výhody v páse „Energia, ktorá vám dáva slobodu“ — o produkte.
 VYHODY = [
     ("Energia bez motora",
      "Panel nabíja batériu počas státia aj jazdy. Chladnička či fotoaparát "
      "fungujú bez štartovania auta."),
     ("Tvarované na konkrétne vozidlo",
-     "Kapotové panely sú vyrobené na tvar konkrétneho modelu a generácie. "
-     "Nelepíte univerzálny obdĺžnik."),
+     "Každý panel je prispôsobený konkrétnemu modelu. Prirodzene kopíruje "
+     "tvar kapoty a nenarúša vzhľad auta."),
     ("Montáž bez vŕtania",
-     "Flexibilné panely sú hrubé pár milimetrov a prilepia sa na povrch, "
-     "bez dier, rámov a odporu vzduchu."),
-    ("Stavané na drsné použitie",
-     "Navrhnuté pre vietor, dážď, prach a vibrácie, na trvalé používanie vonku."),
+     "Jednoduchá inštalácia bez nutnosti vŕtania a bez zbytočných zásahov "
+     "do karosérie."),
+    ("Stavané do drsných podmienok",
+     "Odolnosť na každom kilometri. Navrhnuté tak, aby zvládali vibrácie, "
+     "nepriaznivé počasie a náročné podmienky na cestách."),
 ]
+
+# Čo sľubujeme v hero. Zámerne iný zoznam než vyššie: tam ide o panel,
+# tu o to, čo od nás zákazník dostane. Pôvodne to bol jeden zoznam a
+# v hero potom stáli vlastnosti výrobku namiesto služby.
+HERO_ISTOTY = ["Pomôžeme s výberom", "Overenie kompatibility",
+               "Technické poradenstvo"]
 
 BLOG_ZAKLAD = "/blog"              # overené proti živému obchodu;
                                    # /nase-spravy vracia 404
@@ -127,18 +135,16 @@ def hero():
     pritom obmedzený na šírku stránky, takže sa z nej musíme vymaniť —
     na to je ten výpočet so 100vw v CSS.
     """
-    body = "".join(f"<li>{e(n)}</li>" for n, _ in VYHODY)
+    body = "".join(f"<li>{e(n)}</li>" for n in HERO_ISTOTY)
     return f'''
 <section class="rnc-hero" style="background-image:url('{e(FOTO["hero"])}')">
   <div class="container rnc-hero-in">
     <p class="rnc-eyebrow">RNC EXPLORE</p>
-    <h2>Solárna energia<br>pre vozidlá a karavany</h2>
-    <p class="rnc-lead">Vyberte produkt a prevedenie, vložte do košíka a
-       objednajte. Faktúru s QR kódom pošleme e-mailom, tovar odošleme
-       po úhrade.</p>
+    <h2>Vybavený na cestu.<br>Pripravený na neznáme.</h2>
+    <p class="rnc-lead">Vybavenie pre overlanding, off-road a nezávislé
+       cestovanie.</p>
     <p class="rnc-cta">
-      <a class="rnc-btn" href="/panely-na-kapotu/">Zobraziť celý katalóg →</a>
-      <a class="rnc-link-light" href="/na-mieru/">Panely na mieru</a>
+      <a class="rnc-btn" href="/panely-na-kapotu/">Zobraziť katalóg</a>
     </p>
     <ul class="rnc-hero-body">{body}</ul>
   </div>

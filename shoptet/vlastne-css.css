@@ -562,6 +562,13 @@ textarea:focus-visible,
 }
 #header .navigation-buttons .btn.cart-count:hover,
 #header .navigation-buttons .rnc-ucet:hover { color: var(--rnc-amber); }
+/* Na telefóne nie. Shoptet si tam košík aj hamburger vytiahne nad
+   hlavičku cez position:relative a záporný top, náš presunutý účet
+   zostane v toku a spadne do prázdneho pásu pod logom. Prihlásenie je
+   aj tak v rozbaľovacom menu, tak ho tu nedupľujeme. */
+@media (max-width: 767px) {
+  #header .navigation-buttons .rnc-ucet { display: none; }
+}
 /* Text „Prázdny košík“ preč — v návrhu je pri košíku len ikona
    a číslo. Počet vykresľuje Shoptet sám do vnoreného <i>.
 
@@ -1369,12 +1376,6 @@ label { color: var(--rnc-ink); }
   text-decoration: none;
   white-space: nowrap;
 }
-/* Druhé tlačidlo v hero je v návrhu podčiarknutý odkaz, nie rám. */
-.rnc-link-light {
-  color: #fff; font-family: var(--rnc-display); font-weight: 600;
-  text-decoration: underline; text-underline-offset: 4px;
-}
-.rnc-link-light:hover { color: var(--rnc-amber); }
 .rnc-btn:hover { background: var(--rnc-amber-dark); border-color: var(--rnc-amber-dark); color: var(--rnc-tma); }
 .rnc-btn-ghost { background: transparent; border-color: currentColor; color: inherit; }
 .rnc-btn-ghost:hover { background: rgba(255,255,255,.12); border-color: currentColor; color: inherit; }
@@ -1454,12 +1455,15 @@ label { color: var(--rnc-ink); }
    šírok väčší než karta, takže tlačidlo z nej vytŕčalo von. Takto si
    polia aj tlačidlo nájdu miesto samy a keď ho nie je dosť, zalomia sa
    dovnútra karty. */
+/* Návrh chce, aby karta zasahovala do hero len asi tretinou svojej
+   výšky, nie aby na jeho hrane sedela v polovici. Karta je po presune
+   popisov do polí vysoká okolo 96 px, takže -30 px je tá tretina. */
 .rnc-find-karta {
   position: relative;
-  margin-top: -56px;
+  margin-top: -30px;
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-end;
+  align-items: center;
   gap: 16px;
   background: var(--rnc-surface);
   border-radius: 12px;
@@ -1469,26 +1473,23 @@ label { color: var(--rnc-ink); }
 /* Nad 1100 px sa karta nezalamuje: polia sa radšej stlačia, než aby
    tlačidlo spadlo do druhého riadku. Nadpis sa nezväčšuje, voľné miesto
    patrí poliam. */
-.rnc-find-nadpis { flex: 0 1 220px; min-width: 0; }
-.rnc-find-karta label { flex: 1 1 130px; min-width: 0; }
+.rnc-find-nadpis { flex: 0 0 auto; }
+.rnc-find-karta select { flex: 1 1 140px; min-width: 0; }
 .rnc-find-karta .rnc-btn { flex: 0 0 auto; white-space: nowrap; }
 
 @media (min-width: 1101px) {
   .rnc-find-karta { flex-wrap: nowrap; }
 }
+/* Nadpis má podľa návrhu zostať na jednom riadku — preto nowrap a nie
+   pružná šírka, pri ktorej sa „vozidlo“ zlomilo pod seba. */
 .rnc-find-nadpis strong {
-  display: block;
+  display: block; white-space: nowrap;
   font-family: var(--rnc-display); font-weight: 600; font-size: 20px;
-  color: var(--rnc-head); margin-bottom: 6px;
-}
-.rnc-find-nadpis span { color: var(--rnc-muted); font-size: 12px; line-height: 1.5; }
-.rnc-find-karta label {
-  display: block;
-  font-family: var(--rnc-display); font-weight: 600; font-size: 12px;
   color: var(--rnc-head);
 }
+/* Čo bolo v popise nad poľom, je teraz prvá položka v ňom. */
 .rnc-find-karta select {
-  display: block; width: 100%; margin-top: 6px;
+  display: block;
   padding: 15px 12px;
   background: var(--rnc-surface);
   border: 1px solid var(--rnc-line-2);
@@ -1499,29 +1500,10 @@ label { color: var(--rnc-ink); }
 .rnc-find-karta select:disabled { color: var(--rnc-muted); background: var(--rnc-chip); }
 .rnc-find-karta .rnc-btn { font-size: 14px; padding: 16px 22px; }
 
-/* riadok pod kartou — recenzie vľavo, odkaz na mieru vpravo */
-.rnc-find-pod {
-  display: flex; flex-wrap: wrap; gap: 10px 24px;
-  justify-content: space-between; align-items: baseline;
-  margin: 26px 0 0;
-}
-.rnc-find-pod p { margin: 0; }
-.rnc-find-mieru a {
-  font-family: var(--rnc-display); font-weight: 600; color: var(--rnc-ink);
-  text-decoration: underline; text-underline-offset: 4px;
-}
-.rnc-find-istoty {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px 20px;
-  list-style: none; padding: 0; margin: 22px 0 0;
-  color: var(--rnc-muted); font-size: 14px;
-}
 
 .rnc-find-out:not(:empty) { margin-top: 26px; }
 
 .rnc-life-txt { min-width: 0; }
-.rnc-find-rec { color: var(--rnc-muted); font-size: 14px; margin: 14px 0 0; }
-
-.rnc-find-istoty li::before { content: "✓ "; color: var(--rnc-ok); font-weight: 700; }
 .rnc-find-pocet {
   font-family: var(--rnc-display); font-weight: 600;
   color: var(--rnc-head); margin: 0 0 14px;
@@ -2587,7 +2569,6 @@ body:not(.type-index) .breadcrumbs-wrapper { padding-inline: 20px; }
 
 @media (max-width: 1100px) {
   .rnc-find-nadpis { flex: 1 1 100%; }
-  .rnc-find-istoty { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 980px) {
@@ -2613,11 +2594,16 @@ body:not(.type-index) .breadcrumbs-wrapper { padding-inline: 20px; }
 }
 
 @media (max-width: 680px) {
-  .rnc-find-karta { margin-top: -32px; }
-  .rnc-find-karta label,
+  /* Tu je karta vysoká okolo 290 px, polia sú pod sebou. Tretina z toho
+     by hero prekryla celé, takže prekrytie zostáva malé. */
+  .rnc-find-karta { margin-top: -24px; }
+  /* Jeden riadok je požiadavka z návrhu, a ten je kreslený na 1440 px.
+     Na telefóne sa nadpis na šírku karty nevojde a nowrap ju roztiahol
+     aj s poliami za okraj obrazovky, tak tu smie zalomiť. */
+  .rnc-find-nadpis strong { white-space: normal; font-size: 18px; }
+  .rnc-find-karta select,
   .rnc-find-karta .rnc-btn { flex: 1 1 100%; }
   .rnc-hero-body { flex-wrap: wrap; }
-  .rnc-find-istoty { grid-template-columns: 1fr; }
   .rnc-hero { min-height: 420px; }
   .rnc-hero-in { padding-bottom: 64px; }
 }
