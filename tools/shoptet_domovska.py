@@ -44,18 +44,46 @@ KATEGORIE = [
     ("tonneau",  "Na kryty korby",     "na-kryty-korby"),
 ]
 
-# Štyri do veľkých kachličiek — tie, ktoré majú najviac produktov.
-VELKE = ["hood", "flexible", "foldable", "rooftent"]
+# Dlaždice na domovskej. Návrh ich má štyri a sú to iné kategórie než
+# tých sedem vyššie: prvé dve sedia na existujúce (len s dlhším názvom),
+# druhé dve v Shoptete ešte nie sú. Odkazujeme na ne dopredu, aby sa
+# rozsvietili samy, keď ich klient založí — preto musia slugy sedieť
+# presne a na konci behu ich vypisujeme.
+#   názov · slug v obchode · z ktorej fotky kategórie brať obrázok
+#
+# Klient medzitým štyri kategórie z návrhu naozaj založil, ale produkty
+# nechal v pôvodných. Dve z nich sú tak dnes prázdne dvojičky toho, čo
+# už máme (solarne-panely-na-kapotu-a-stresne-stany vs panely-na-kapotu).
+# Dlaždice preto vedú tam, kde tovar naozaj je, nie na prázdnu stránku.
+# Keď sa katalóg upraceme, prepíšu sa tu dva slugy a hotovo.
+DLAZDICE = [
+    ("Solárne panely na kapotu a strešné stany",
+     "panely-na-kapotu", "panely-na-kapotu"),
+    ("Flexibilné solárne panely",
+     "flexibilne-panely", "flexibilne-panely"),
+    ("Strešné stany a markízy",
+     "stresne-stany-a-markizy", "pre-stresne-stany"),
+    # Na kempovanie fotku zatiaľ nemáme. Dlaždica vyjde ako tmavé pole —
+    # presne tak, ako ju má návrh, kde sú tri zo štyroch bez fotky.
+    ("Kempovanie a outdoor vybavenie",
+     "kempovanie-a-outdoor-vybavenie", None),
+]
+# Existujú, ale sú prázdne — klik na ne zatiaľ nič neukáže.
+PRAZDNE = ["stresne-stany-a-markizy", "kempovanie-a-outdoor-vybavenie"]
 
-# Odporúčané produkty. Prvé tri sú z návrhu — a zhodou okolností sú to
-# práve tie, ku ktorým máme recenzie. Štvrtý mal byť regulátor MPPT 20 A,
-# ktorý samostatne nepredávame; najbližšie má deka v sade s MPPT
-# regulátorom, a zároveň ukáže aj iný druh tovaru než panel na kapotu.
+# Koreňová kategória obchodu. Overené proti živému obchodu — sem vedú
+# všetky odkazy „zobraziť všetko“, predtým mierili na panely-na-kapotu.
+KATALOG = "/produkty/"
+
+# Odporúčané produkty — štyri, ktoré klient vymenoval. „Landcruiser
+# LC250“ je u nás Prado 250, „Hilux 2015+“ je spoločná položka
+# Hilux/Fortuner. Pri iKamperi si návrh druh stanu nevyberá, tak berieme
+# najnovší model Skycamp 4.0.
 ODPORUCAME = [
-    "dacia-duster-lensun-40w-hood-bonnet-solar-panel",
-    "toyota-land-cruiser-100-series-lensun-100w-hood-flexible-solar-panel",
-    "lensun-400w-200w-flexible-solar-panel",
-    "lensunsolar-300w-solar-panel-blanket-with-controller",
+    "toyota-hilux-fortuner-lensun-100w-bonnet-flexible-solar-panel",
+    "toyota-landcruiser-prado-250-lensun-115w-bonnet-flexible-solar-panel",
+    "ikamper-skycamp-4-0-roof-tent-lensun-300w-flexible-solar-panel",
+    "lensun-200w-flexible-solar-panel-n-type-cell",
 ]
 
 # Výhody v páse „Energia, ktorá vám dáva slobodu“ — o produkte.
@@ -144,7 +172,7 @@ def hero():
     <p class="rnc-lead">Vybavenie pre overlanding, off-road a nezávislé
        cestovanie.</p>
     <p class="rnc-cta">
-      <a class="rnc-btn" href="/panely-na-kapotu/">Zobraziť katalóg</a>
+      <a class="rnc-btn" href="{KATALOG}">Zobraziť katalóg</a>
     </p>
     <ul class="rnc-hero-body">{body}</ul>
   </div>
@@ -163,49 +191,43 @@ def vyhladavanie():
 
 
 def kategorie(P, meta):
-    """Štyri veľké dlaždice a pod nimi štítky so všetkými kategóriami.
+    """Štyri dlaždice podľa návrhu.
 
-    Fotky v dlaždiciach sú naše vlastné kópie, nie odkazy na
-    cdn.shopify.com — prečo, je v tools/fotky_kategorii.py. Keď niektorá
-    chýba, dlaždica by zostala prázdna a nebolo by to na prvý pohľad
-    vidieť, tak to radšej povieme hneď.
+    Fotky sú naše vlastné kópie, nie odkazy na cdn.shopify.com — prečo,
+    je v tools/fotky_kategorii.py. Keď fotka chýba, dlaždica vyjde ako
+    tmavé pole; to je v poriadku, návrh ich tak má tri zo štyroch.
+    Chýbajúci súbor pri kategórii, ktorá ho mať má, je ale chyba.
     """
-    pocty = {c["k"]: c["n"] for c in meta["cats"]}
     fotky = os.path.join(vystup.IMPORT, "vzhlad", "fotky")
-    chyba = [s for _, _, s in KATEGORIE
-             if not os.path.exists(os.path.join(fotky, f"kategoria-{s}.jpg"))]
+    chyba = [f for _, _, f in DLAZDICE
+             if f and not os.path.exists(os.path.join(fotky, f"kategoria-{f}.jpg"))]
     if chyba:
         sys.exit("chýbajú fotky kategórií — spusti najprv:\n"
                  "  python3 tools/fotky_kategorii.py\n  "
                  + "\n  ".join(f"kategoria-{x}.jpg" for x in chyba))
-    foto = {s: f"/user/documents/upload/kategoria-{s}.jpg"
-            for _, _, s in KATEGORIE}
 
-    velke = "".join(f'''
+    dlazdice = []
+    for nazov, slug, foto in DLAZDICE:
+        st = (f" style=\"background-image:url('/user/documents/upload/"
+              f"kategoria-{foto}.jpg')\"" if foto else "")
+        dlazdice.append(f'''
     <a class="rnc-cat" href="/{slug}/">
-      <span class="rnc-cat-img" style="background-image:url('{e(foto[slug])}')"></span>
-      <span class="rnc-cat-txt"><strong>{e(nazov)}</strong>
-        <span>{pocty.get(k, 0)} produktov</span></span>
+      <span class="rnc-cat-img"{st}></span>
+      <span class="rnc-cat-txt">{e(nazov)}</span>
       <span class="rnc-cat-sip">→</span>
-    </a>''' for k, nazov, slug in KATEGORIE if k in VELKE)
-
-    stitky = "".join(
-        f'<a href="/{slug}/">{e(nazov)} <span>{pocty.get(k, 0)}</span></a>'
-        for k, nazov, slug in KATEGORIE)
+    </a>''')
 
     return f'''
 <section class="rnc-sec">
   <div class="rnc-sec-head">
     <div>
-      <p class="rnc-eyebrow">KATEGÓRIE</p>
-      <h2>Vyberte, čo hľadáte</h2>
+      <h2>Objavte naše kategórie</h2>
+      <p class="rnc-sub">Solárne riešenia, kempingové a expedičné vybavenie</p>
     </div>
-    <a class="rnc-more" href="/panely-na-kapotu/">Zobraziť celý katalóg →</a>
+    <a class="rnc-more" href="{KATALOG}">Zobraziť všetky kategórie</a>
   </div>
-  <div class="rnc-cats">{velke}
+  <div class="rnc-cats">{"".join(dlazdice)}
   </div>
-  <p class="rnc-eyebrow rnc-eyebrow-sm">SOLÁRNE PANELY PODĽA TYPU</p>
-  <div class="rnc-chips">{stitky}</div>
 </section>'''
 
 
@@ -231,11 +253,13 @@ def odporucame(P):
         # zvyšok zahodí. Na ostrej stránke tak zo štyroch kariet
         # zostali holé texty bez fotky a bez prekliku. Dlaždice
         # kategórií to prežili práve preto, že majú len spany.
+        # Poradie textov pod fotkou je z návrhu: najskôr kategória,
+        # až potom názov produktu menším a sivým písmom.
         karty.append(f'''
     <a class="rnc-prod" href="{e(ADRESY[p["id"]])}">
       <span class="rnc-prod-img" style="background-image:url('{e((p.get("img") or [""])[0])}')"></span>
+      <span class="rnc-prod-hlava">{e(kat)}</span>
       <span class="rnc-prod-n">{e(p["n"]["sk"])}</span>
-      <span class="rnc-prod-kat">{e(kat)}</span>
       <span class="rnc-prod-cena">od <strong>{cena(od_ceny(p))}</strong>
          <span>s DPH</span></span>
       <span class="rnc-more">Zobraziť detail →</span>
@@ -244,12 +268,11 @@ def odporucame(P):
 <section class="rnc-sec">
   <div class="rnc-sec-head">
     <div>
-      <p class="rnc-eyebrow">ODPORÚČAME</p>
-      <h2>Odporúčame</h2>
+      <h2>Odporúčané produkty</h2>
+      <p class="rnc-sub">S našou výbavou zvládnete viac.</p>
     </div>
-    <a class="rnc-more" href="/panely-na-kapotu/">Zobraziť celý katalóg →</a>
+    <a class="rnc-more" href="{KATALOG}">Zobraziť všetky produkty</a>
   </div>
-  <p class="rnc-sub">Vyberte produkt a prevedenie, vložte do košíka a objednajte.</p>
   <div class="rnc-prods">{"".join(karty)}
   </div>
 </section>'''
@@ -289,15 +312,14 @@ def recenzie():
     karty = "".join(f'''
     <figure class="rnc-rev">
       <span class="rnc-rev-img" style="background-image:url('{e(r["img"])}')"></span>
-      <blockquote>{e(r["sk"])}</blockquote>
       <figcaption><strong>{e(r["who"])}</strong><span>{e(r["car"])}</span></figcaption>
+      <blockquote>{e(r["sk"])}</blockquote>
     </figure>''' for r in REVIEWS)
     return f'''
 <section class="rnc-sec">
-  <p class="rnc-eyebrow">RECENZIE</p>
   <h2>Skúsenosti zákazníkov</h2>
-  <p class="rnc-sub">Zostavy na reálnych vozidlách. Recenzie z lensunsolar.com,
-     preložené a skrátené.</p>
+  <p class="rnc-sub">Preverené cestami. Zhodnotené zákazníkmi.
+     Autentické názory na produkty.</p>
   <div class="rnc-revs">{karty}</div>
 </section>'''
 
@@ -306,27 +328,29 @@ def clanky():
     def datum(d):
         r, m, den = d.split("-")
         return f"{int(den)}. {int(m)}. {r}"
+    # Štítok rubriky je podľa návrhu vnútri fotky, nie pod ňou, a dátum
+    # sa neuvádza — klient ho nechce, pri návodoch starne zbytočne.
     karty = "".join(f'''
     <article class="rnc-post">
       <a class="rnc-post-img" href="{BLOG_ZAKLAD}/{e(a["slug"])}/"
-         style="background-image:url('{e(a.get("hero") or "")}')"></a>
-      <p class="rnc-post-meta"><span class="rnc-tag">{e(B.CAT[a["cat"]][0])}</span>
-         {datum(a["date"])}</p>
+         style="background-image:url('{e(a.get("hero") or "")}')"
+         ><span class="rnc-tag">{e(B.CAT[a["cat"]][0])}</span></a>
       <h3><a href="{BLOG_ZAKLAD}/{e(a["slug"])}/">{e(a["title"][0])}</a></h3>
       <p>{e(a["lead"][0][:130])}…</p>
-      <p><a class="rnc-more" href="{BLOG_ZAKLAD}/{e(a["slug"])}/">Čítať viac →</a></p>
+      <p><a class="rnc-more rnc-more-tmavy"
+            href="{BLOG_ZAKLAD}/{e(a["slug"])}/">Čítať viac →</a></p>
     </article>''' for a in B.newest(3))
     return f'''
 <section class="rnc-sec rnc-band rnc-band-biely">
   <div class="container">
   <div class="rnc-sec-head">
     <div>
-      <p class="rnc-eyebrow">BLOG</p>
       <h2>Tipy, montáž a inšpirácia</h2>
+      <p class="rnc-sub">Návody a nápady, vďaka ktorým z techniky
+         vyťažíte maximum.</p>
     </div>
-    <a class="rnc-more" href="{BLOG_ZAKLAD}/">Všetky články →</a>
+    <a class="rnc-more" href="{BLOG_ZAKLAD}/">Zobraziť všetky články</a>
   </div>
-  <p class="rnc-sub">Návody a nápady, vďaka ktorým z techniky vyťažíte maximum.</p>
   <div class="rnc-posts">{karty}</div>
   </div>
 </section>'''
@@ -338,11 +362,13 @@ def b2b():
   <div class="container rnc-b2b-in">
     <div>
       <h2>Ste predajca alebo montážny servis?</h2>
-      <p>Partnerské ceny a nákupné funkcie uvidíte po prihlásení do B2B.</p>
+      <p>Máte predajňu, servis alebo sa venujete úpravám terénnych
+         vozidiel? Ozvite sa nám. Radi vám predstavíme našu ponuku
+         a pozrieme sa, ako by sme mohli spolupracovať.</p>
     </div>
     <p class="rnc-cta">
       <a class="rnc-btn" href="/velkoobchod/">Registrácia partnera</a>
-      <a class="rnc-btn rnc-btn-ghost" href="/login/">Prihlásiť sa do B2B →</a>
+      <a class="rnc-btn rnc-btn-ghost" href="/login/">Prihlásiť sa ako partner</a>
     </p>
   </div>
 </section>'''
@@ -362,7 +388,7 @@ def main():
         "     Vkladá sa do: Vzhľad a obsah → Stránky → úvodná stránka,",
         "     v editore prepni na HTML režim. -->",
         hero(), vyhladavanie(), kategorie(P, meta), odporucame(P),
-        benefity(), recenzie(), clanky(), b2b(),
+        benefity(), recenzie(), b2b(), clanky(),
     ]
     h = "\n".join(casti) + "\n"
     ciel = vystup.kam(vystup.IMPORT, "vzhlad", "uvodna-stranka.html")
@@ -370,9 +396,14 @@ def main():
         f.write(h)
     print(f"{len(h):>6} znakov -> {ciel}")
     print(f"  sekcií: {len(casti) - 4}")
-    print(f"  kategórií: {len(KATEGORIE)} · značiek: {len(meta['brands'])} · "
+    print(f"  dlaždíc: {len(DLAZDICE)} · značiek: {len(meta['brands'])} · "
           f"produktov: {len(ODPORUCAME)} · recenzií: {len(REVIEWS)} · článkov: 3")
     print("  vyhľadávanie vozidla: vložené")
+    print("\n  POZOR — tieto kategórie existujú, ale nemajú produkty.")
+    print("  Dlaždica sa zobrazí, klik ale vedie na prázdny výpis:")
+    for nazov, slug, _ in DLAZDICE:
+        if slug in PRAZDNE:
+            print(f"    {nazov:<42} /{slug}/")
 
 
 if __name__ == "__main__":

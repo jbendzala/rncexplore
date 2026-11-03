@@ -93,28 +93,31 @@ CLANKOV_NA_BLOGU = 9
 # Adresy sú overené proti živému obchodu, nie odhadnuté. Dve sa od
 # predpokladu líšia: články sú na /blog/ (nie /nase-spravy/) a kontakt
 # na /kontakty/ (nie /kontakt/).
+# Stĺpec Produkty má podľa návrhu to isté, čo dlaždice na domovskej,
+# plus panely na mieru. Adresy sú overené proti živému obchodu —
+# kempovanie aj strešné stany už existujú, zatiaľ bez tovaru.
 PRODUKTY = [
-    ("Panely na kapotu",   "/panely-na-kapotu/"),
-    ("Flexibilné panely",  "/flexibilne-panely/"),
-    ("Pre strešné stany",  "/pre-stresne-stany/"),
-    ("Na kryty korby",     "/na-kryty-korby/"),
-    ("Karavany a prívesy", "/karavany-a-privesy/"),
-    ("Skladacie panely",   "/skladacie-panely/"),
-    ("Solárne deky",       "/solarne-deky/"),
+    ("Solárne panely na kapotu a strešné stany", "/panely-na-kapotu/"),
+    ("Flexibilné solárne panely",                "/flexibilne-panely/"),
+    ("Strešné stany a markízy",                  "/stresne-stany-a-markizy/"),
+    ("Kempovanie a outdoor",                     "/kempovanie-a-outdoor-vybavenie/"),
+    ("Panely na mieru",                          "/na-mieru/"),
 ]
 
-INFORMACIE = [
-    ("Veľkoobchod", "/velkoobchod/"),
-    ("Na mieru",    "/na-mieru/"),
-    ("Montáž",      "/montaz/"),
-    ("O nás",       "/o-nas/"),
-    ("Blog",        "/blog/"),
-    ("FAQ",         "/faq/"),
-    ("Kontakt",     "/kontakty/"),
+SERVIS = [
+    ("Doprava a platba", "/doprava-a-platba/"),
+    ("Montáž",           "/montaz/"),
+    ("Blog",             "/blog/"),
+    ("FAQ",              "/faq/"),
 ]
 
-PEREX = ("Solárna energia pre vozidlá a karavany. Panely, regulátory "
-         "a vybavenie pre cestovateľov.")
+VELKOOBCHOD = [
+    ("Informácie",  "/velkoobchod/"),
+    ("Registrácia", "/registracia/"),
+]
+
+PEREX = ("Solárne riešenia, kempingové a outdoor vybavenie pre "
+         "cestovateľov, dobrodruhov aj profesionálov.")
 
 # Istoty pod tlačidlom na detaile produktu. Sú to naše skutočné
 # podmienky, nie sľuby navyše — tie isté vety sú na domovskej aj
@@ -135,9 +138,14 @@ SLUBY = []
 # z horného menu, aby sa na ne dalo dostať aj po prerobení lišty.
 # „Ako nakupovať“ tu bývalo tiež, ale tú stránku sme zrušili — jej
 # obsah pokrývajú obchodné podmienky. Odkaz by viedol na 404.
+# Cookies nemajú vlastnú stránku — Shoptet na ne otvára svoje okno
+# cez triedu js-cookies-settings. /cookies/ je 404, overené.
 PRAVNE = [
     ("Obchodné podmienky", "/obchodne-podmienky/"),
+    ("Reklamácie", "/reklamacie/"),
     ("Ochrana osobných údajov", "/podmienky-ochrany-osobnych-udajov/"),
+    ("Cookies", None),
+    ("Identifikácia prevádzkovateľa", "/identifikacia-prevadzkovatela/"),
 ]
 
 
@@ -246,7 +254,12 @@ def stlpec(nadpis, odkazy):
 
 
 def blok():
-    pravne = "".join(f'<a href="{e(u)}">{e(n)}</a>' for n, u in PRAVNE)
+    # Oddeľovač je samostatný prvok, nie ::before vnútri odkazu —
+    # tam by sa bodka stala súčasťou klikateľnej plochy.
+    pravne = '<span class="rnc-pata-bod">·</span>'.join(
+        f'<a href="{e(u)}">{e(n)}</a>' if u
+        else f'<a href="#" class="js-cookies-settings">{e(n)}</a>'
+        for n, u in PRAVNE)
     sluby = "".join(f'<span>{e(x)}</span>' for x in SLUBY)
     return f'''<div id="rnc-top" class="rnc-top">
   <div class="rnc-top-sluby">{sluby}</div>
@@ -261,14 +274,11 @@ def blok():
     <div class="rnc-pata-st rnc-pata-znacka">
       <h3>RNC EXPLORE</h3>
       <p>{e(PEREX)}</p>
+      <p class="rnc-pata-kontakt"><a href="/kontakty/">Kontakt</a></p>
     </div>
     {stlpec("Produkty", PRODUKTY)}
-    {stlpec("Informácie", INFORMACIE)}
-    <div class="rnc-pata-st">
-      <h3>Pre partnerov a kontakt</h3>
-      <p><a class="rnc-btn-ghost-amber" href="/velkoobchod/">Veľkoobchod (B2B) →</a></p>
-      <p class="rnc-pata-jazyk"><strong>SK</strong><span>|</span>CZ</p>
-    </div>
+    {stlpec("Zákaznícky servis", SERVIS)}
+    {stlpec("Veľkoobchod", VELKOOBCHOD)}
   </div>
   <div class="container rnc-pata-spodok">
     {pravne}
@@ -670,6 +680,30 @@ def skript():
     }}
   }}
 
+  /* Recenzie na domovskej: dva riadky a zvyšok na rozkliknutie.
+     Orez zapíname až odtiaľto, nie priamo v CSS — keby skript
+     nedobehol, zostal by text natrvalo useknutý bez tlačidla, ktorým
+     sa dá rozbaliť. Tlačidlo dávame len tam, kde sa text naozaj
+     nezmestil; pri krátkej recenzii by inak nerobilo nič. */
+  document.querySelectorAll(".rnc-rev").forEach(function (k) {{
+    var t = k.querySelector("blockquote");
+    if (!t || k.querySelector(".rnc-rev-viac")) {{ return; }}
+    k.classList.add("rnc-rev-orez");
+    if (t.scrollHeight <= t.clientHeight + 1) {{
+      k.classList.remove("rnc-rev-orez");
+      return;
+    }}
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "rnc-rev-viac";
+    b.textContent = "Zobraziť celú recenziu";
+    b.addEventListener("click", function () {{
+      var cele = k.classList.toggle("rnc-rev-cele");
+      b.textContent = cele ? "Skryť" : "Zobraziť celú recenziu";
+    }});
+    k.appendChild(b);
+  }});
+
   var obal = document.querySelector(".products-block");
   if (obal && window.MutationObserver) {{
     new MutationObserver(dopln).observe(obal.parentNode || obal,
@@ -710,7 +744,7 @@ def main():
     print(f"   {znakov:>6} znakov · strop {STROP} · "
           + (f"zmestí sa, zostáva {STROP - znakov}" if znakov <= STROP
              else "PRESAHUJE, treba skrátiť"))
-    print(f"   odkazov: {len(PRODUKTY) + len(INFORMACIE) + 2}")
+    print(f"   odkazov: {len(PRODUKTY) + len(SERVIS) + len(VELKOOBCHOD) + len(PRAVNE) + 1}")
     if znakov > STROP:
         sys.exit(1)
 

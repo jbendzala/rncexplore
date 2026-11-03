@@ -1200,25 +1200,16 @@ input:checked + .filter-label,
   color: #B9BDB6; font-size: 14px; line-height: 1.9; text-decoration: none;
 }
 #footer .rnc-pata-st a:hover { color: var(--rnc-amber); }
-/* Obrysové tlačidlo — v návrhu jediné jantárové miesto v pätičke. */
-#footer .rnc-btn-ghost-amber {
-  display: inline-flex; align-items: center; justify-content: center;
-  min-height: 44px; padding: 0 22px;
-  border: 1px solid var(--rnc-amber); border-radius: 999px;
-  color: var(--rnc-amber); text-decoration: none;
-  font-family: var(--rnc-display); font-weight: 700; font-size: 14px;
-  transition: background .18s, color .18s;
-}
-#footer .rnc-btn-ghost-amber:hover {
-  background: var(--rnc-amber); color: var(--rnc-tma);
-}
-.rnc-pata-jazyk { margin-top: 18px !important; }
-.rnc-pata-jazyk strong { color: #fff; font-weight: 600; }
-.rnc-pata-jazyk span { margin: 0 8px; color: rgba(255, 255, 255, .25); }
+/* Odkaz na kontakt pod perexom značky — v návrhu stojí samostatne,
+   oddelený medzerou, nie ako položka zoznamu. */
+.rnc-pata-kontakt { margin-top: 16px !important; }
+
 .rnc-pata-spodok {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px;
   margin-top: 48px; padding-top: 16px;
   border-top: 1px solid rgba(255, 255, 255, .1);
 }
+.rnc-pata-bod { color: #4A5248; font-size: 12px; }
 #footer .rnc-pata-spodok a {
   color: #8A9088; font-size: 12px; text-decoration: none;
 }
@@ -1359,9 +1350,14 @@ label { color: var(--rnc-ink); }
   align-items: flex-end; justify-content: space-between;
   margin-bottom: 8px;
 }
-.rnc-sec-head h2 { margin: 0; }
-.rnc-sec-head .rnc-more { white-space: nowrap; }
+.rnc-sec-head { margin-bottom: 22px; }
+.rnc-sec-head h2 { margin: 0; font-size: 28px; color: var(--rnc-head); }
+.rnc-sec-head .rnc-more { white-space: nowrap; color: var(--rnc-head); }
+.rnc-sec-head .rnc-more:hover { color: var(--rnc-amber-dark); }
 .rnc-sub, .rnc-note { color: var(--rnc-muted); margin: 0 0 24px; max-width: 62ch; }
+/* Podnadpis patrí pod nadpis do tej istej hlavy, nie pod celú hlavu —
+   návrh ho má tesne pod ním a menším sivým písmom. */
+.rnc-sec-head .rnc-sub { margin: 6px 0 0; font-size: 14px; }
 .rnc-note { margin-top: 20px; }
 
 .rnc-btn {
@@ -1527,22 +1523,38 @@ label { color: var(--rnc-ink); }
 
 
 
-/* kategórie */
+/* kategórie
+   Nie biela karta s fotkou nad textom, ale tmavé pole, v ktorom fotka
+   leží na pozadí a text sedí dole pod stmavením. Tri zo štyroch dlaždíc
+   sú v návrhu bez fotky — vtedy zostane len to tmavé pole, čo je presne
+   to, čo chceme, kým klient fotky nedodá. */
 .rnc-cats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
 .rnc-cat {
-  display: flex; flex-direction: column;
-  background: var(--rnc-surface);
-  border: 1px solid var(--rnc-line);
+  position: relative; display: block;
+  aspect-ratio: 5/6;
+  background: #1C211E;
   border-radius: var(--rnc-radius);
   overflow: hidden; text-decoration: none;
   transition: box-shadow .18s, transform .18s;
 }
 .rnc-cat:hover { box-shadow: var(--rnc-shadow); transform: translateY(-2px); }
-.rnc-cat-img { display: block; aspect-ratio: 4/3; background: var(--rnc-chip) center/cover; }
-.rnc-cat-txt { padding: 16px; flex: 1; }
-.rnc-cat-txt strong { display: block; font-family: var(--rnc-display); color: var(--rnc-head); }
-.rnc-cat-txt span { color: var(--rnc-muted); font-size: 13px; }
-.rnc-cat-sip { padding: 0 16px 16px; color: var(--rnc-tint); font-weight: 700; }
+.rnc-cat-img { position: absolute; inset: 0; background: center/cover; }
+/* Stmavenie silnie smerom dole, kde je text. Hore má fotka zostať
+   čitateľná, inak je z dlaždice len tmavý obdĺžnik. */
+.rnc-cat-img::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(14,21,18,.12) 0%,
+              rgba(14,21,18,.34) 48%, rgba(14,21,18,.93) 100%);
+}
+.rnc-cat-txt {
+  position: absolute; left: 18px; right: 48px; bottom: 16px;
+  font-family: var(--rnc-display); font-weight: 600;
+  font-size: 15px; line-height: 1.35; color: #fff;
+}
+.rnc-cat-sip {
+  position: absolute; right: 18px; bottom: 16px;
+  color: var(--rnc-amber); font-weight: 700;
+}
 
 .rnc-chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .rnc-chips a {
@@ -1561,26 +1573,40 @@ label { color: var(--rnc-ink); }
   border-radius: var(--rnc-radius);
   overflow: hidden;
 }
-.rnc-prod-img { display: block; aspect-ratio: 4/3; background: var(--rnc-surface) center/cover; }
+/* Fotka je v návrhu vložená do karty s odsadením a vlastnými oblými
+   rohmi, nie nalepená na jej okraj. */
+.rnc-prod-img {
+  display: block; aspect-ratio: 4/3;
+  background: #fff center/cover;
+  border-radius: 10px;
+}
 /* Karta je zvnútra len zo spanov — pozri komentár v shoptet_domovska.py.
    Riadkovanie im preto musí dať CSS, nie prehliadač. Stĺpec s medzerou
    navyše drží „Zobraziť detail“ dole, nech majú karty rovnakú výšku. */
 .rnc-prod {
   display: flex; flex-direction: column;
+  padding: 10px;
   text-decoration: none; color: inherit;
 }
 .rnc-prod:hover { border-color: var(--rnc-line-2); box-shadow: var(--rnc-shadow); }
-.rnc-prod-n {
-  display: block; margin: 14px 16px 2px;
+/* Výrazný riadok karty. Na domovskej je to kategória a názov je pod ním
+   sivý, vo výsledkoch vyhľadávania vozidla je tu názov — preto neutrálne
+   meno triedy a nie „-kat“. */
+.rnc-prod-hlava {
+  display: block; margin: 14px 6px 2px;
   font-family: var(--rnc-display); font-weight: 600;
   font-size: 15px; line-height: 1.35; color: var(--rnc-head);
 }
-.rnc-prod-kat { display: block; margin: 0 16px 8px; font-size: 13px; color: var(--rnc-muted); }
-.rnc-prod .rnc-more { display: block; margin: 0 16px 16px; font-size: 14px; color: var(--rnc-tint); }
+.rnc-prod-n {
+  display: block; margin: 0 6px 10px;
+  font-size: 13px; line-height: 1.45; color: var(--rnc-muted);
+}
+/* Návrh tu oranžový text nechce — odkaz je tmavý ako ostatný text. */
+.rnc-prod .rnc-more { display: block; margin: 0 6px 6px; font-size: 14px; color: var(--rnc-head); }
 .rnc-prod-cena {
   /* „auto“ hore odtlačí cenu aj odkaz pod ňou na spodok karty. */
-  display: block; margin: auto 16px 16px;
-  color: var(--rnc-muted); font-size: 14px;
+  display: block; margin: auto 6px 10px;
+  color: var(--rnc-muted); font-size: 13px;
 }
 .rnc-prod-cena strong {
   font-family: var(--rnc-display); font-size: 19px; color: var(--rnc-head);
@@ -1689,21 +1715,57 @@ label { color: var(--rnc-ink); }
 
 /* recenzie */
 .rnc-revs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+/* Biely rám, do ktorého je fotka vložená s odsadením a s vlastnými
+   oblými rohmi — rovnako ako pri kartách produktov. */
 .rnc-rev {
-  margin: 0; background: var(--rnc-surface);
+  margin: 0; display: flex; flex-direction: column;
+  background: var(--rnc-surface);
   border: 1px solid var(--rnc-line);
-  border-radius: var(--rnc-radius); overflow: hidden;
+  border-radius: var(--rnc-radius);
+  padding: 10px;
 }
-.rnc-rev-img { display: block; aspect-ratio: 16/10; background: var(--rnc-chip) center/cover; }
-.rnc-rev blockquote { margin: 0; padding: 18px 18px 10px; font-size: 15px; line-height: 1.6; }
-.rnc-rev figcaption { padding: 0 18px 18px; font-size: 13px; color: var(--rnc-muted); }
-.rnc-rev figcaption strong { display: block; color: var(--rnc-ink); font-family: var(--rnc-display); }
+.rnc-rev-img {
+  display: block; aspect-ratio: 16/10;
+  background: var(--rnc-chip) center/cover;
+  border-radius: 10px;
+}
+.rnc-rev figcaption { padding: 14px 6px 8px; font-size: 13px; color: var(--rnc-muted); }
+.rnc-rev figcaption strong {
+  display: block; color: var(--rnc-head);
+  font-family: var(--rnc-display); font-weight: 600; font-size: 15px;
+}
+/* Z recenzie vidno dva riadky, zvyšok si zákazník rozklikne. Tlačidlo
+   dopĺňa rnc-skript.js — bez neho zostane text orezaný, preto sa orez
+   zapína až triedou, ktorú skript pridá. */
+/* Riadkovanie je zámerne v pixeloch, nie násobkom — podľa neho sa
+   počíta výška dvoch riadkov nižšie. */
+.rnc-rev blockquote {
+  margin: 0; padding: 0 6px 10px;
+  font-size: 14px; line-height: 22px; color: var(--rnc-ink);
+  /* Bez tohto ju flexbox karty stlačí pod jej obsah a text sa oreže
+     v polovici riadku aj vtedy, keď orezaný byť nemá. */
+  flex: 0 0 auto;
+}
+/* Orez výškou, nie cez -webkit-line-clamp. Clamp potrebuje
+   display:-webkit-box, lenže blockquote je tu položka flexboxu a tú
+   prehliadač poblokuje — výsledné display vyjde flow-root a clamp
+   prestane platiť. Dva riadky po 22 px sú 44. */
+.rnc-rev-orez blockquote { max-height: 44px; overflow: hidden; }
+.rnc-rev-orez.rnc-rev-cele blockquote { max-height: none; }
+.rnc-rev-viac {
+  align-self: flex-start; margin: auto 6px 6px;
+  background: none; border: 0; padding: 0; cursor: pointer;
+  font-family: var(--rnc-display); font-weight: 600; font-size: 13px;
+  color: var(--rnc-head);
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.rnc-rev-viac:hover { color: var(--rnc-amber-dark); }
 
 /* články */
 .rnc-posts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
 .rnc-post { background: transparent; }
 .rnc-post-img {
-  display: block; aspect-ratio: 16/10;
+  position: relative; display: block; aspect-ratio: 16/10;
   background: var(--rnc-chip) center/cover;
   border-radius: var(--rnc-radius); margin-bottom: 12px;
 }
@@ -1713,6 +1775,14 @@ label { color: var(--rnc-ink); }
   padding: 3px 10px; margin-right: 8px;
   font-family: var(--rnc-display); font-weight: 600; font-size: 12px; color: var(--rnc-ink);
 }
+/* Štítok rubriky sedí podľa návrhu vnútri fotky, v jej ľavom hornom
+   rohu. Na fotke je tmavý podklad, tak si nesie vlastné farby. */
+.rnc-post-img .rnc-tag {
+  position: absolute; top: 12px; left: 12px; margin: 0;
+  background: rgba(14,21,18,.82); color: #fff;
+}
+.rnc-more-tmavy { color: var(--rnc-head); }
+.rnc-more-tmavy:hover { color: var(--rnc-amber-dark); }
 .rnc-post h3 { font-size: 17px; margin: 0 0 6px; }
 .rnc-post h3 a { color: var(--rnc-head); text-decoration: none; }
 .rnc-post h3 a:hover { color: var(--rnc-tint); }
@@ -1737,7 +1807,27 @@ label { color: var(--rnc-ink); }
 .rnc-b2b-in {
   display: flex; flex-wrap: wrap; align-items: center;
   justify-content: space-between; gap: 20px;
+  text-align: left;
 }
+/* „Sekciu o kúsok širšiu“ — pás je cez celé okno už teraz, širší má byť
+   obsah v ňom, aby text siahal viac doľava a tlačidlá viac doprava.
+   Robíme to odsadením, nie šírkou: .container je tu fluidný a jeho
+   100 % je celé okno, takže calc(100% + 72px) ho pretiahol za okraj. */
+@media (min-width: 1200px) {
+  /* .container má na veľkých obrazovkách vlastný strop a vycentruje sa,
+     čím vyjde užší než sekcie okolo. Strop tu teda rušíme a šírku
+     držíme odsadením — nie cez calc(100% + …), ktoré sa počíta z celého
+     okna a pás pretiahlo za jeho okraj. */
+  /* Pás má pozadie cez celé okno, obsah v ňom ale sedí presne tam, kde
+     sekcie okolo — .container si drží vlastnú šírku aj automatické
+     okraje, ktoré ho vycentrujú. Rušíme oboje, nie šírku cez calc ani
+     záporné okraje: tie pás zakaždým pretiahli za okraj okna. */
+  .rnc-b2b > .rnc-b2b-in {
+    width: auto; max-width: none; margin-left: 0; margin-right: 0;
+  }
+}
+.rnc-b2b-in > div { flex: 1 1 420px; min-width: 0; }
+.rnc-b2b-in > .rnc-cta { flex: 0 0 auto; justify-content: flex-end; }
 .rnc-b2b h2 { color: #fff; margin: 0 0 6px; }
 .rnc-b2b p { color: rgba(255,255,255,.78); margin: 0; }
 .rnc-b2b .rnc-cta { margin: 0; }
@@ -2613,7 +2703,14 @@ body:not(.type-index) .breadcrumbs-wrapper { padding-inline: 20px; }
 }
 
 @media (max-width: 560px) {
-  .rnc-cats, .rnc-prods { grid-template-columns: 1fr; }
+  .rnc-prods { grid-template-columns: 1fr; }
+  /* Dlaždice kategórií zostávajú po dvoch aj na telefóne. V jednom
+     stĺpci by pri pomere 5/6 mala každá cez 400 px a štyri za sebou by
+     boli na polovicu obrazovky dlhé rolovanie. */
+  .rnc-cats { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  /* Vpravo musí zostať miesto na šípku, inak doň text vbehne. */
+  .rnc-cat-txt { left: 12px; right: 34px; bottom: 12px; font-size: 13px; }
+  .rnc-cat-sip { right: 12px; bottom: 12px; }
   .rnc-hero { min-height: 380px; }
   .rnc-hero-in h2 { font-size: 30px; }
 }
