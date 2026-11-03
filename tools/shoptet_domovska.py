@@ -330,10 +330,15 @@ def clanky():
         return f"{int(den)}. {int(m)}. {r}"
     # Štítok rubriky je podľa návrhu vnútri fotky, nie pod ňou, a dátum
     # sa neuvádza — klient ho nechce, pri návodoch starne zbytočne.
+    #
+    # Fotky berieme z vlastnej kópie v Správcovi súborov, nie z adresy
+    # v článku. Tie mierili jednak na /assets/ zo starého webu, čo je
+    # na Shoptete 404 a karta zostala prázdna, jednak na cdn.shopify.com
+    # — teda na stránku dodávateľa, ktorý ich môže kedykoľvek prehodiť.
     karty = "".join(f'''
     <article class="rnc-post">
       <a class="rnc-post-img" href="{BLOG_ZAKLAD}/{e(a["slug"])}/"
-         style="background-image:url('{e(a.get("hero") or "")}')"
+         style="background-image:url('/user/documents/upload/blog-{e(a["slug"])}.jpg')"
          ><span class="rnc-tag">{e(B.CAT[a["cat"]][0])}</span></a>
       <h3><a href="{BLOG_ZAKLAD}/{e(a["slug"])}/">{e(a["title"][0])}</a></h3>
       <p>{e(a["lead"][0][:130])}…</p>
@@ -399,6 +404,9 @@ def main():
     print(f"  dlaždíc: {len(DLAZDICE)} · značiek: {len(meta['brands'])} · "
           f"produktov: {len(ODPORUCAME)} · recenzií: {len(REVIEWS)} · článkov: 3")
     print("  vyhľadávanie vozidla: vložené")
+    print("\n  fotky článkov na nahratie do Správcu súborov:")
+    for a in B.newest(3):
+        print(f"    blog-{a['slug']}.jpg")
     print("\n  POZOR — tieto kategórie existujú, ale nemajú produkty.")
     print("  Dlaždica sa zobrazí, klik ale vedie na prázdny výpis:")
     for nazov, slug, _ in DLAZDICE:

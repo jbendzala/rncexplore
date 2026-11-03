@@ -478,7 +478,13 @@ textarea:focus-visible,
      súbore loga — po jeho orezaní sa menu nalepilo na logo. */
   .header-top > .site-name-wrapper  { order: 1; flex: 0 0 auto; margin: 0 36px 0 0; }
   #navigation                       { order: 2; }
-  .header-top > .search             { order: 3; flex: 0 1 320px; margin-left: auto; }
+  /* Dolná hranica je tu preto, že pole sa pri dlhšom menu stlačí až na
+     šírku lupy a z placeholderu zostane „Napíš“. Shrink mu to dovolí,
+     lebo min-width je u flex položky predvolene auto a formulár sa vie
+     zúžiť na obsah. 220 px je ešte čitateľné a do hlavičky sa to aj pri
+     1280 px zmestí. */
+  .header-top > .search             { order: 3; flex: 0 1 320px; margin-left: auto;
+                                      min-width: 220px; }
   .header-top > .navigation-buttons { order: 4; flex: 0 0 auto; }
 
   /* Menu v jednom riadku si vyžiada prebiť Shoptetov skript, ktorý si
@@ -536,6 +542,16 @@ textarea:focus-visible,
 
   /* Menu a vyhľadávanie trochu od seba. */
   #navigation { margin-right: 24px; }
+}
+
+/* Medzi 1200 a 1400 px je riadok tesný: šesť položiek menu, logo,
+   vyhľadávanie a dve ikony. Uberieme položkám z odsadenia — to je
+   najlacnejšie miesto, odkiaľ sa dá vziať. Bez toho sa musí stlačiť
+   vyhľadávanie a zostane z neho lupa s dvoma slovami. */
+@media (min-width: 1200px) and (max-width: 1400px) {
+  .navigation-in > ul.menu-level-1 { gap: 2px; }
+  .navigation-in > ul > li > a { padding: 8px 7px; }
+  #navigation { margin-right: 10px; }
 }
 
 /* Zvislé čiarky medzi položkami menu. Rušili sme ich len nad 1200 px,
