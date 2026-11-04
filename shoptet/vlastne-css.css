@@ -2668,6 +2668,18 @@ body:not(.type-index) .breadcrumbs-wrapper { padding-inline: 20px; }
 }
 .cart-table th { font-family: var(--rnc-display); color: var(--rnc-muted); }
 
+/* Pás „Darčeky a zľavy“ v košíku. Shoptet doň pri každom neprázdnom
+   košíku napíše „Dopravu máte zadarmo!“, hoci pokladňa o krok ďalej
+   dopravu naúčtuje — produkty príznak doprava zadarmo nemajú, vypnutý
+   je aj v Produkty → Zľavy, a prázdny košík hlášku nevypíše. Spúšťa to
+   teda nejaké zľavové pravidlo, ktoré sme v administrácii nenašli.
+
+   Kým sa nájde, celý pás skrývame: žiadne darčeky ani zľavy zatiaľ
+   nebežia, takže okrem tej nepravdivej vety v ňom nič nie je. Keď sa
+   akcia naozaj spustí, toto pravidlo treba zmazať — inak ju zákazník
+   neuvidí. */
+.cart-summary { display: none; }
+
 /* --- 21. MENŠIE OBRAZOVKY -----------------------------------------------
    Zoradené zostupne. Pri rovnakej špecificite rozhoduje poradie
    v súbore, takže predtým, keď boli pomiešané, prepisoval širší
