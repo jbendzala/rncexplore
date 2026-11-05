@@ -541,6 +541,21 @@ textarea:focus-visible,
   .navigation-in > ul.menu-level-1 { display: flex; gap: 4px; }
   .navigation-in > ul > li > a { padding: 8px 12px; white-space: nowrap; }
 
+  /* Trojuholníček za každou položkou menu. Shoptet vlastnú šípku
+     pridáva len tam, kde je podmenu — to je dnes jediné „Produkty“ —
+     a kreslí ju ikonovým písmom. Skrývame ju a všetkým položkám
+     dávame rovnaký tvar z orámovania, nech je menu jednotné. */
+  .navigation-in > ul > li > a .submenu-arrow { display: none; }
+  .navigation-in > ul > li > a::after {
+    content: ""; display: inline-block;
+    width: 0; height: 0; margin-left: 7px; vertical-align: 2px;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid currentColor;
+    opacity: .55;
+  }
+  .navigation-in > ul > li > a:hover::after { opacity: 1; }
+
   /* Zvislé čiarky medzi položkami dáva Shoptet cez border-left a farbu
      si počíta z --color-primary — odkedy je jantárová, svietia. Návrh
      ich nemá, položky oddeľuje len medzera. Rušíme ich len tu: v
