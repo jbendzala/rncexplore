@@ -647,7 +647,9 @@ textarea:focus-visible,
    triedu .visible-lg-inline-block s „display: inline-block!important“,
    ktorú bez toho isté slovo neprebijem. */
 #header .navigation-buttons .cart-price { display: none !important; }
-#header .navigation-buttons .btn.cart-count::before { font-size: 22px; }
+/* Bez riadkovania sa rám znaku zmenší na nulu a ikonové písmo sa
+   vykreslí od účiaria — košík potom sedel mimo stredu svojho krúžku. */
+#header .navigation-buttons .btn.cart-count::before { font-size: 22px; line-height: 1; }
 #header .navigation-buttons .rnc-ucet > span { display: none; }
 #header .navigation-buttons .rnc-ucet::before {
   content: "\e922";
@@ -1046,7 +1048,13 @@ input:checked + .filter-label,
   padding: 10px 12px;
 }
 
+/* Pole s počtom a tlačidlo musia byť rovnako vysoké. Výška oboch
+   doteraz vychádzala z obsahu — tlačidlu ju dal padding, poľu zasa
+   výška šípok — a stačila drobná odchýlka a riadok sa rozišiel. */
 .add-to-cart { display: flex; gap: 10px; align-items: stretch; }
+.add-to-cart > .quantity,
+.add-to-cart > .btn { min-height: 52px; }
+.add-to-cart > .quantity { display: inline-flex; align-items: center; }
 .add-to-cart .quantity input {
   border: 1px solid var(--rnc-line-2);
   border-radius: 10px;
@@ -2751,6 +2759,25 @@ body:not(.type-index) .breadcrumbs-wrapper { padding-inline: 20px; }
   border-radius: var(--rnc-radius);
 }
 .cart-table th { font-family: var(--rnc-display); color: var(--rnc-muted); }
+
+/* Obsah košíka aj pokladne bol nalepený na hornú lištu. */
+body.ordering-process #content { padding-top: 28px; }
+
+/* Počet kusov patrí na stred poľa. Shoptet ho zarovnáva doprava
+   a obalu dáva odsadenie len sprava, kde sedia šípky — číslo tak
+   vyšlo o jedenásť pixelov vľavo od stredu. Platí pre košík,
+   rozbaľovacie okno aj detail produktu. */
+.quantity input.amount { text-align: center; }
+
+/* Riadok dopravy: názov, logo a cena majú rôznu výšku (18, 40 a 18 px)
+   a label ich zarovnával k hornej hrane, takže logo viselo o desať
+   pixelov nižšie než text vedľa neho.
+   Selektor musí mať rovnakú váhu ako Shoptetov
+   „.radio-wrapper input[type=radio]+label“, inak si flex-start
+   udrží. */
+.shipping-billing-table .radio-wrapper input[type="radio"] + label {
+  align-items: center;
+}
 
 /* Pás „Darčeky a zľavy“ v košíku. Shoptet doň pri každom neprázdnom
    košíku napíše „Dopravu máte zadarmo!“, hoci pokladňa o krok ďalej
