@@ -1663,20 +1663,23 @@ label { color: var(--rnc-ink); }
 /* Výrazný riadok karty. Na domovskej je to kategória a názov je pod ním
    sivý, vo výsledkoch vyhľadávania vozidla je tu názov — preto neutrálne
    meno triedy a nie „-kat“. */
+/* Texty majú mať tie isté zvislé okraje ako fotka nad nimi. Fotka
+   vypĺňa obsahový rám karty, takže im tu žiadne ďalšie odsadenie
+   nepatrí — s ním boli o 6 px užšie a karta vyzerala rozladená. */
 .rnc-prod-hlava {
-  display: block; margin: 14px 6px 2px;
+  display: block; margin: 14px 0 2px;
   font-family: var(--rnc-display); font-weight: 600;
   font-size: 15px; line-height: 1.35; color: var(--rnc-head);
 }
 .rnc-prod-n {
-  display: block; margin: 0 6px 10px;
+  display: block; margin: 0 0 10px;
   font-size: 13px; line-height: 1.45; color: var(--rnc-muted);
 }
 /* Návrh tu oranžový text nechce — odkaz je tmavý ako ostatný text. */
-.rnc-prod .rnc-more { display: block; margin: 0 6px 6px; font-size: 14px; color: var(--rnc-head); }
+.rnc-prod .rnc-more { display: block; margin: 0 0 6px; font-size: 14px; color: var(--rnc-head); }
 .rnc-prod-cena {
   /* „auto“ hore odtlačí cenu aj odkaz pod ňou na spodok karty. */
-  display: block; margin: auto 6px 10px;
+  display: block; margin: auto 0 10px;
   color: var(--rnc-muted); font-size: 13px;
 }
 .rnc-prod-cena strong {
@@ -1809,7 +1812,7 @@ label { color: var(--rnc-ink); }
   background: var(--rnc-chip) center/cover;
   border-radius: 10px;
 }
-.rnc-rev figcaption { padding: 14px 6px 8px; font-size: 13px; color: var(--rnc-muted); }
+.rnc-rev figcaption { padding: 14px 0 8px; font-size: 13px; color: var(--rnc-muted); }
 .rnc-rev figcaption strong {
   display: block; color: var(--rnc-head);
   font-family: var(--rnc-display); font-weight: 600; font-size: 15px;
@@ -1820,7 +1823,7 @@ label { color: var(--rnc-ink); }
 /* Riadkovanie je zámerne v pixeloch, nie násobkom — podľa neho sa
    počíta výška dvoch riadkov nižšie. */
 .rnc-rev blockquote {
-  margin: 0; padding: 0 6px 10px;
+  margin: 0; padding: 0 0 10px;
   font-size: 14px; line-height: 22px; color: var(--rnc-ink);
   /* Bez tohto ju flexbox karty stlačí pod jej obsah a text sa oreže
      v polovici riadku aj vtedy, keď orezaný byť nemá. */
@@ -1833,7 +1836,7 @@ label { color: var(--rnc-ink); }
 .rnc-rev-orez blockquote { max-height: 44px; overflow: hidden; }
 .rnc-rev-orez.rnc-rev-cele blockquote { max-height: none; }
 .rnc-rev-viac {
-  align-self: flex-start; margin: auto 6px 6px;
+  align-self: flex-start; margin: auto 0 6px;
   background: none; border: 0; padding: 0; cursor: pointer;
   font-family: var(--rnc-display); font-weight: 600; font-size: 13px;
   color: var(--rnc-head);
