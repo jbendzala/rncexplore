@@ -2271,6 +2271,23 @@ body:not(.type-index) .breadcrumbs-wrapper { padding-inline: 20px; }
   grid-column: 2; grid-row: 2; width: auto;
 }
 
+/* Na úzkej obrazovke sa dvojstĺpec nezmestí: bočný panel má pevných
+   280 px a s medzerou a odsadením zostalo pri 390 px okne na obsah
+   18 px. Hlavička výpisu sa doň nevošla, rozťahovala dokument na
+   542 px a prehliadač stránku oddialil.
+
+   Pravidlo musí stáť až tu, za definíciou mriežky. Keď som ho dal
+   vyššie k ostatným mobilným pravidlám, základná definícia ho
+   prebíjala — rovnaká špecificita, rozhoduje poradie. */
+@media (max-width: 991px) {
+  .type-category .content-wrapper-in {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+  .type-category .sidebar { grid-column: 1; grid-row: 2; }
+  .type-category .category-content-wrapper { grid-column: 1; grid-row: 3; }
+}
+
 /* Značky vozidiel tu boli ako štítky pod nadpisom. Odkedy je Značka
    vozidla filter, je to tá istá vec dvakrát na jednej obrazovke. */
 .type-category .subcategories { display: none; }
