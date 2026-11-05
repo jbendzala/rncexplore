@@ -200,6 +200,14 @@ body:not(.type-index) .p-image {
    kvôli farbe — a je vynútené ich vlastným pravidlom, nie mojou
    pohodlnosťou.                                                          */
 html { overflow-x: clip; }
+/* Shoptet parkuje zbalené mobilné menu vedľa obrazovky, takže dokument
+   je širší než okno; „clip“ to drží bez toho, aby z html urobil
+   rolovací kontajner a pokazil sticky hlavičku. Staršie Safari ho ale
+   nepozná a stránka sa potom dá odsunúť doprava — aj s cookie lištou,
+   ktorá sa roztiahne na šírku dokumentu. Pre ne záložné riešenie. */
+@supports not (overflow-x: clip) {
+  html, body { overflow-x: hidden; }
+}
 
 body {
   background: var(--rnc-bg) !important;
@@ -584,6 +592,28 @@ textarea:focus-visible,
    aj tak v rozbaľovacom menu, tak ho tu nedupľujeme. */
 @media (max-width: 767px) {
   #header .navigation-buttons .rnc-ucet { display: none; }
+
+  /* Lupa patrí k ostatným ikonám vpravo, nie na logo.
+     Shoptet necháva v hornej lište tri prepínače — hľadanie, prihlásenie
+     a menu. Hamburger si odsadí doprava sám, lupa ale zostane v toku na
+     ľavom okraji, teda presne na logu.
+
+     Posúvame ju okrajom, nie polohovaním: lupa je jediný prvok hornej
+     lišty, ktorý v toku zostal, a práve ona jej drží výšku 50 px. Keď
+     sme ju skúsili dať absolútne, lišta spadla na 10 px a stiahla so
+     sebou hamburger, ktorý má voči nej záporný top.
+        lupa    236–276
+        košík   286–330
+        menu    340–380                                                 */
+  .top-navigation-bar .container > div.top-navigation-tools {
+    margin-left: auto; margin-right: 19px;
+  }
+
+  /* Košík sedel o 8 px nižšie než hamburger. Horná lišta je vysoká
+     50 px, stred teda y=25; košík je vysoký 44, má byť na y=3. Leží
+     v .navigation-buttons, ktoré začína na y=50, takže posun je
+     3 − 50 = −47. Shoptet tam dáva −39 a tým ho zarovná na y=33. */
+  #header .navigation-buttons .btn-icon { top: -47px; }
 }
 /* Text „Prázdny košík“ preč — v návrhu je pri košíku len ikona
    a číslo. Počet vykresľuje Shoptet sám do vnoreného <i>.
@@ -2712,6 +2742,15 @@ body:not(.type-index) .breadcrumbs-wrapper { padding-inline: 20px; }
 }
 
 @media (max-width: 680px) {
+  /* B2B pás: na širokej obrazovke stojí text vľavo a tlačidlá vpravo,
+     na telefóne sa to nezmestí. „flex: 0 0 auto“ z toho pravidla navyše
+     bránilo tlačidlám zalomiť sa, takže riadok vyšiel 423 px široký na
+     390 px obrazovke a rozťahoval celý dokument do šírky. */
+  .rnc-b2b-in > div,
+  .rnc-b2b-in > .rnc-cta { flex: 1 1 100%; }
+  .rnc-b2b-in > .rnc-cta { justify-content: flex-start; }
+  .rnc-b2b .rnc-cta .rnc-btn { flex: 1 1 100%; }
+
   /* Tu je karta vysoká okolo 290 px, polia sú pod sebou. Tretina z toho
      by hero prekryla celé, takže prekrytie zostáva malé. */
   .rnc-find-karta { margin-top: -24px; }
