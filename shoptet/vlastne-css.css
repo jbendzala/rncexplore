@@ -609,11 +609,21 @@ textarea:focus-visible,
     margin-left: auto; margin-right: 19px;
   }
 
-  /* Košík sedel o 8 px nižšie než hamburger. Horná lišta je vysoká
-     50 px, stred teda y=25; košík je vysoký 44, má byť na y=3. Leží
-     v .navigation-buttons, ktoré začína na y=50, takže posun je
-     3 − 50 = −47. Shoptet tam dáva −39 a tým ho zarovná na y=33. */
-  #header .navigation-buttons .btn-icon { top: -47px; }
+  /* Košík vyťahujeme z toku, nie len posúvame. Shoptet ho má
+     position:relative, takže sa viaže na miesto, kde práve stojí
+     .navigation-buttons — a to sa hýbe: po rozbalení vyhľadávania
+     klesne z y=50 na y=127 a košík skončí na vyhľadávacom poli.
+     Absolútne sa viaže na #header, ktorý zostáva na y=50 vždy.
+        y: 50 − 47 = 3, stred 25 ako lupa aj hamburger
+        x: 390 − 60 − 44 = 286
+     Vedľajší efekt je vítaný: .navigation-buttons tým zostane bez
+     obsahu, zbalí sa na nulu a zmizne prázdny tmavý pás pod logom.
+     Selektor musí byť ten istý ako pri .btn.cart-count vyššie —
+     s „.btn-icon“ mal o triedu menej a vlastné pravidlo ho prebíjalo
+     späť na relative. */
+  #header .navigation-buttons .btn.cart-count {
+    position: absolute; top: -47px; right: 60px;
+  }
 }
 /* Text „Prázdny košík“ preč — v návrhu je pri košíku len ikona
    a číslo. Počet vykresľuje Shoptet sám do vnoreného <i>.
