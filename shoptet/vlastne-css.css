@@ -1671,6 +1671,15 @@ label { color: var(--rnc-ink); }
   position: relative;
   width: 100vw;
   margin-inline: calc(50% - 50vw);
+  /* Panel vpravo si dobieha pozadie k okraju okna pseudoprvkom širokým
+     100vw (nižšie, .rnc-life-panel::after). Ten ale prečnieva o celú
+     šírku okna doprava, takže dokument vychádzal dvojnásobne široký —
+     pri 390 px okne 760, pri 1400 px 2669. Na počítači to prekryje
+     overflow-x: clip na html, Android si ale stránku oddialil, aby sa
+     tá šírka zmestila: hero potom zaberal ľavú polovicu obrazovky
+     a dalo sa rolovať doprava. Pás si teda prečnievajúce pozadie
+     oreže sám — k okraju okna dobehne, ďalej netreba. */
+  overflow: hidden;
   /* Výplň priamo z návrhu. Miesto na fotku je v ňom prázdne — toto je
      jeho podklad, nie dekorácia navyše. Keď klient dodá širokú
      lifestyle fotografiu, nastaví sa v shoptet_domovska.py a prekryje
