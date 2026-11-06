@@ -601,6 +601,20 @@ textarea:focus-visible,
 }
 #header .navigation-buttons .btn.cart-count:hover,
 #header .navigation-buttons .rnc-ucet:hover { color: var(--rnc-amber); }
+/* Po kliknutí kreslil prehliadač svoj biely prstenec. Nahrádzame ho
+   jantárovým; outline sa drží rámu prvku, takže sedí presne na stred.
+   Musí tu byť aj :focus-visible — samotné :focus to nechytí, prstenec
+   sa kreslí práve cezeň. */
+#header .navigation-buttons .btn.cart-count:focus,
+#header .navigation-buttons .btn.cart-count:focus-visible,
+#header .navigation-buttons .rnc-ucet:focus,
+#header .navigation-buttons .rnc-ucet:focus-visible {
+  /* box-shadow, nie outline: prehliadač si svoj prstenec kreslí
+     vlastným outlinom a ten náš len prekryl, takže zostali tri
+     krúžky za sebou — biely, jantárový, biely. */
+  outline: none;
+  box-shadow: 0 0 0 2px var(--rnc-amber);
+}
 /* Na telefóne nie. Shoptet si tam košík aj hamburger vytiahne nad
    hlavičku cez position:relative a záporný top, náš presunutý účet
    zostane v toku a spadne do prázdneho pásu pod logom. Prihlásenie je
@@ -649,7 +663,12 @@ textarea:focus-visible,
 #header .navigation-buttons .cart-price { display: none !important; }
 /* Bez riadkovania sa rám znaku zmenší na nulu a ikonové písmo sa
    vykreslí od účiaria — košík potom sedel mimo stredu svojho krúžku. */
+/* Znak košíka má vpravo prázdne miesto — tam mu Shoptet kreslí odznak
+   s počtom. Pri prázdnom košíku tam ale nie je nič a vozík sa potom
+   javil posunutý doľava od stredu krúžku. Odsadenie zľava ho vráti
+   opticky na stred a odznaku miesto neuberie. */
 #header .navigation-buttons .btn.cart-count::before { font-size: 22px; line-height: 1; }
+#header .navigation-buttons .btn.cart-count { padding-left: 8px; }
 #header .navigation-buttons .rnc-ucet > span { display: none; }
 #header .navigation-buttons .rnc-ucet::before {
   content: "\e922";
@@ -2744,6 +2763,19 @@ body:not(.type-index) .breadcrumbs-wrapper { padding-inline: 20px; }
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* Formulárové karty aj mimo pokladne — zákaznícky účet, registrácia.
+   Šablóna im dáva odsadenie len zhora a zdola alebo vôbec žiadne,
+   takže polia siahajú po okraj a dve karty za sebou sú zlepené.
+   Pravidlo je viazané na samotný markup, nie na triedu stránky:
+   v zákazníckom účte ju nepoznám a hádať ju sa mi už nevyplatilo.
+   Musí stáť pred blokom .co-box nižšie — ten vnútornú kartu
+   v registrácii zasa odsadenia zbavuje a má rovnakú váhu. */
+fieldset.box.box-bg-default { padding: 24px 26px; }
+fieldset.box.box-bg-default + fieldset.box.box-bg-default,
+fieldset.box.box-bg-default + .co-box,
+.co-box + .co-box,
+.co-box + fieldset.box.box-bg-default { margin-top: 16px; }
 
 /* --- 20. KOŠÍK A OBJEDNÁVKA --------------------------------------------
    Zámerne len farby a písmo. Trojkrok je pevný a prestavovať ho skriptom
