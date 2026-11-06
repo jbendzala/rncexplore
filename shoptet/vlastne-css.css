@@ -359,6 +359,11 @@ textarea:focus-visible,
 .top-navigation-bar .rnc-top .rnc-top-b2b {
   color: var(--rnc-amber); font-weight: 600;
 }
+/* Prihlásený zákazník: účet a odhlásenie v hornej lište. Dopĺňa ich
+   rnc-skript.js, keď na stránke nájde odkaz na odhlásenie. */
+.top-navigation-bar .rnc-top .rnc-top-odhlasit {
+  color: var(--rnc-amber); font-weight: 600;
+}
 .rnc-top-jazyk strong { color: #fff; font-weight: 600; }
 .rnc-top-jazyk span { margin: 0 7px; color: rgba(255, 255, 255, .25); }
 /* Bez modifikátora --language: Shoptet ho na tom prvku už nemá, a náš
@@ -2775,7 +2780,10 @@ fieldset.box.box-bg-default { padding: 24px 26px; }
 fieldset.box.box-bg-default + fieldset.box.box-bg-default,
 fieldset.box.box-bg-default + .co-box,
 .co-box + .co-box,
-.co-box + fieldset.box.box-bg-default { margin-top: 16px; }
+.co-box + fieldset.box.box-bg-default,
+/* Druhá karta v zákazníckom účte. Susedský selektor vyššie by stačil,
+   keby Shoptetov skript prvú kartu občas neprebalil — toto je istota. */
+#additionalInformation { margin-top: 16px; }
 
 /* --- 20. KOŠÍK A OBJEDNÁVKA --------------------------------------------
    Zámerne len farby a písmo. Trojkrok je pevný a prestavovať ho skriptom
@@ -2802,7 +2810,8 @@ fieldset.box.box-bg-default + .co-box,
    .btn-primary, ktorý je u nás tmavý — na tmavej stránke splynul
    s pozadím a vyzeral ako vypnutý. */
 body.in-registracia #content .btn.btn-primary,
-body.in-login #content .btn.btn-primary {
+body.in-login #content .btn.btn-primary,
+body.customer-page .btn.btn-primary:not(.btn-xs) {
   background: var(--rnc-amber);
   border-color: var(--rnc-amber);
   color: var(--rnc-tma);
@@ -2811,8 +2820,10 @@ body.in-login #content .btn.btn-primary {
 }
 body.in-registracia #content .btn.btn-primary:hover,
 body.in-login #content .btn.btn-primary:hover,
+body.customer-page .btn.btn-primary:not(.btn-xs):hover,
 body.in-registracia #content .btn.btn-primary:focus,
-body.in-login #content .btn.btn-primary:focus {
+body.in-login #content .btn.btn-primary:focus,
+body.customer-page .btn.btn-primary:not(.btn-xs):focus {
   background: var(--rnc-amber-dark);
   border-color: var(--rnc-amber-dark);
   color: var(--rnc-tma);

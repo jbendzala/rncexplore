@@ -680,6 +680,26 @@ def skript():
     }}
   }}
 
+  /* Odhlásenie do hornej lišty. Shoptet ho má len v okne pod ikonou
+     účtu a v bočnom menu zákazníka — teda tam, kde ho zákazník
+     nehľadá. Prihlásenie poznáme podľa toho, že na stránke vôbec je
+     odkaz na odhlásenie; pri neprihlásenom tam nie je žiadny. */
+  var odhl = document.querySelector('[data-testid="headerSignout"]');
+  var top = document.querySelector("#rnc-top .rnc-top-odkazy");
+  if (odhl && top && !top.querySelector(".rnc-top-odhlasit")) {{
+    var ucet = document.createElement("a");
+    ucet.className = "rnc-top-ucet";
+    ucet.href = "/klient/";
+    ucet.textContent = "Môj účet";
+    var von = document.createElement("a");
+    von.className = "rnc-top-odhlasit";
+    von.href = odhl.getAttribute("href") || "/logout/";
+    von.setAttribute("rel", "nofollow");
+    von.textContent = "Odhlásiť sa";
+    top.appendChild(ucet);
+    top.appendChild(von);
+  }}
+
   /* Recenzie na domovskej: dva riadky a zvyšok na rozkliknutie.
      Orez zapíname až odtiaľto, nie priamo v CSS — keby skript
      nedobehol, zostal by text natrvalo useknutý bez tlačidla, ktorým
