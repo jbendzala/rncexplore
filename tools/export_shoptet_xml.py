@@ -34,8 +34,8 @@ KOREN = os.path.dirname(TU)
 sys.path.insert(0, TU)
 import seo
 import vystup
-from export_shopify import POPISKY, PORADIE
-from export_shoptet import kod, PARAMETER, DAVKA
+from export_shopify import PORADIE   # popisky máme vlastné, po jazykoch
+from export_shoptet import kod, DAVKA
 from pages_content import REVIEWS
 
 CIEL = vystup.kam(vystup.IMPORT, "obsah-xml", "obsah.xml")
@@ -88,8 +88,8 @@ def prevedenie(p, v, odsadenie, s_parametrom):
     r.append(f"{o}<LOGISTIC><WEIGHT>{p['kg']}</WEIGHT></LOGISTIC>")
     if s_parametrom:
         r.append(f"{o}<PARAMETERS><PARAMETER>")
-        r.append(f"{o}  <NAME>{e(PARAMETER)}</NAME>")
-        r.append(f"{o}  <VALUE>{e(v['sk'])}</VALUE>")
+        r.append(f"{o}  <NAME>{e(t('parameter'))}</NAME>")
+        r.append(f"{o}  <VALUE>{e(v[JAZYK])}</VALUE>")
         r.append(f"{o}</PARAMETER></PARAMETERS>")
     return r
 
@@ -101,11 +101,6 @@ def prevedenie(p, v, odsadenie, s_parametrom):
 # by podkategória podľa značky nemala čo znamenať.
 DELIT = {"hood"}
 
-# Koreň stromu kategórií. V obchode sú kategórie zanorené pod „Produkty“,
-# aby sa dali dať do menu ako jediná rozbaľovacia položka. Import musí
-# posielať celú cestu vrátane koreňa — inak Shoptet strom prestaví podľa
-# toho, čo dostane, a kategórie vyskočia na najvyššiu úroveň.
-KOREN_KATEGORII = "Produkty"
 
 
 def cesty(p, kategoria):
@@ -113,7 +108,8 @@ def cesty(p, kategoria):
     podľa toho vytvorí — a aj prestaví, takže cesta musí byť úplná,
     vrátane koreňa. Rodiča vypisujeme zvlášť, aby sa produkt objavil aj
     v ňom bez ohľadu na to, či je zapnuté dedenie z podkategórií."""
-    k = f"{KOREN_KATEGORII} > {kategoria}" if KOREN_KATEGORII else kategoria
+    koren = t("koren")
+    k = f"{koren} > {kategoria}" if koren else kategoria
     if p["cat"] in DELIT and p.get("b"):
         podkat = f'{k} > {p["b"]}'
         return [k, podkat], podkat
@@ -125,14 +121,87 @@ def cesty(p, kategoria):
 # na zvyšných 154 kartách by vyzeral horšie než žiadny.
 RECENZIE = {r["pid"]: r for r in REVIEWS}
 
-# Texty, ktoré sú v návrhu rovnaké pri každom produkte.
-MONTAZ = ("Priemerne zručný človek panel nalepí za jednu až dve hodiny a "
-          "nepotrebuje špeciálne náradie.")
-ZAPOJENIE = ("Panel, regulátor aj káble nájdete pokope. Pri otázkach vám "
-             "poradí náš odborný tím.")
-OBJEDNAVKA = ("Vyberiete produkt a prevedenie, vložíte ho do košíka a "
-              "objednáte. Faktúru pošleme e-mailom a tovar odošleme po úhrade.")
-NA_MIERU = ("Ak v ponuke nenájdete svoje vozidlo, panel vyrobíme na mieru.")
+# Jazyk exportu. Dáta produktov nesú „sk“ aj „cs“ pri názve, popise,
+# obsahu balenia aj prevedení — prepne sa teda celý obsah, nielen
+# nadpisy. Nastavuje sa prvým argumentom: „python3 … cs“.
+JAZYK = "sk"
+
+# Texty, ktoré sú v návrhu rovnaké pri každom produkte, a nadpisy
+# rozbaľovačov. Adresy odkazov nechávame rovnaké — česká mutácia má
+# vlastné stránky, ale ak im klient nechá tie isté adresy, sadnú.
+SLOVA = {
+    "sk": {
+        "montaz": "Priemerne zručný človek panel nalepí za jednu až dve "
+                  "hodiny a nepotrebuje špeciálne náradie.",
+        "zapojenie": "Panel, regulátor aj káble nájdete pokope. Pri otázkach "
+                     "vám poradí náš odborný tím.",
+        "objednavka": "Vyberiete produkt a prevedenie, vložíte ho do košíka "
+                      "a objednáte. Faktúru pošleme e-mailom a tovar "
+                      "odošleme po úhrade.",
+        "na_mieru": "Ak v ponuke nenájdete svoje vozidlo, panel vyrobíme "
+                    "na mieru.",
+        "h_montaz": "Montáž",
+        "h_zapojenie": "Čo potrebujete k zapojeniu",
+        "h_balenie": "Obsah balenia",
+        "h_objednavka": "Objednávka a platba",
+        "h_na_mieru": "Iné vozidlo alebo rozmer",
+        "h_detaily": "Detaily produktu",
+        "h_technicke": "Technické údaje",
+        "h_recenzia": "Skúsenosť zákazníka",
+        "znacka": "Značka vozidla",
+        "odkaz_montaz": "Postup montáže krok za krokom →",
+        "odkaz_na_mieru": "Panely na mieru →",
+        "tvarovany": "Tvarovaný na",
+        "ine_vozidlo": "Iné vozidlo? Na mieru",
+        "zdroj_recenzie": "recenzia z lensunsolar.com, preložená a skrátená",
+        "parameter": "Prevedenie",
+        "koren": "Produkty",
+        "popisky": {"w": "Výkon", "eff": "Účinnosť článkov",
+                    "vmp": "Napätie pri max. výkone",
+                    "imp": "Prúd pri max. výkone", "voc": "Napätie naprázdno",
+                    "isc": "Skratový prúd", "vsys": "Max. napätie sústavy",
+                    "dim": "Rozmer", "kg": "Hmotnosť",
+                    "jbox": "Pripojovacia skrinka"},
+    },
+    "cs": {
+        "montaz": "Průměrně zručný člověk panel nalepí za jednu až dvě "
+                  "hodiny a nepotřebuje speciální nářadí.",
+        "zapojenie": "Panel, regulátor i kabely najdete pohromadě. "
+                     "Při dotazech vám poradí náš odborný tým.",
+        "objednavka": "Vyberete produkt a provedení, vložíte ho do košíku "
+                      "a objednáte. Fakturu pošleme e-mailem a zboží "
+                      "odešleme po úhradě.",
+        "na_mieru": "Pokud v nabídce nenajdete své vozidlo, panel vyrobíme "
+                    "na míru.",
+        "h_montaz": "Montáž",
+        "h_zapojenie": "Co potřebujete k zapojení",
+        "h_balenie": "Obsah balení",
+        "h_objednavka": "Objednávka a platba",
+        "h_na_mieru": "Jiné vozidlo nebo rozměr",
+        "h_detaily": "Detaily produktu",
+        "h_technicke": "Technické údaje",
+        "h_recenzia": "Zkušenost zákazníka",
+        "znacka": "Značka vozidla",
+        "odkaz_montaz": "Postup montáže krok za krokem →",
+        "odkaz_na_mieru": "Panely na míru →",
+        "tvarovany": "Tvarovaný na",
+        "ine_vozidlo": "Jiné vozidlo? Na míru",
+        "zdroj_recenzie": "recenze z lensunsolar.com, přeložená a zkrácená",
+        "parameter": "Provedení",
+        "koren": "Produkty",
+        "popisky": {"w": "Výkon", "eff": "Účinnost článků",
+                    "vmp": "Napětí při max. výkonu",
+                    "imp": "Proud při max. výkonu", "voc": "Napětí naprázdno",
+                    "isc": "Zkratový proud", "vsys": "Max. napětí soustavy",
+                    "dim": "Rozměr", "kg": "Hmotnost",
+                    "jbox": "Připojovací skříňka"},
+    },
+}
+
+
+def t(kluc):
+    """Text v jazyku exportu."""
+    return SLOVA[JAZYK][kluc]
 
 
 def vozidlo(p):
@@ -144,18 +213,19 @@ def vozidlo(p):
     """
     if not p.get("b"):
         return ""
-    casti = p["n"]["sk"].split(" – ")
+    casti = p["n"][JAZYK].split(" – ")
     return casti[0].strip() if len(casti) > 1 else ""
 
 
 def kratky_popis(p):
     """Krátky popis. CSS ho na karte posúva nad cenu, takže je to prvé, čo
     zákazník prečíta — návrh tam má vetu o produkte a riadok s vozidlom."""
-    r = [f"<p>{e(prvá_veta(p['d']['sk']))}</p>"]
+    r = [f"<p>{e(prvá_veta(p['d'][JAZYK]))}</p>"]
     auto = vozidlo(p)
     if auto:
-        r.append(f'<p class="rnc-fit">Tvarovaný na <strong>{e(auto)}</strong> · '
-                 f'<a href="/na-mieru/">Iné vozidlo? Na mieru</a></p>')
+        r.append(f'<p class="rnc-fit">{e(t("tvarovany"))} '
+                 f'<strong>{e(auto)}</strong> · '
+                 f'<a href="/na-mieru/">{e(t("ine_vozidlo"))}</a></p>')
     return "".join(r)
 
 
@@ -170,34 +240,34 @@ def popis(p):
     Štyri výhody („Prečo panel na kapotu“) tu nie sú zámerne — tie Shoptet
     vykresľuje sám cez benefitBanner a nastavujú sa v administrácii.
     """
-    c = [f"<p>{e(p['d']['sk'])}</p>"]
+    c = [f"<p>{e(p['d'][JAZYK])}</p>"]
 
     spec = p.get("spec") or {}
-    riadky = [(POPISKY[k], spec[k]) for k in PORADIE if spec.get(k)]
+    riadky = [(t('popisky')[k], spec[k]) for k in PORADIE if spec.get(k)]
     if p.get("b"):
-        riadky.append(("Značka vozidla", p["b"]))
-    c.append('<h2>Detaily produktu</h2>')
+        riadky.append((t("znacka"), p["b"]))
+    c.append(f'<h2>{e(t("h_detaily"))}</h2>')
     if riadky:
-        c.append("<h3>Technické údaje</h3><table>")
+        c.append(f"<h3>{e(t('h_technicke'))}</h3><table>")
         c += [f"<tr><th>{e(a)}</th><td>{e(b)}</td></tr>" for a, b in riadky]
         c.append("</table>")
 
-    c.append(rozbal("Montáž", f"<p>{MONTAZ}</p>"
-                    '<p><a href="/montaz/">Postup montáže krok za krokom →</a></p>'))
-    c.append(rozbal("Čo potrebujete k zapojeniu", f"<p>{ZAPOJENIE}</p>"))
+    c.append(rozbal(t("h_montaz"), f"<p>{t('montaz')}</p>"
+                    f'<p><a href="/montaz/">{e(t("odkaz_montaz"))}</a></p>'))
+    c.append(rozbal(t("h_zapojenie"), f"<p>{t('zapojenie')}</p>"))
     if p.get("pack"):
-        polozky = "".join(f"<li>{e(r['sk'])}</li>" for r in p["pack"])
-        c.append(rozbal("Obsah balenia", f"<ul>{polozky}</ul>"))
-    c.append(rozbal("Objednávka a platba", f"<p>{OBJEDNAVKA}</p>"))
-    c.append(rozbal("Iné vozidlo alebo rozmer", f"<p>{NA_MIERU}</p>"
-                    '<p><a href="/na-mieru/">Panely na mieru →</a></p>'))
+        polozky = "".join(f"<li>{e(r[JAZYK])}</li>" for r in p["pack"])
+        c.append(rozbal(t("h_balenie"), f"<ul>{polozky}</ul>"))
+    c.append(rozbal(t("h_objednavka"), f"<p>{t('objednavka')}</p>"))
+    c.append(rozbal(t("h_na_mieru"), f"<p>{t('na_mieru')}</p>"
+                    f'<p><a href="/na-mieru/">{e(t("odkaz_na_mieru"))}</a></p>'))
 
     rec = RECENZIE.get(p["id"])
     if rec:
-        c.append('<h2>Skúsenosť zákazníka</h2>'
-                 f'<blockquote class="rnc-review"><p>{e(rec["sk"])}</p>'
+        c.append(f'<h2>{e(t("h_recenzia"))}</h2>'
+                 f'<blockquote class="rnc-review"><p>{e(rec[JAZYK])}</p>'
                  f'<footer><strong>{e(rec["who"])}</strong> · {e(rec["car"])} · '
-                 'recenzia z lensunsolar.com, preložená a skrátená</footer>'
+                 f'{e(t("zdroj_recenzie"))}</footer>'
                  '</blockquote>')
     return "".join(c)
 
@@ -205,7 +275,7 @@ def popis(p):
 def seo_popis(p):
     """Popis do výsledkov vyhľadávania. Google ukáže asi 155 znakov, zvyšok
     odreže — tak ho režeme sami, a na hranici slova, nie v polovici."""
-    t = p["d"]["sk"]
+    t = p["d"][JAZYK]
     if len(t) <= 155:
         return t
     kus = t[:155]
@@ -215,7 +285,7 @@ def seo_popis(p):
 def shopitem(p, kategoria):
     viac = len(p["var"]) > 1
     r = ["  <SHOPITEM>"]
-    r.append(f"    <NAME>{e(p['n']['sk'])}</NAME>")
+    r.append(f"    <NAME>{e(p['n'][JAZYK])}</NAME>")
     r.append(f"    <SHORT_DESCRIPTION>{e(kratky_popis(p))}</SHORT_DESCRIPTION>")
     r.append(f"    <DESCRIPTION>{e(popis(p))}</DESCRIPTION>")
     r.append(f"    <MANUFACTURER>{e(VYROBCA)}</MANUFACTURER>")
@@ -227,7 +297,7 @@ def shopitem(p, kategoria):
     # Titulok a popis pre vyhľadávače. Bez nich dá Shoptet každému produktu
     # predvolený titulok a Google si popis vyberie sám z čohokoľvek na
     # stránke. Titulok dopĺňame firmou, aby bol v zoznamoch rozpoznateľný.
-    r.append(f"    <SEO_TITLE>{e(p['n']['sk'] + ' | RnC Explore')}</SEO_TITLE>")
+    r.append(f"    <SEO_TITLE>{e(p['n'][JAZYK] + ' | RnC Explore')}</SEO_TITLE>")
     r.append(f"    <META_DESCRIPTION>{e(seo_popis(p))}</META_DESCRIPTION>")
     # Video je v poli vid, nie v. Pole v je napätie panela (12 V, 36 V) —
     # to tu nemá čo robiť a raz sa tak už stalo.
@@ -317,19 +387,31 @@ def zapis(cesta, produkty, nazvy):
 
 
 def main():
+    global JAZYK
+    if len(sys.argv) > 1:
+        if sys.argv[1] not in SLOVA:
+            sys.exit(f"neznámy jazyk {sys.argv[1]!r}; poznám "
+                     + ", ".join(SLOVA))
+        JAZYK = sys.argv[1]
+    # Slovenčina ide do pôvodného priečinka, aby staré postupy sedeli;
+    # čeština vedľa, nech sa súbory nezamiešajú.
+    priecinok = "obsah-xml" if JAZYK == "sk" else f"obsah-xml-{JAZYK}"
+
     s = open(os.path.join(KOREN, "data", "products.js"), encoding="utf-8").read()
     meta = json.loads(re.search(r"window\.CATALOG_META=(\{.*?\});", s, re.S).group(1))
     P = json.loads(re.search(r"window\.PRODUCTS=(\[.*\]);", s, re.S).group(1))
-    nazvy = {c["k"]: c["sk"] for c in meta["cats"]}
+    nazvy = {c["k"]: c[JAZYK] for c in meta["cats"]}
 
-    zapis(CIEL, P, nazvy)
+    ciel = vystup.kam(vystup.IMPORT, priecinok, "obsah.xml")
+    zapis(ciel, P, nazvy)
     fotiek = sum(len(p.get("img") or []) for p in P)
     prevedeni = sum(len(p["var"]) for p in P)
+    print(f"jazyk: {JAZYK}")
     print(f"{len(P)} produktov, {prevedeni} prevedení, {fotiek} fotografií "
-          f"-> {CIEL}\n   {over(CIEL)}")
+          f"-> {ciel}\n   {over(ciel)}")
 
     skus = [p for p in P if p["id"] == SKUSKA]
-    c = vystup.kam(vystup.IMPORT, "obsah-xml", "skuska-jeden-produkt.xml")
+    c = vystup.kam(vystup.IMPORT, priecinok, "skuska-jeden-produkt.xml")
     zapis(c, skus, nazvy)
     print(f"\nna skúšku jeden produkt -> {c}\n   {over(c)}")
 
@@ -338,7 +420,7 @@ def main():
     davky = [P[i:i + DAVKA] for i in range(0, len(P), DAVKA)]
     print(f"\npo dávkach (najviac {DAVKA} produktov na súbor):")
     for i, cast in enumerate(davky, 1):
-        c = vystup.kam(vystup.IMPORT, "obsah-xml",
+        c = vystup.kam(vystup.IMPORT, priecinok,
                        f"davka-{i}-z-{len(davky)}.xml")
         zapis(c, cast, nazvy)
         print(f"  {os.path.basename(c):<40} {len(cast):>3} produktov · "
