@@ -97,21 +97,18 @@ def bez_diakritiky(t):
 def adresy():
     """Adresy produktov z mapy stránok obchodu, kľúčované názvom.
 
-    Česká mutácia beží v podadresári, takže jej adresy majú o jeden
-    segment viac. Shoptet si navyše názov prevádza na adresu v každej
-    mutácii zvlášť — české adresy teda nevzniknú predponovaním
-    slovenských a treba ich brať z mapy stránok tak, ako sú."""
+    Kľúčom je vždy slovenský názov, aj keď generujeme češtinu. Adresu
+    si totiž Shoptet odvodil zo slovenského názvu a v českej mutácii ju
+    nechal rovnakú, len pred ňu dal /cs/. Overené: /cs/flexibilny-
+    solarny-panel-20w/ vracia 200, česká podoba toho istého názvu 404.
+    Mapa stránok navyše české adresy vôbec neobsahuje, takže ich ani
+    nemáme odkiaľ čítať."""
     url = OBCHOD + "/sitemaps/sitemap0.xml.gz"
     with urllib.request.urlopen(url, timeout=30) as r:
         xml = gzip.decompress(r.read()).decode("utf-8")
     cesty = [x.replace(OBCHOD + "/", "").strip("/")
              for x in re.findall(r"<loc>([^<]+)</loc>", xml)]
-    predpona = jazyk.odkaz("/").strip("/")      # "" alebo "cs"
-    if not predpona:
-        return {bez_diakritiky(c): c for c in cesty if "/" not in c}
-    zac = predpona + "/"
-    return {bez_diakritiky(c[len(zac):]): c
-            for c in cesty if c.startswith(zac) and c.count("/") == 1}
+    return {bez_diakritiky(c): c for c in cesty if "/" not in c}
 
 
 def rozbor(p):
@@ -138,7 +135,8 @@ def main():
 
     mapa = adresy()
     j = jazyk.aktualny()
-    chyba = [p["n"][j] for p in P if bez_diakritiky(p["n"][j]) not in mapa]
+    chyba = [p["n"]["sk"] for p in P
+             if bez_diakritiky(p["n"]["sk"]) not in mapa]
     if chyba:
         sys.exit("v mape stránok obchodu nie sú tieto produkty:\n  "
                  + "\n  ".join(chyba[:10]))
@@ -155,7 +153,7 @@ def main():
             "w": p["w"],
             "c": round(min(seo.price(v["p"], "EUR") for v in p["var"]), 2),
             "i": (p.get("img") or [""])[0],
-            "u": "/" + mapa[bez_diakritiky(p["n"][j])] + "/",
+            "u": jazyk.odkaz("/" + mapa[bez_diakritiky(p["n"]["sk"])] + "/"),
         })
         if od:
             rokov += [od, do]
