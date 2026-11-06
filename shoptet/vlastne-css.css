@@ -2758,6 +2758,33 @@ body:not(.type-index) .breadcrumbs-wrapper { padding-inline: 20px; }
   border: 1px solid var(--rnc-line);
   border-radius: var(--rnc-radius);
 }
+/* Karta mala odsadenie „0 0 38px“ — zhora a po stranách nič, takže
+   polia siahali po samý okraj. Priehľadné skupiny (výber typu
+   zákazníka) vynechávame, tie majú zostať zarovnané s nadpisom. */
+.co-box:not(.box-bg-transparent) { padding: 24px 26px; }
+.co-box:not(.box-bg-transparent) > fieldset.box { padding: 0; }
+.co-box > h2,
+.co-box > fieldset > h2 { margin-top: 0; }
+
+/* Hlavné tlačidlo registrácie a prihlásenia. Shoptet mu dáva
+   .btn-primary, ktorý je u nás tmavý — na tmavej stránke splynul
+   s pozadím a vyzeral ako vypnutý. */
+body.in-registracia #content .btn.btn-primary,
+body.in-login #content .btn.btn-primary {
+  background: var(--rnc-amber);
+  border-color: var(--rnc-amber);
+  color: var(--rnc-tma);
+  min-height: 48px; padding: 0 30px;
+  font-size: 16px;
+}
+body.in-registracia #content .btn.btn-primary:hover,
+body.in-login #content .btn.btn-primary:hover,
+body.in-registracia #content .btn.btn-primary:focus,
+body.in-login #content .btn.btn-primary:focus {
+  background: var(--rnc-amber-dark);
+  border-color: var(--rnc-amber-dark);
+  color: var(--rnc-tma);
+}
 .cart-table th { font-family: var(--rnc-display); color: var(--rnc-muted); }
 
 /* Obsah košíka aj pokladne bol nalepený na hornú lištu. */
