@@ -40,6 +40,7 @@ TU = os.path.dirname(os.path.abspath(__file__))
 KOREN = os.path.dirname(TU)
 sys.path.insert(0, TU)
 import seo
+import jazyk
 import vystup
 
 OBCHOD = "https://822969.myshoptet.com"
@@ -94,13 +95,23 @@ def bez_diakritiky(t):
 
 
 def adresy():
-    """Adresy produktov z mapy stránok obchodu, kľúčované názvom."""
+    """Adresy produktov z mapy stránok obchodu, kľúčované názvom.
+
+    Česká mutácia beží v podadresári, takže jej adresy majú o jeden
+    segment viac. Shoptet si navyše názov prevádza na adresu v každej
+    mutácii zvlášť — české adresy teda nevzniknú predponovaním
+    slovenských a treba ich brať z mapy stránok tak, ako sú."""
     url = OBCHOD + "/sitemaps/sitemap0.xml.gz"
     with urllib.request.urlopen(url, timeout=30) as r:
         xml = gzip.decompress(r.read()).decode("utf-8")
     cesty = [x.replace(OBCHOD + "/", "").strip("/")
              for x in re.findall(r"<loc>([^<]+)</loc>", xml)]
-    return {bez_diakritiky(c): c for c in cesty if "/" not in c}
+    predpona = jazyk.odkaz("/").strip("/")      # "" alebo "cs"
+    if not predpona:
+        return {bez_diakritiky(c): c for c in cesty if "/" not in c}
+    zac = predpona + "/"
+    return {bez_diakritiky(c[len(zac):]): c
+            for c in cesty if c.startswith(zac) and c.count("/") == 1}
 
 
 def rozbor(p):
@@ -121,11 +132,13 @@ def rozbor(p):
 
 
 def main():
+    jazyk.z_argumentov()
     s = open(os.path.join(KOREN, "data", "products.js"), encoding="utf-8").read()
     P = json.loads(re.search(r"window\.PRODUCTS=(\[.*\]);", s, re.S).group(1))
 
     mapa = adresy()
-    chyba = [p["n"]["sk"] for p in P if bez_diakritiky(p["n"]["sk"]) not in mapa]
+    j = jazyk.aktualny()
+    chyba = [p["n"][j] for p in P if bez_diakritiky(p["n"][j]) not in mapa]
     if chyba:
         sys.exit("v mape stránok obchodu nie sú tieto produkty:\n  "
                  + "\n  ".join(chyba[:10]))
@@ -138,22 +151,23 @@ def main():
         polozky.append({
             "b": p["b"], "m": rodina, "p": presne,
             "od": od, "do": do,
-            "n": p["n"]["sk"],
+            "n": p["n"][j],
             "w": p["w"],
             "c": round(min(seo.price(v["p"], "EUR") for v in p["var"]), 2),
             "i": (p.get("img") or [""])[0],
-            "u": "/" + mapa[bez_diakritiky(p["n"]["sk"])] + "/",
+            "u": "/" + mapa[bez_diakritiky(p["n"][j])] + "/",
         })
         if od:
             rokov += [od, do]
 
     data = json.dumps(polozky, ensure_ascii=False, separators=(",", ":"))
     najstarsi = min(rokov)
-    h = SABLONA.replace("__DATA__", data) \
+    h = prelož(SABLONA).replace("__DATA__", data) \
                .replace("__OD__", str(najstarsi)) \
                .replace("__DO__", str(TERAZ))
 
-    ciel = vystup.kam(vystup.IMPORT, "vzhlad", "vyhladavanie-vozidla.html")
+    ciel = vystup.kam(vystup.IMPORT, jazyk.priecinok("vzhlad"),
+                      "vyhladavanie-vozidla.html")
     with open(ciel, "w", encoding="utf-8") as f:
         f.write(h)
 
@@ -162,11 +176,10 @@ def main():
     # vyhľadávanie je na nej až pod hero. Stránka sa vkladá cez
     # Vzhľad a obsah → Stránky, preto ide do iného priečinka než
     # vzhľad a bez hlavičkového komentára pre úvodnú stránku.
-    uvod = ('<p>Vyberte značku, model a rok výroby. Zobrazíme panely, '
-            'ktoré sú tvarované presne na vaše vozidlo — a pod nimi aj '
-            'tie, pri ktorých výrobca roky neuvádza.</p>\n')
+    uvod = "<p>" + jazyk.t(SLOVA)["uvod"] + "</p>\n"
     bez = re.sub(r"^<!--.*?-->\s*", "", h, flags=re.S)
-    cesta = vystup.kam(vystup.VLOZIT, "stranky", "podla-vozidla.html")
+    cesta = vystup.kam(vystup.VLOZIT, jazyk.priecinok("stranky"),
+                       "podla-vozidla.html")
     with open(cesta, "w", encoding="utf-8") as f:
         f.write(uvod + bez)
     print(f"{len(uvod) + len(bez):>6} znakov -> {cesta}")
@@ -179,6 +192,57 @@ def main():
           f"(zobrazia sa pri každom roku)")
 
 
+SLOVA = {
+    "sk": {
+        "nadpis": "Nájdi produkt pre svoje vozidlo",
+        "znacka": "Značka", "model": "Model", "rok": "Rok výroby",
+        "najprv_znacku": "Najskôr vyber značku",
+        "najprv_model": "Najskôr vyber model",
+        "tlacidlo": "Zobraziť kompatibilné produkty",
+        "s_dph": "s DPH", "od": "od",
+        "jeden": " panel", "par": " panely", "viac": " panelov",
+        "pre_rok": " pre rok ", "pre_model": " pre tento model",
+        "nic": "Pre toto vozidlo zatiaľ panel nemáme. ",
+        "nic_rok_a": "Pre rok ", "nic_rok_b": " nemáme panel s overeným rozsahom. ",
+        "na_mieru": "Vyrobíme ho na mieru →",
+        "dalsie": "Ďalšie panely pre tento model. Pri týchto neuvádzame "
+                  "roky výroby, tak overte rozmer alebo nám napíšte.",
+        "uvod": "Vyberte značku, model a rok výroby. Zobrazíme panely, "
+                "ktoré sú tvarované presne na vaše vozidlo — a pod nimi "
+                "aj tie, pri ktorých výrobca roky neuvádza.",
+    },
+    "cs": {
+        "nadpis": "Najdi produkt pro své vozidlo",
+        "znacka": "Značka", "model": "Model", "rok": "Rok výroby",
+        "najprv_znacku": "Nejprve vyber značku",
+        "najprv_model": "Nejprve vyber model",
+        "tlacidlo": "Zobrazit kompatibilní produkty",
+        "s_dph": "s DPH", "od": "od",
+        "jeden": " panel", "par": " panely", "viac": " panelů",
+        "pre_rok": " pro rok ", "pre_model": " pro tento model",
+        "nic": "Pro toto vozidlo zatím panel nemáme. ",
+        "nic_rok_a": "Pro rok ", "nic_rok_b": " nemáme panel s ověřeným rozsahem. ",
+        "na_mieru": "Vyrobíme ho na míru →",
+        "dalsie": "Další panely pro tento model. U těchto neuvádíme "
+                  "roky výroby, tak ověřte rozměr nebo nám napište.",
+        "uvod": "Vyberte značku, model a rok výroby. Zobrazíme panely, "
+                "které jsou tvarované přesně na vaše vozidlo — a pod nimi "
+                "i ty, u kterých výrobce roky neuvádí.",
+    },
+}
+
+
+def prelož(sablona):
+    """Doplní do šablóny texty v aktuálnom jazyku a predponu mutácie.
+    Tokeny sú @@kluc@@, nie formátovacie zátvorky — v šablóne je
+    JavaScript a ten je zátvoriek plný."""
+    v = jazyk.t(SLOVA)
+    out = sablona
+    for k, text in v.items():
+        out = out.replace(f"@@{k}@@", text)
+    return out.replace("@@na-mieru@@", jazyk.odkaz("/na-mieru/"))
+
+
 SABLONA = '''<!-- Vyhľadávanie panela podľa vozidla.
      Vyrába tools/shoptet_vyhladavanie.py — needituj tu, uprav zdroj.
      Patrí do úvodnej stránky, na miesto pásu so značkami. -->
@@ -186,12 +250,12 @@ SABLONA = '''<!-- Vyhľadávanie panela podľa vozidla.
 
     <div class="rnc-find-karta">
       <div class="rnc-find-nadpis">
-        <strong>Nájdi produkt pre svoje vozidlo</strong>
+        <strong>@@nadpis@@</strong>
       </div>
-      <select id="rnc-b" aria-label="Značka"><option value="">Značka</option></select>
-      <select id="rnc-m" aria-label="Model" disabled><option value="">Najskôr vyber značku</option></select>
-      <select id="rnc-r" aria-label="Rok výroby" disabled><option value="">Najskôr vyber model</option></select>
-      <a class="rnc-btn" href="#rnc-vysledok" id="rnc-go">Zobraziť kompatibilné produkty</a>
+      <select id="rnc-b" aria-label="@@znacka@@"><option value="">@@znacka@@</option></select>
+      <select id="rnc-m" aria-label="@@model@@" disabled><option value="">@@najprv_znacku@@</option></select>
+      <select id="rnc-r" aria-label="@@rok@@" disabled><option value="">@@najprv_model@@</option></select>
+      <a class="rnc-btn" href="#rnc-vysledok" id="rnc-go">@@tlacidlo@@</a>
     </div>
 
     <div id="rnc-vysledok" class="rnc-find-out" aria-live="polite"></div>
@@ -220,26 +284,26 @@ SABLONA = '''<!-- Vyhľadávanie panela podľa vozidla.
     return x.toFixed(2).replace(".", ",") + " €";
   }
   function poč(n) {
-    return n + (n === 1 ? " panel" : (n < 5 ? " panely" : " panelov"));
+    return n + (n === 1 ? "@@jeden@@" : (n < 5 ? "@@par@@" : "@@viac@@"));
   }
   function mriežka(zoznam) {
     return '<div class="rnc-prods">' + zoznam.map(function (x) {
       return '<a class="rnc-prod" href="' + x.u + '">' +
         '<span class="rnc-prod-img" style="background-image:url(\\'' + x.i + '\\')"></span>' +
         '<span class="rnc-prod-hlava">' + x.n + '</span>' +
-        '<span class="rnc-prod-cena">od <strong>' + cena(x.c) + '</strong> <span>s DPH</span></span>' +
+        '<span class="rnc-prod-cena">@@od@@ <strong>' + cena(x.c) + '</strong> <span>@@s_dph@@</span></span>' +
         '</a>';
     }).join("") + "</div>";
   }
 
-  naplň(zb, jedinečné(V.map(function (x) { return x.b; })), "Značka");
+  naplň(zb, jedinečné(V.map(function (x) { return x.b; })), "@@znacka@@");
 
   zb.addEventListener("change", function () {
     var b = zb.value;
     naplň(zm, b ? jedinečné(V.filter(function (x) { return x.b === b; })
                              .map(function (x) { return x.m; })) : [],
-          b ? "Model" : "Najskôr vyber značku");
-    naplň(zr, [], "Najskôr vyber model");
+          b ? "@@model@@" : "@@najprv_znacku@@");
+    naplň(zr, [], "@@najprv_model@@");
     ukáž();
   });
 
@@ -255,7 +319,7 @@ SABLONA = '''<!-- Vyhľadávanie panela podľa vozidla.
       var b = p.length ? Math.max.apply(null, p.map(function (x) { return x.do; })) : DO;
       for (var r = b; r >= a; r--) roky.push(String(r));
     }
-    naplň(zr, roky, m ? "Rok výroby" : "Najskôr vyber model");
+    naplň(zr, roky, m ? "@@rok@@" : "@@najprv_model@@");
     zr.disabled = !m;
     ukáž();
   });
@@ -283,23 +347,21 @@ SABLONA = '''<!-- Vyhľadávanie panela podľa vozidla.
     });
 
     if (!sedia.length && !mozno.length) {
-      out.innerHTML = '<p class="rnc-find-nic">Pre toto vozidlo zatiaľ panel ' +
-        'nemáme. <a href="/na-mieru/">Vyrobíme ho na mieru →</a></p>';
+      out.innerHTML = '<p class="rnc-find-nic">@@nic@@' +
+        '<a href="@@na-mieru@@">@@na_mieru@@</a></p>';
       return;
     }
 
     var h = "";
     if (sedia.length) {
       h += '<p class="rnc-find-pocet">' + poč(sedia.length) +
-           (r ? " pre rok " + r : " pre tento model") + "</p>" + mriežka(sedia);
+           (r ? "@@pre_rok@@" + r : "@@pre_model@@") + "</p>" + mriežka(sedia);
     } else {
-      h += '<p class="rnc-find-nic">Pre rok ' + r + ' nemáme panel s overeným ' +
-           'rozsahom. <a href="/na-mieru/">Vyrobíme ho na mieru →</a></p>';
+      h += '<p class="rnc-find-nic">@@nic_rok_a@@' + r + '@@nic_rok_b@@' +
+           '<a href="@@na-mieru@@">@@na_mieru@@</a></p>';
     }
     if (mozno.length) {
-      h += '<p class="rnc-find-dalsie">Ďalšie panely pre tento model. Pri ' +
-           'týchto neuvádzame roky výroby, tak overte rozmer alebo nám ' +
-           'napíšte.</p>' + mriežka(mozno);
+      h += '<p class="rnc-find-dalsie">@@dalsie@@</p>' + mriežka(mozno);
     }
     out.innerHTML = h;
   }

@@ -32,6 +32,7 @@ import html, json, os, re, subprocess, sys
 TU = os.path.dirname(os.path.abspath(__file__))
 KOREN = os.path.dirname(TU)
 sys.path.insert(0, TU)
+import jazyk
 import seo
 import vystup
 from export_shopify import PORADIE   # popisky máme vlastné, po jazykoch
@@ -225,7 +226,7 @@ def kratky_popis(p):
     if auto:
         r.append(f'<p class="rnc-fit">{e(t("tvarovany"))} '
                  f'<strong>{e(auto)}</strong> · '
-                 f'<a href="/na-mieru/">{e(t("ine_vozidlo"))}</a></p>')
+                 f'<a href="{jazyk.odkaz("/na-mieru/")}">{e(t("ine_vozidlo"))}</a></p>')
     return "".join(r)
 
 
@@ -253,14 +254,14 @@ def popis(p):
         c.append("</table>")
 
     c.append(rozbal(t("h_montaz"), f"<p>{t('montaz')}</p>"
-                    f'<p><a href="/montaz/">{e(t("odkaz_montaz"))}</a></p>'))
+                    f'<p><a href="{jazyk.odkaz("/montaz/")}">{e(t("odkaz_montaz"))}</a></p>'))
     c.append(rozbal(t("h_zapojenie"), f"<p>{t('zapojenie')}</p>"))
     if p.get("pack"):
         polozky = "".join(f"<li>{e(r[JAZYK])}</li>" for r in p["pack"])
         c.append(rozbal(t("h_balenie"), f"<ul>{polozky}</ul>"))
     c.append(rozbal(t("h_objednavka"), f"<p>{t('objednavka')}</p>"))
     c.append(rozbal(t("h_na_mieru"), f"<p>{t('na_mieru')}</p>"
-                    f'<p><a href="/na-mieru/">{e(t("odkaz_na_mieru"))}</a></p>'))
+                    f'<p><a href="{jazyk.odkaz("/na-mieru/")}">{e(t("odkaz_na_mieru"))}</a></p>'))
 
     rec = RECENZIE.get(p["id"])
     if rec:
@@ -393,6 +394,7 @@ def main():
             sys.exit(f"neznámy jazyk {sys.argv[1]!r}; poznám "
                      + ", ".join(SLOVA))
         JAZYK = sys.argv[1]
+    jazyk.nastav(JAZYK)
     # Slovenčina ide do pôvodného priečinka, aby staré postupy sedeli;
     # čeština vedľa, nech sa súbory nezamiešajú.
     priecinok = "obsah-xml" if JAZYK == "sk" else f"obsah-xml-{JAZYK}"
