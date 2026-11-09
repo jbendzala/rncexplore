@@ -146,6 +146,7 @@ SLOVA = {
         "katalog": "Katalóg", "vsetko": "Všetko", "s_dph": "s DPH",
         "pd_b2b": "Ste predajca alebo montážny servis? ",
         "ucet": "Môj účet", "odhlasit": "Odhlásiť sa",
+        "najnovsie": "Najnovšie články",
         "cela_recenzia": "Zobraziť celú recenziu", "skryt": "Skryť",
     },
     "cs": {
@@ -176,6 +177,7 @@ SLOVA = {
         "katalog": "Katalog", "vsetko": "Vše", "s_dph": "s DPH",
         "pd_b2b": "Jste prodejce nebo montážní servis? ",
         "ucet": "Můj účet", "odhlasit": "Odhlásit se",
+        "najnovsie": "Nejnovější články",
         "cela_recenzia": "Zobrazit celou recenzi", "skryt": "Skrýt",
     },
 }
@@ -425,6 +427,7 @@ def skript():
             "s_dph": z["s_dph"], "pd_b2b": z["pd_b2b"], "b2b": z["b2b"],
             "ucet": z["ucet"], "odhlasit": z["odhlasit"],
             "cela_recenzia": z["cela_recenzia"], "skryt": z["skryt"],
+            "najnovsie": z["najnovsie"],
             "bez_vrtania": z["bez_vrtania"], "na_mieru": z["na_mieru"],
             "kategorie": z["kategorie"],
             "b2b_odkaz": PREDPONY[kod] + "/velkoobchod/",
@@ -438,6 +441,14 @@ def skript():
     posty = json.dumps({k: clanky(k) for k in SLOVA}, ensure_ascii=False,
                        separators=(",", ":"))
     return f'''
+/* Záhlavie a zápätie má Shoptet spoločné pre všetky mutácie, takže
+   jazyk nevyberáme pri generovaní, ale tu — podľa cesty. Premenné
+   musia byť nad všetkými blokmi: skript ich má šesť a jazyk používajú
+   štyri. Keď boli vnútri prvého, ostatné tri na ne nedosiahli a tíško
+   spadli — prestal sa vypisovať blog aj štítky na kartách. */
+var JAZ = location.pathname.indexOf("/cs/") === 0 ? "cs" : "sk";
+var T = {texty}[JAZ];
+
 /* Zápätie sa vkladá pred </body>, teda až pod celou stránkou. Oba
    bloky preto presunieme tam, kam patria. Skript beží hneď, nie na
    DOMContentLoaded — oba ciele sú v stránke dávno pred ním. */
@@ -447,11 +458,6 @@ def skript():
      nadpisy — a nebolo by hneď jasné prečo. */
   if (document.documentElement.dataset.rncZapatie) {{ return; }}
   document.documentElement.dataset.rncZapatie = "1";
-
-  /* Záhlavie a zápätie má Shoptet spoločné pre všetky mutácie, takže
-     jazyk nevyberáme pri generovaní, ale tu — podľa cesty. */
-  var JAZ = location.pathname.indexOf("/cs/") === 0 ? "cs" : "sk";
-  var T = {texty}[JAZ];
 
   /* Z dvoch pripravených blokov necháme ten, ktorý patrí k jazyku.
 
@@ -674,7 +680,7 @@ def skript():
 
   var h = document.createElement("h2");
   h.className = "rnc-clanky-nadpis";
-  h.textContent = "Najnovšie články";
+  h.textContent = T.najnovsie;
 
   var r = document.createElement("div");
   r.className = "news-wrapper rnc-clanky";
