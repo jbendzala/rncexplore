@@ -25,10 +25,30 @@ import sys
 TU = os.path.dirname(os.path.abspath(__file__))
 KOREN = os.path.dirname(TU)
 sys.path.insert(0, TU)
+import jazyk as jaz                                     # noqa: E402
 import vystup                                           # noqa: E402
 from export_shoptet import kod                          # noqa: E402
+import export_shoptet_xml as X                          # noqa: E402
 
 JAZYK = "cs"
+
+# Popisy staviame tými istými funkciami ako slovenský import, len
+# s prepnutým jazykom. Inak by česká karta mala inú stavbu než
+# slovenská — iné nadpisy, inú tabuľku, chýbajúce rozbaľovače.
+X.JAZYK = JAZYK
+jaz.nastav(JAZYK)
+
+
+def ako_v_obchode(k):
+    """Kód v tej podobe, v akej ho má Shoptet.
+
+    Pri importe si ho prepísal: veľké písmená a znaky, ktoré do adresy
+    nepustí, nahradil pomlčkou. Z „LS-100FX2-Max+DC“ je tak
+    „LS-100FX2-MAX-DC“ a z „2*LS-200FX2-N+FullKit“ zasa
+    „2-LS-200FX2-N-FULLKIT“. Bez tejto úpravy sa spáruje 158 riadkov
+    z 533 a zvyšok by zostal po slovensky.
+    """
+    return re.sub(r"[+*]", "-", k.strip().upper())
 
 
 def katalog():
@@ -51,15 +71,11 @@ def kluce(hlavicka):
 # jazykovej koncovky, malými písmenami.
 ZDROJE = {
     "name": lambda p: p["n"][JAZYK],
-    "description": lambda p: p["d"][JAZYK],
-    "shortdescription": lambda p: prva_veta(p["d"][JAZYK]),
-    "descriptionshort": lambda p: prva_veta(p["d"][JAZYK]),
+    "shortdescription": X.kratky_popis,
+    "description": X.popis,
+    "metadescription": X.seo_popis,
+    "seotitle": lambda p: p["n"][JAZYK] + " | RnC Explore",
 }
-
-
-def prva_veta(t):
-    m = re.search(r"(.+?[.!?])(\s|$)", t)
-    return (m.group(1) if m else t).strip()
 
 
 def main():
@@ -85,7 +101,7 @@ def main():
         for v in p["var"]:
             if not v.get("sku"):
                 continue
-            k = kod(p, v).strip().upper()
+            k = ako_v_obchode(kod(p, v))
             if k in podla_kodu and podla_kodu[k] is not p:
                 kolizie += 1
             podla_kodu[k] = p
@@ -116,7 +132,7 @@ def main():
 
     doplnene, bez_zdroja, nezname = 0, set(), 0
     for r in riadky:
-        kluc = (r.get(kod_stlpec) or "").strip().upper()
+        kluc = ako_v_obchode(r.get(kod_stlpec) or "")
         p = podla_kodu.get(kluc)
         if not p:
             nezname += 1
