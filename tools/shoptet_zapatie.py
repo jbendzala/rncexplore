@@ -381,7 +381,7 @@ def blok():
         else f'<a href="#" class="js-cookies-settings">{e(nz)}</a>'
         for (n, u), nz in zip(PRAVNE, sl()["pravne"]))
     sluby = "".join(f'<span>{e(x)}</span>' for x in SLUBY)
-    return f'''<div id="rnc-top" class="rnc-top">
+    return f'''<div class="rnc-top">
   <div class="rnc-top-sluby">{sluby}</div>
   <div class="rnc-top-odkazy">
     {prepinac_jazyka()}
@@ -389,7 +389,7 @@ def blok():
     <a href="{jazyk.odkaz("/kontakty/")}">{e(sl()["kontakt"])}</a>
   </div>
 </div>
-<div id="rnc-pata" class="rnc-pata">
+<div class="rnc-pata">
   <div class="container rnc-pata-in">
     <div class="rnc-pata-st rnc-pata-znacka">
       <h3>RNC EXPLORE</h3>
@@ -453,12 +453,21 @@ def skript():
   var JAZ = location.pathname.indexOf("/cs/") === 0 ? "cs" : "sk";
   var T = {texty}[JAZ];
 
-  /* Z dvoch pripravených blokov necháme ten, ktorý patrí k jazyku. */
+  /* Z dvoch pripravených blokov necháme ten, ktorý patrí k jazyku.
+
+     Identifikátory nesie až ten, ktorý prežije. V zdroji ich mať
+     nemôžu — oba bloky sú v stránke naraz a editor Shoptetu dvakrát
+     to isté id právom odmietne. */
   var bloky = document.querySelectorAll("[data-rnc-jazyk]");
   for (var bi = 0; bi < bloky.length; bi++) {{
-    if (bloky[bi].getAttribute("data-rnc-jazyk") !== JAZ) {{
-      bloky[bi].parentNode.removeChild(bloky[bi]);
+    var b = bloky[bi];
+    if (b.getAttribute("data-rnc-jazyk") !== JAZ) {{
+      b.parentNode.removeChild(b);
+      continue;
     }}
+    var hore = b.querySelector(".rnc-top"), dole = b.querySelector(".rnc-pata");
+    if (hore) {{ hore.id = "rnc-top"; }}
+    if (dole) {{ dole.id = "rnc-pata"; }}
   }}
 
   var f = document.getElementById("footer"),
