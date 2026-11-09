@@ -1083,8 +1083,14 @@ input:checked + .filter-label,
    doteraz vychádzala z obsahu — tlačidlu ju dal padding, poľu zasa
    výška šípok — a stačila drobná odchýlka a riadok sa rozišiel. */
 .add-to-cart { display: flex; gap: 10px; align-items: stretch; }
+/* Pevná výška, nie len dolná hranica. Obsah oboch prvkov sa líši —
+   tlačidlo drží padding, pole výška šípok — a stačí, aby si prehliadač
+   vyrátal riadkovanie inak, a riadok sa rozíde. Pri meraní na našej
+   strane sedel, klient ho však rozídený videl, tak to nenechávame
+   na výpočte. */
+.add-to-cart { align-items: center; }
 .add-to-cart > .quantity,
-.add-to-cart > .btn { min-height: 52px; }
+.add-to-cart > .btn { height: 52px; min-height: 52px; }
 .add-to-cart > .quantity { display: inline-flex; align-items: center; }
 .add-to-cart .quantity input {
   border: 1px solid var(--rnc-line-2);
