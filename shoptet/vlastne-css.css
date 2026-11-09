@@ -364,7 +364,14 @@ textarea:focus-visible,
 .top-navigation-bar .rnc-top .rnc-top-odhlasit {
   color: var(--rnc-amber); font-weight: 600;
 }
+/* Shoptet má vlastný prepínač jazyka s vlajkami. Návrh má na jeho
+   mieste dve skratky, tak jeho schovávame — inak by boli v lište
+   prepínače dva vedľa seba. */
+.top-navigation-bar .languagesMenu { display: none; }
 .rnc-top-jazyk strong { color: #fff; font-weight: 600; }
+.rnc-top-jazyk a { color: rgba(255, 255, 255, .62); text-decoration: none; }
+.rnc-top-jazyk a:hover { color: #fff; }
+.rnc-top-jazyk-del { margin: 0 7px; color: rgba(255, 255, 255, .25); }
 .rnc-top-jazyk span { margin: 0 7px; color: rgba(255, 255, 255, .25); }
 /* Bez modifikátora --language: Shoptet ho na tom prvku už nemá, a náš
    selektor sa tak prestal chytať — nástroje si potom vzali 30 %

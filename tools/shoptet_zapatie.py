@@ -47,6 +47,7 @@ import re
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import jazyk
 import vystup                                          # noqa: E402
 from shoptet_vyhladavanie import adresy, bez_diakritiky  # noqa: E402
 
@@ -116,6 +117,77 @@ VELKOOBCHOD = [
     ("Registrácia", "/registracia/"),
 ]
 
+SLOVA = {
+    "sk": {
+        "kategorie": {"hood": "Panely na kapotu",
+                      "flexible": "Flexibilné panely",
+                      "rooftent": "Pre strešné stany",
+                      "foldable": "Skladacie panely",
+                      "blanket": "Solárne deky",
+                      "rv": "Karavany a prívesy",
+                      "tonneau": "Na kryty korby"},
+        "produkty": ["Solárne panely na kapotu a strešné stany",
+                     "Flexibilné solárne panely", "Strešné stany a markízy",
+                     "Kempovanie a outdoor", "Panely na mieru"],
+        "servis": ["Doprava a platba", "Montáž", "Blog", "FAQ"],
+        "velkoobchod": ["Informácie", "Registrácia"],
+        "pravne": ["Obchodné podmienky", "Reklamácie",
+                   "Ochrana osobných údajov", "Cookies",
+                   "Identifikácia prevádzkovateľa"],
+        "perex": "Solárne riešenia, kempingové a outdoor vybavenie pre "
+                 "cestovateľov, dobrodruhov aj profesionálov.",
+        "istoty": ["Faktúru s QR kódom pošleme e-mailom po objednaní.",
+                   "Tovar odošleme po úhrade.",
+                   "Montáž bez vŕtania, návod ku každému produktu."],
+        "h_produkty": "Produkty", "h_servis": "Zákaznícky servis",
+        "h_velkoobchod": "Veľkoobchod", "kontakt": "Kontakt",
+        "b2b": "Veľkoobchod (B2B)",
+        "bez_vrtania": "Bez vŕtania", "na_mieru": "Na mieru",
+        "katalog": "Katalóg", "vsetko": "Všetko", "s_dph": "s DPH",
+        "pd_b2b": "Ste predajca alebo montážny servis? ",
+        "ucet": "Môj účet", "odhlasit": "Odhlásiť sa",
+        "cela_recenzia": "Zobraziť celú recenziu", "skryt": "Skryť",
+    },
+    "cs": {
+        "kategorie": {"hood": "Panely na kapotu",
+                      "flexible": "Flexibilní panely",
+                      "rooftent": "Pro střešní stany",
+                      "foldable": "Skládací panely",
+                      "blanket": "Solární deky",
+                      "rv": "Karavany a přívěsy",
+                      "tonneau": "Na kryty korby"},
+        "produkty": ["Solární panely na kapotu a střešní stany",
+                     "Flexibilní solární panely", "Střešní stany a markýzy",
+                     "Kempování a outdoor", "Panely na míru"],
+        "servis": ["Doprava a platba", "Montáž", "Blog", "FAQ"],
+        "velkoobchod": ["Informace", "Registrace"],
+        "pravne": ["Obchodní podmínky", "Reklamace",
+                   "Ochrana osobních údajů", "Cookies",
+                   "Identifikace provozovatele"],
+        "perex": "Solární řešení, kempingové a outdoor vybavení pro "
+                 "cestovatele, dobrodruhy i profesionály.",
+        "istoty": ["Fakturu s QR kódem pošleme e-mailem po objednání.",
+                   "Zboží odešleme po úhradě.",
+                   "Montáž bez vrtání, návod ke každému produktu."],
+        "h_produkty": "Produkty", "h_servis": "Zákaznický servis",
+        "h_velkoobchod": "Velkoobchod", "kontakt": "Kontakt",
+        "b2b": "Velkoobchod (B2B)",
+        "bez_vrtania": "Bez vrtání", "na_mieru": "Na míru",
+        "katalog": "Katalog", "vsetko": "Vše", "s_dph": "s DPH",
+        "pd_b2b": "Jste prodejce nebo montážní servis? ",
+        "ucet": "Můj účet", "odhlasit": "Odhlásit se",
+        "cela_recenzia": "Zobrazit celou recenzi", "skryt": "Skrýt",
+    },
+}
+
+
+PREDPONY = {"sk": "", "cs": "/cs"}
+
+
+def sl():
+    return jazyk.t(SLOVA)
+
+
 PEREX = ("Solárne riešenia, kempingové a outdoor vybavenie pre "
          "cestovateľov, dobrodruhov aj profesionálov.")
 
@@ -176,14 +248,16 @@ def udaje_kariet():
         a = kam.get(p["id"])
         if not a:
             continue
+        # Ukladáme kľúče, nie hotové texty — tabuľka je spoločná pre
+        # obe mutácie a jazyk sa vyberá až v prehliadači.
         stitky = []
         if p.get("w"):
             stitky.append(f'{p["w"]} W')
         if p["cat"] in PRILEPENE:
-            stitky.append("Bez vŕtania")
+            stitky.append("@bez_vrtania")
         if p.get("b"):
-            stitky.append("Na mieru")
-        riadok = [KATEGORIE.get(p["cat"], ""), stitky]
+            stitky.append("@na_mieru")
+        riadok = [p["cat"], stitky]
         # Tretia položka je priblíženie hlavnej fotky, a to len keď ho
         # fotka naozaj potrebuje. Číslo je presné: rám delený šírkou
         # zdroja presne pokryje bielu obrubu a nič neoreže.
@@ -208,7 +282,7 @@ def foto_rozmery():
     return json.load(open(cesta, encoding="utf-8"))
 
 
-def clanky():
+def clanky(kod):
     """Najnovšie články pre stránku Blog.
 
     Obrázky článkov sedia v obchode pod adresou odvodenou od adresy
@@ -217,6 +291,7 @@ def clanky():
     karta sa vykreslí bez fotky — nerozbije sa.
     """
     from blog_content import POSTS, CAT
+    I = 0 if kod == "sk" else 1
     zoz = sorted(POSTS, key=lambda p: p["date"], reverse=True)
     r = []
     for p in zoz[:CLANKOV_NA_BLOGU]:
@@ -224,11 +299,11 @@ def clanky():
         if not rub:
             continue
         r.append([
-            f'/{rub}/{p["slug"]}/',
-            p["title"][0],
-            p["lead"][0],
+            PREDPONY[kod] + f'/{rub}/{p["slug"]}/',
+            p["title"][I],
+            p["lead"][I],
             f'/user/articles/images/{p["slug"]}.jpg',
-            CAT[p["cat"]][0],
+            CAT[p["cat"]][I],
         ])
     return r
 
@@ -242,43 +317,88 @@ def adresy_produktov(P):
     bolo prehnané, vzhľad zostane funkčný aj bez štítkov.
     """
     mapa = adresy()
+    # Kľúč je bez predpony mutácie. Záhlavie a zápätie sú v Shoptete
+    # spoločné pre všetky jazyky — overené na živom obchode, /cs/ aj /
+    # ťahajú ten istý rnc-skript.js — takže tabuľka musí poslúžiť
+    # obom. Skript si pri hľadaní predponu odreže.
     return {p["id"]: "/" + mapa[bez_diakritiky(p["n"]["sk"])] + "/"
             for p in P if bez_diakritiky(p["n"]["sk"]) in mapa}
 
 
-def stlpec(nadpis, odkazy):
-    polozky = "".join(f'<li><a href="{e(u)}">{e(n)}</a></li>'
-                      for n, u in odkazy)
+def stlpec(nadpis, odkazy, nazvy):
+    polozky = "".join(
+        f'<li><a href="{e(jazyk.odkaz(u))}">{e(nz)}</a></li>'
+        for (n, u), nz in zip(odkazy, nazvy))
     return (f'<div class="rnc-pata-st"><h3>{e(nadpis)}</h3>'
             f'<ul>{polozky}</ul></div>')
+
+
+def prepinac_jazyka():
+    """SK | CZ ako skutočné odkazy.
+
+    Shoptet má vlastný prepínač s vlajkami v .languagesMenu; ten CSS
+    skrýva, lebo návrh má na jeho mieste tieto dve skratky. Adresy sú
+    jeho — mutáciu prepína cez action, nie cez cestu, takže si zapamätá,
+    na ktorej stránke si bol.
+    """
+    akt = jazyk.aktualny()
+    kusy = []
+    for kod, popis in (("sk", "SK"), ("cs", "CZ")):
+        if kod == akt:
+            kusy.append(f"<strong>{popis}</strong>")
+        else:
+            kusy.append(
+                f'<a href="/action/Language/changeLanguage/?language={kod}"'
+                f' rel="nofollow">{popis}</a>')
+    return ('<span class="rnc-top-jazyk">'
+            + '<span class="rnc-top-jazyk-del">|</span>'.join(kusy)
+            + "</span>")
+
+
+def blok_oboch():
+    """Horná lišta a pätička pre obe mutácie v jednom súbore.
+
+    Shoptet má pole Zápätie spoločné pre celý obchod — overené na
+    živom obchode, / aj /cs/ ťahajú ten istý rnc-skript.js. Vkladáme
+    preto oba bloky a skript ten cudzí hneď zmaže.
+    """
+    kusy = []
+    povodny = jazyk.aktualny()
+    try:
+        for kod in SLOVA:
+            jazyk.nastav(kod)
+            kusy.append(f'<div data-rnc-jazyk="{kod}">' + blok() + "</div>")
+    finally:
+        jazyk.nastav(povodny)
+    return "\n".join(kusy)
 
 
 def blok():
     # Oddeľovač je samostatný prvok, nie ::before vnútri odkazu —
     # tam by sa bodka stala súčasťou klikateľnej plochy.
     pravne = '<span class="rnc-pata-bod">·</span>'.join(
-        f'<a href="{e(u)}">{e(n)}</a>' if u
-        else f'<a href="#" class="js-cookies-settings">{e(n)}</a>'
-        for n, u in PRAVNE)
+        f'<a href="{e(jazyk.odkaz(u))}">{e(nz)}</a>' if u
+        else f'<a href="#" class="js-cookies-settings">{e(nz)}</a>'
+        for (n, u), nz in zip(PRAVNE, sl()["pravne"]))
     sluby = "".join(f'<span>{e(x)}</span>' for x in SLUBY)
     return f'''<div id="rnc-top" class="rnc-top">
   <div class="rnc-top-sluby">{sluby}</div>
   <div class="rnc-top-odkazy">
-    <span class="rnc-top-jazyk"><strong>SK</strong><span>|</span>CZ</span>
-    <a class="rnc-top-b2b" href="/velkoobchod/">Veľkoobchod (B2B)</a>
-    <a href="/kontakty/">Kontakt</a>
+    {prepinac_jazyka()}
+    <a class="rnc-top-b2b" href="{jazyk.odkaz("/velkoobchod/")}">{e(sl()["b2b"])}</a>
+    <a href="{jazyk.odkaz("/kontakty/")}">{e(sl()["kontakt"])}</a>
   </div>
 </div>
 <div id="rnc-pata" class="rnc-pata">
   <div class="container rnc-pata-in">
     <div class="rnc-pata-st rnc-pata-znacka">
       <h3>RNC EXPLORE</h3>
-      <p>{e(PEREX)}</p>
-      <p class="rnc-pata-kontakt"><a href="/kontakty/">Kontakt</a></p>
+      <p>{e(sl()["perex"])}</p>
+      <p class="rnc-pata-kontakt"><a href="{jazyk.odkaz("/kontakty/")}">{e(sl()["kontakt"])}</a></p>
     </div>
-    {stlpec("Produkty", PRODUKTY)}
-    {stlpec("Zákaznícky servis", SERVIS)}
-    {stlpec("Veľkoobchod", VELKOOBCHOD)}
+    {stlpec(sl()["h_produkty"], PRODUKTY, sl()["produkty"])}
+    {stlpec(sl()["h_servis"], SERVIS, sl()["servis"])}
+    {stlpec(sl()["h_velkoobchod"], VELKOOBCHOD, sl()["velkoobchod"])}
   </div>
   <div class="container rnc-pata-spodok">
     {pravne}
@@ -292,11 +412,31 @@ def skript():
     To isté, čo doteraz sedelo v Zápätí, plus doplnenie kariet. Do
     poľa sa to prestalo zmestať, keď k tomu pribudla tabuľka údajov.
     """
-    istoty = ('<ul class="rnc-istoty">'
-              + "".join(f"<li>{e(x)}</li>" for x in ISTOTY) + "</ul>")
+    # Záhlavie a zápätie sú v Shoptete spoločné pre všetky mutácie,
+    # takže jazyk nevyberáme pri generovaní, ale až v prehliadači
+    # podľa cesty. Do skriptu preto ide tabuľka oboch jazykov.
+    def pre(kod):
+        z = SLOVA[kod]
+        return {
+            "istoty": ('<ul class="rnc-istoty">'
+                       + "".join(f"<li>{e(x)}</li>" for x in z["istoty"])
+                       + "</ul>"),
+            "katalog": z["katalog"], "vsetko": z["vsetko"],
+            "s_dph": z["s_dph"], "pd_b2b": z["pd_b2b"], "b2b": z["b2b"],
+            "ucet": z["ucet"], "odhlasit": z["odhlasit"],
+            "cela_recenzia": z["cela_recenzia"], "skryt": z["skryt"],
+            "bez_vrtania": z["bez_vrtania"], "na_mieru": z["na_mieru"],
+            "kategorie": z["kategorie"],
+            "b2b_odkaz": PREDPONY[kod] + "/velkoobchod/",
+            "klient": PREDPONY[kod] + "/klient/",
+            "odhlasenie": PREDPONY[kod] + "/logout/",
+        }
+    texty = json.dumps({k: pre(k) for k in SLOVA}, ensure_ascii=False,
+                       separators=(",", ":"))
     udaje = json.dumps(udaje_kariet(), ensure_ascii=False,
                        separators=(",", ":"))
-    posty = json.dumps(clanky(), ensure_ascii=False, separators=(",", ":"))
+    posty = json.dumps({k: clanky(k) for k in SLOVA}, ensure_ascii=False,
+                       separators=(",", ":"))
     return f'''
 /* Zápätie sa vkladá pred </body>, teda až pod celou stránkou. Oba
    bloky preto presunieme tam, kam patria. Skript beží hneď, nie na
@@ -307,6 +447,19 @@ def skript():
      nadpisy — a nebolo by hneď jasné prečo. */
   if (document.documentElement.dataset.rncZapatie) {{ return; }}
   document.documentElement.dataset.rncZapatie = "1";
+
+  /* Záhlavie a zápätie má Shoptet spoločné pre všetky mutácie, takže
+     jazyk nevyberáme pri generovaní, ale tu — podľa cesty. */
+  var JAZ = location.pathname.indexOf("/cs/") === 0 ? "cs" : "sk";
+  var T = {texty}[JAZ];
+
+  /* Z dvoch pripravených blokov necháme ten, ktorý patrí k jazyku. */
+  var bloky = document.querySelectorAll("[data-rnc-jazyk]");
+  for (var bi = 0; bi < bloky.length; bi++) {{
+    if (bloky[bi].getAttribute("data-rnc-jazyk") !== JAZ) {{
+      bloky[bi].parentNode.removeChild(bloky[bi]);
+    }}
+  }}
 
   var f = document.getElementById("footer"),
       p = document.getElementById("rnc-pata"),
@@ -366,7 +519,7 @@ def skript():
          „Domov“ namiesto zaradenia. */
       if (v && v !== nadpis && n[x].getAttribute("href") !== "/") {{ r = v; }}
     }}
-    if (!r) {{ r = "Katalóg"; }}
+    if (!r) {{ r = T.katalog; }}
     if (r) {{
       var u = document.createElement("p");
       u.className = "rnc-eyebrow";
@@ -395,7 +548,7 @@ def skript():
 
     var koren = strom.querySelector(".topic a");
     if (koren) {{
-      stitok(koren.getAttribute("href"), "Všetko",
+      stitok(koren.getAttribute("href"), T.vsetko,
              koren.getAttribute("href") === cesta);
     }}
     var polozky = strom.querySelectorAll(":scope > ul > li");
@@ -453,15 +606,15 @@ def skript():
   if (c && !c.querySelector(".rnc-dph")) {{
     var s = document.createElement("span");
     s.className = "rnc-dph";
-    s.textContent = "s DPH";
+    s.textContent = T.s_dph;
     c.appendChild(s);
   }}
 
   var z = document.createElement("div");
   z.className = "rnc-pd-pata";
-  z.innerHTML = {istoty!r}
-    + '<p class="rnc-pd-b2b">Ste predajca alebo montážny servis? '
-    + '<a href="/velkoobchod/">Veľkoobchod (B2B)</a></p>';
+  z.innerHTML = T.istoty
+    + '<p class="rnc-pd-b2b">' + T.pd_b2b
+    + '<a href="' + T.b2b_odkaz + '">' + T.b2b + '</a></p>';
   i.appendChild(z);
 }})();
 
@@ -507,7 +660,7 @@ def skript():
   var o = document.querySelector(".type-posts-listing .content-inner");
   if (!o || o.querySelector(".news-wrapper") || o.querySelector(".rnc-clanky")) {{ return; }}
 
-  var C = {posty};
+  var C = {posty}[JAZ];
   if (!C.length) {{ return; }}
 
   var h = document.createElement("h2");
@@ -579,8 +732,8 @@ def skript():
        zátvorky tiež, preto odzadu. */
     var m = t.match(/\(([^()]*\d[^()]*)\)\s*$/);
     if (m) {{ cena = m[1]; t = t.slice(0, m.index); }}
-    t = t.replace(/[-\u2013\u2014]\s*Momentálne nedostupné\s*$/i, "");
-    t = t.replace(/^Prevedenie:\s*/i, "").replace(/[\s\u00b7-]+$/, "").trim();
+    t = t.replace(/[-\u2013\u2014]\s*(Momentálne nedostupné|Momentálně nedostupné)\s*$/i, "");
+    t = t.replace(/^(Prevedenie|Provedení):\s*/i, "").replace(/[\s\u00b7-]+$/, "").trim();
 
     var l = document.createElement("label");
     l.className = "rnc-variant";
@@ -634,17 +787,17 @@ def skript():
   for (var n = 0; n < karty.length; n++) {{
     var k = karty[n], o = k.querySelector("a.name") || k.querySelector("a.image");
     if (!o) {{ continue; }}
-    var u = U[o.getAttribute("href")];
+    var u = U[(o.getAttribute("href") || "").replace(/^\/cs/, "")];
     if (!u || k.querySelector(".rnc-karta-kat")) {{ continue; }}
 
     var meno = k.querySelector("a.name");
     if (!meno) {{ continue; }}
     var po = meno;
 
-    if (u[0]) {{
+    if (u[0] && T.kategorie[u[0]]) {{
       var kat = document.createElement("p");
       kat.className = "rnc-karta-kat";
-      kat.textContent = u[0];
+      kat.textContent = T.kategorie[u[0]] || "";
       po.parentNode.insertBefore(kat, po.nextSibling);
       po = kat;
     }}
@@ -653,7 +806,8 @@ def skript():
       r.className = "rnc-karta-stitky";
       for (var m = 0; m < u[1].length; m++) {{
         var x = document.createElement("span");
-        x.textContent = u[1][m];
+        var st = u[1][m];
+        x.textContent = st.charAt(0) === "@" ? T[st.slice(1)] : st;
         r.appendChild(x);
       }}
       po.parentNode.insertBefore(r, po.nextSibling);
@@ -670,7 +824,7 @@ def skript():
      a menšie nezväčšuje, len doplní bielou — obruba je preto pri
      každom produkte iná. Priblíženie je presne rám delený šírkou
      zdroja, takže bielu pokryje a z fotky neodreže nič. */
-  var d = U[location.pathname];
+  var d = U[location.pathname.replace(/^\/cs/, "")];
   if (d && d[2]) {{
     var f = document.querySelector(".p-main-image img");
     if (f) {{
@@ -689,13 +843,13 @@ def skript():
   if (odhl && top && !top.querySelector(".rnc-top-odhlasit")) {{
     var ucet = document.createElement("a");
     ucet.className = "rnc-top-ucet";
-    ucet.href = "/klient/";
-    ucet.textContent = "Môj účet";
+    ucet.href = T.klient;
+    ucet.textContent = T.ucet;
     var von = document.createElement("a");
     von.className = "rnc-top-odhlasit";
-    von.href = odhl.getAttribute("href") || "/logout/";
+    von.href = odhl.getAttribute("href") || T.odhlasenie;
     von.setAttribute("rel", "nofollow");
-    von.textContent = "Odhlásiť sa";
+    von.textContent = T.odhlasit;
     top.appendChild(ucet);
     top.appendChild(von);
   }}
@@ -716,10 +870,10 @@ def skript():
     var b = document.createElement("button");
     b.type = "button";
     b.className = "rnc-rev-viac";
-    b.textContent = "Zobraziť celú recenziu";
+    b.textContent = T.cela_recenzia;
     b.addEventListener("click", function () {{
       var cele = k.classList.toggle("rnc-rev-cele");
-      b.textContent = cele ? "Skryť" : "Zobraziť celú recenziu";
+      b.textContent = cele ? T.skryt : T.cela_recenzia;
     }});
     k.appendChild(b);
   }});
@@ -734,6 +888,7 @@ def skript():
 
 
 def main():
+    jazyk.z_argumentov()
     js = skript().strip() + "\n"
     cesta_js = vystup.kam(vystup.IMPORT, "vzhlad", SUBOR)
     with open(cesta_js, "w", encoding="utf-8") as f:
@@ -748,7 +903,7 @@ def main():
         "\n"
         "     Zdroj je tools/shoptet_zapatie.py v repozitári. Needituj tu\n"
         "     ani v nahranom súbore — uprav zdroj a spusti ten skript. -->\n"
-        + blok().strip() + "\n"
+        + blok_oboch().strip() + "\n"
         f'<script src="{CESTA}/{SUBOR}?v={odtlacok}"></script>\n')
 
     cesta_z = vystup.kam(vystup.IMPORT, "vzhlad", "do-zapatia.html")
