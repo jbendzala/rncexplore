@@ -26,6 +26,7 @@ import sys
 TU = os.path.dirname(os.path.abspath(__file__))
 KOREN = os.path.dirname(TU)
 sys.path.insert(0, TU)
+import jazyk
 import seo
 import vystup
 import blog_content as B
@@ -108,6 +109,97 @@ VYHODY = [
 HERO_ISTOTY = ["Pomôžeme s výberom", "Overenie kompatibility",
                "Technické poradenstvo"]
 
+# Všetko, čo sa na domovskej zobrazuje, po jazykoch. Dlaždice, výhody
+# a istoty sú tu tiež — ich slovenské znenie vyššie zostáva, lebo sa
+# naň odvoláva kód inde, ale do stránky ide toto.
+SLOVA = {
+    "sk": {
+        "hero_h": "Vybavený na cestu.<br>Pripravený na neznáme.",
+        "hero_p": "Vybavenie pre overlanding, off-road a nezávislé cestovanie.",
+        "hero_btn": "Zobraziť katalóg",
+        "hero_istoty": HERO_ISTOTY,
+        "kat_h": "Objavte naše kategórie",
+        "kat_p": "Solárne riešenia, kempingové a expedičné vybavenie",
+        "kat_viac": "Zobraziť všetky kategórie",
+        "prod_h": "Odporúčané produkty",
+        "prod_p": "S našou výbavou zvládnete viac.",
+        "prod_viac": "Zobraziť všetky produkty",
+        "prod_detail": "Zobraziť detail →",
+        "prod_od": "od", "prod_dph": "s DPH",
+        "life_h": "Energia, ktorá vám dáva slobodu.",
+        "life_p": "Pre dlhšie cesty, vzdialenejšie miesta a väčšiu nezávislosť.",
+        "life_video": "Pozrieť video",
+        "rec_h": "Skúsenosti zákazníkov",
+        "rec_p": "Preverené cestami. Zhodnotené zákazníkmi. "
+                 "Autentické názory na produkty.",
+        "blog_h": "Tipy, montáž a inšpirácia",
+        "blog_p": "Návody a nápady, vďaka ktorým z techniky vyťažíte maximum.",
+        "blog_viac": "Zobraziť všetky články",
+        "blog_citat": "Čítať viac →",
+        "b2b_h": "Ste predajca alebo montážny servis?",
+        "b2b_p": "Máte predajňu, servis alebo sa venujete úpravám terénnych "
+                 "vozidiel? Ozvite sa nám. Radi vám predstavíme našu ponuku "
+                 "a pozrieme sa, ako by sme mohli spolupracovať.",
+        "b2b_reg": "Registrácia partnera",
+        "b2b_login": "Prihlásiť sa ako partner",
+        "dlazdice": [d[0] for d in DLAZDICE],
+        "vyhody": VYHODY,
+    },
+    "cs": {
+        "hero_h": "Vybavený na cestu.<br>Připravený na neznámé.",
+        "hero_p": "Vybavení pro overlanding, off-road a nezávislé cestování.",
+        "hero_btn": "Zobrazit katalog",
+        "hero_istoty": ["Pomůžeme s výběrem", "Ověření kompatibility",
+                        "Technické poradenství"],
+        "kat_h": "Objevte naše kategorie",
+        "kat_p": "Solární řešení, kempingové a expediční vybavení",
+        "kat_viac": "Zobrazit všechny kategorie",
+        "prod_h": "Doporučené produkty",
+        "prod_p": "S naší výbavou zvládnete víc.",
+        "prod_viac": "Zobrazit všechny produkty",
+        "prod_detail": "Zobrazit detail →",
+        "prod_od": "od", "prod_dph": "s DPH",
+        "life_h": "Energie, která vám dává svobodu.",
+        "life_p": "Pro delší cesty, vzdálenější místa a větší nezávislost.",
+        "life_video": "Přehrát video",
+        "rec_h": "Zkušenosti zákazníků",
+        "rec_p": "Prověřeno cestami. Zhodnoceno zákazníky. "
+                 "Autentické názory na produkty.",
+        "blog_h": "Tipy, montáž a inspirace",
+        "blog_p": "Návody a nápady, díky kterým z techniky vytěžíte maximum.",
+        "blog_viac": "Zobrazit všechny články",
+        "blog_citat": "Číst více →",
+        "b2b_h": "Jste prodejce nebo montážní servis?",
+        "b2b_p": "Máte prodejnu, servis nebo se věnujete úpravám terénních "
+                 "vozidel? Ozvěte se nám. Rádi vám představíme naši nabídku "
+                 "a podíváme se, jak bychom mohli spolupracovat.",
+        "b2b_reg": "Registrace partnera",
+        "b2b_login": "Přihlásit se jako partner",
+        "dlazdice": ["Solární panely na kapotu a střešní stany",
+                     "Flexibilní solární panely",
+                     "Střešní stany a markýzy",
+                     "Kempování a outdoor vybavení"],
+        "vyhody": [
+            ("Energie bez motoru",
+             "Panel nabíjí baterii během stání i jízdy. Lednice či "
+             "fotoaparát fungují bez startování auta."),
+            ("Tvarované na konkrétní vozidlo",
+             "Každý panel je přizpůsoben konkrétnímu modelu. Přirozeně "
+             "kopíruje tvar kapoty a nenarušuje vzhled auta."),
+            ("Montáž bez vrtání",
+             "Jednoduchá instalace bez nutnosti vrtání a bez zbytečných "
+             "zásahů do karoserie."),
+            ("Stavěné do drsných podmínek",
+             "Odolnost na každém kilometru. Navrženy tak, aby zvládaly "
+             "vibrace, nepříznivé počasí a náročné podmínky na cestách."),
+        ],
+    },
+}
+
+
+def t():
+    return jazyk.t(SLOVA)
+
 BLOG_ZAKLAD = "/blog"              # overené proti živému obchodu;
                                    # /nase-spravy vracia 404
 ADRESY = {}                        # id produktu -> adresa v obchode
@@ -163,16 +255,15 @@ def hero():
     pritom obmedzený na šírku stránky, takže sa z nej musíme vymaniť —
     na to je ten výpočet so 100vw v CSS.
     """
-    body = "".join(f"<li>{e(n)}</li>" for n in HERO_ISTOTY)
+    body = "".join(f"<li>{e(n)}</li>" for n in t()["hero_istoty"])
     return f'''
 <section class="rnc-hero" style="background-image:url('{e(FOTO["hero"])}')">
   <div class="container rnc-hero-in">
     <p class="rnc-eyebrow">RNC EXPLORE</p>
-    <h2>Vybavený na cestu.<br>Pripravený na neznáme.</h2>
-    <p class="rnc-lead">Vybavenie pre overlanding, off-road a nezávislé
-       cestovanie.</p>
+    <h2>{t()["hero_h"]}</h2>
+    <p class="rnc-lead">{e(t()["hero_p"])}</p>
     <p class="rnc-cta">
-      <a class="rnc-btn" href="{KATALOG}">Zobraziť katalóg</a>
+      <a class="rnc-btn" href="{jazyk.odkaz(KATALOG)}">{e(t()["hero_btn"])}</a>
     </p>
     <ul class="rnc-hero-body">{body}</ul>
   </div>
@@ -183,10 +274,12 @@ def vyhladavanie():
     """Vyhľadávanie vozidla. Vyrába ho tools/shoptet_vyhladavanie.py, lebo
     si musí stiahnuť adresy produktov z mapy stránok obchodu — a to je
     jediné miesto v celej stavbe, ktoré potrebuje sieť. Tu sa len vloží."""
-    cesta = vystup.kam(vystup.IMPORT, "vzhlad", "vyhladavanie-vozidla.html")
+    cesta = vystup.kam(vystup.IMPORT, jazyk.priecinok("vzhlad"),
+                       "vyhladavanie-vozidla.html")
     if not os.path.exists(cesta):
         sys.exit("chýba vyhľadávanie vozidla — spusti najprv:\n"
-                 "  python3 tools/shoptet_vyhladavanie.py")
+                 "  python3 tools/shoptet_vyhladavanie.py "
+                 + (jazyk.aktualny() if jazyk.aktualny() != "sk" else ""))
     return open(cesta, encoding="utf-8").read()
 
 
@@ -207,11 +300,12 @@ def kategorie(P, meta):
                  + "\n  ".join(f"kategoria-{x}.jpg" for x in chyba))
 
     dlazdice = []
-    for nazov, slug, foto in DLAZDICE:
+    for (nazov, slug, foto), preklad in zip(DLAZDICE, t()["dlazdice"]):
+        nazov = preklad
         st = (f" style=\"background-image:url('/user/documents/upload/"
               f"kategoria-{foto}.jpg')\"" if foto else "")
         dlazdice.append(f'''
-    <a class="rnc-cat" href="/{slug}/">
+    <a class="rnc-cat" href="{jazyk.odkaz("/" + slug + "/")}">
       <span class="rnc-cat-img"{st}></span>
       <span class="rnc-cat-txt">{e(nazov)}</span>
       <span class="rnc-cat-sip">→</span>
@@ -221,14 +315,28 @@ def kategorie(P, meta):
 <section class="rnc-sec">
   <div class="rnc-sec-head">
     <div>
-      <h2>Objavte naše kategórie</h2>
-      <p class="rnc-sub">Solárne riešenia, kempingové a expedičné vybavenie</p>
+      <h2>{e(t()["kat_h"])}</h2>
+      <p class="rnc-sub">{e(t()["kat_p"])}</p>
     </div>
-    <a class="rnc-more" href="{KATALOG}">Zobraziť všetky kategórie</a>
+    <a class="rnc-more" href="{jazyk.odkaz(KATALOG)}">{e(t()["kat_viac"])}</a>
   </div>
   <div class="rnc-cats">{"".join(dlazdice)}
   </div>
 </section>'''
+
+
+# Názvy kategórií na kartách produktov, po jazykoch.
+KAT_NAZVY_SK = {k: n for k, n, _ in KATEGORIE}
+KAT_NAZVY_CS = {
+    "hood": "Panely na kapotu", "flexible": "Flexibilní panely",
+    "rooftent": "Pro střešní stany", "foldable": "Skládací panely",
+    "blanket": "Solární deky", "rv": "Karavany a přívěsy",
+    "tonneau": "Na kryty korby",
+}
+
+
+def kat_nazvy():
+    return KAT_NAZVY_SK if jazyk.aktualny() == "sk" else KAT_NAZVY_CS
 
 
 def odporucame(P):
@@ -246,7 +354,7 @@ def odporucame(P):
     karty = []
     for pid in ODPORUCAME:
         p = by[pid]
-        kat = dict((k, n) for k, n, _ in KATEGORIE).get(p["cat"], "")
+        kat = kat_nazvy().get(p["cat"], "")
             # Vnútri odkazu sú zámerne len <span>, žiadne <h3> a <p>.
         # Editor Shoptetu si z vloženého HTML robí svoje: keď v <a>
         # nájde blokový prvok, odkaz okolo neho rozdelí a prázdny
@@ -260,18 +368,18 @@ def odporucame(P):
       <span class="rnc-prod-img" style="background-image:url('{e((p.get("img") or [""])[0])}')"></span>
       <span class="rnc-prod-hlava">{e(kat)}</span>
       <span class="rnc-prod-n">{e(p["n"]["sk"])}</span>
-      <span class="rnc-prod-cena">od <strong>{cena(od_ceny(p))}</strong>
-         <span>s DPH</span></span>
-      <span class="rnc-more">Zobraziť detail →</span>
+      <span class="rnc-prod-cena">{e(t()["prod_od"])} <strong>{cena(od_ceny(p))}</strong>
+         <span>{e(t()["prod_dph"])}</span></span>
+      <span class="rnc-more">{e(t()["prod_detail"])}</span>
     </a>''')
     return f'''
 <section class="rnc-sec">
   <div class="rnc-sec-head">
     <div>
-      <h2>Odporúčané produkty</h2>
-      <p class="rnc-sub">S našou výbavou zvládnete viac.</p>
+      <h2>{e(t()["prod_h"])}</h2>
+      <p class="rnc-sub">{e(t()["prod_p"])}</p>
     </div>
-    <a class="rnc-more" href="{KATALOG}">Zobraziť všetky produkty</a>
+    <a class="rnc-more" href="{jazyk.odkaz(KATALOG)}">{e(t()["prod_viac"])}</a>
   </div>
   <div class="rnc-prods">{"".join(karty)}
   </div>
@@ -290,7 +398,7 @@ def benefity():
     """
     polozky = "".join(
         f'<div class="rnc-ben"><span class="rnc-ben-ico"></span>'
-        f'<strong>{e(n)}</strong><p>{e(t)}</p></div>' for n, t in VYHODY)
+        f'<strong>{e(n)}</strong><p>{e(x)}</p></div>' for n, x in t()["vyhody"])
     foto = (f' style="background-image:url(\'{e(FOTO["life"])}\')"'
             if FOTO["life"] else "")
     return f'''
@@ -298,10 +406,10 @@ def benefity():
   <div class="rnc-life-foto"{foto}></div>
   <div class="container rnc-life-in">
     <div class="rnc-life-txt">
-      <h2>Energia, ktorá vám dáva slobodu.</h2>
-      <p>Pre dlhšie cesty, vzdialenejšie miesta a väčšiu nezávislosť.</p>
+      <h2>{e(t()["life_h"])}</h2>
+      <p>{e(t()["life_p"])}</p>
       <a class="rnc-play" href="{e(VIDEO)}" target="_blank" rel="noopener">
-        <span class="rnc-play-ico">▶</span><span>Pozrieť video</span></a>
+        <span class="rnc-play-ico">▶</span><span>{e(t()["life_video"])}</span></a>
     </div>
     <div class="rnc-life-panel">{polozky}</div>
   </div>
@@ -313,18 +421,19 @@ def recenzie():
     <figure class="rnc-rev">
       <span class="rnc-rev-img" style="background-image:url('{e(r["img"])}')"></span>
       <figcaption><strong>{e(r["who"])}</strong><span>{e(r["car"])}</span></figcaption>
-      <blockquote>{e(r["sk"])}</blockquote>
+      <blockquote>{e(r[jazyk.aktualny()])}</blockquote>
     </figure>''' for r in REVIEWS)
     return f'''
 <section class="rnc-sec">
-  <h2>Skúsenosti zákazníkov</h2>
-  <p class="rnc-sub">Preverené cestami. Zhodnotené zákazníkmi.
-     Autentické názory na produkty.</p>
+  <h2>{e(t()["rec_h"])}</h2>
+  <p class="rnc-sub">{e(t()["rec_p"])}</p>
   <div class="rnc-revs">{karty}</div>
 </section>'''
 
 
 def clanky():
+    # Texty článkov sú dvojice (sk, cs).
+    I = 0 if jazyk.aktualny() == "sk" else 1
     def datum(d):
         r, m, den = d.split("-")
         return f"{int(den)}. {int(m)}. {r}"
@@ -337,24 +446,23 @@ def clanky():
     # — teda na stránku dodávateľa, ktorý ich môže kedykoľvek prehodiť.
     karty = "".join(f'''
     <article class="rnc-post">
-      <a class="rnc-post-img" href="{BLOG_ZAKLAD}/{e(a["slug"])}/"
+      <a class="rnc-post-img" href="{jazyk.odkaz(BLOG_ZAKLAD + "/" + a["slug"] + "/")}"
          style="background-image:url('/user/documents/upload/blog-{e(a["slug"])}.jpg')"
-         ><span class="rnc-tag">{e(B.CAT[a["cat"]][0])}</span></a>
-      <h3><a href="{BLOG_ZAKLAD}/{e(a["slug"])}/">{e(a["title"][0])}</a></h3>
-      <p>{e(a["lead"][0][:130])}…</p>
+         ><span class="rnc-tag">{e(B.CAT[a["cat"]][I])}</span></a>
+      <h3><a href="{jazyk.odkaz(BLOG_ZAKLAD + "/" + a["slug"] + "/")}">{e(a["title"][I])}</a></h3>
+      <p>{e(a["lead"][I][:130])}…</p>
       <p><a class="rnc-more rnc-more-tmavy"
-            href="{BLOG_ZAKLAD}/{e(a["slug"])}/">Čítať viac →</a></p>
+            href="{jazyk.odkaz(BLOG_ZAKLAD + "/" + a["slug"] + "/")}">{e(t()["blog_citat"])}</a></p>
     </article>''' for a in B.newest(3))
     return f'''
 <section class="rnc-sec rnc-band rnc-band-biely">
   <div class="container">
   <div class="rnc-sec-head">
     <div>
-      <h2>Tipy, montáž a inšpirácia</h2>
-      <p class="rnc-sub">Návody a nápady, vďaka ktorým z techniky
-         vyťažíte maximum.</p>
+      <h2>{e(t()["blog_h"])}</h2>
+      <p class="rnc-sub">{e(t()["blog_p"])}</p>
     </div>
-    <a class="rnc-more" href="{BLOG_ZAKLAD}/">Zobraziť všetky články</a>
+    <a class="rnc-more" href="{jazyk.odkaz(BLOG_ZAKLAD + "/")}">{e(t()["blog_viac"])}</a>
   </div>
   <div class="rnc-posts">{karty}</div>
   </div>
@@ -362,30 +470,29 @@ def clanky():
 
 
 def b2b():
-    return '''
+    return f'''
 <section class="rnc-band rnc-b2b">
   <div class="container rnc-b2b-in">
     <div>
-      <h2>Ste predajca alebo montážny servis?</h2>
-      <p>Máte predajňu, servis alebo sa venujete úpravám terénnych
-         vozidiel? Ozvite sa nám. Radi vám predstavíme našu ponuku
-         a pozrieme sa, ako by sme mohli spolupracovať.</p>
+      <h2>{e(t()["b2b_h"])}</h2>
+      <p>{e(t()["b2b_p"])}</p>
     </div>
     <p class="rnc-cta">
-      <a class="rnc-btn" href="/velkoobchod/">Registrácia partnera</a>
-      <a class="rnc-btn rnc-btn-ghost" href="/login/">Prihlásiť sa ako partner</a>
+      <a class="rnc-btn" href="{jazyk.odkaz("/velkoobchod/")}">{e(t()["b2b_reg"])}</a>
+      <a class="rnc-btn rnc-btn-ghost" href="{jazyk.odkaz("/login/")}">{e(t()["b2b_login"])}</a>
     </p>
   </div>
 </section>'''
 
 
 def main():
+    jazyk.z_argumentov()
     P, meta = katalog()
     # Odkazy na produkty berieme z mapy stránok obchodu, nie z odhadu —
     # rovnako ako vo vyhľadávaní vozidla.
     mapa = adresy()
     global ADRESY
-    ADRESY = {p["id"]: "/" + mapa[bez_diakritiky(p["n"]["sk"])] + "/"
+    ADRESY = {p["id"]: jazyk.odkaz("/" + mapa[bez_diakritiky(p["n"]["sk"])] + "/")
               for p in P if bez_diakritiky(p["n"]["sk"]) in mapa}
     casti = [
         "<!-- Domovská stránka rncexplore.com podľa návrhu grafika.",
@@ -396,7 +503,8 @@ def main():
         benefity(), recenzie(), b2b(), clanky(),
     ]
     h = "\n".join(casti) + "\n"
-    ciel = vystup.kam(vystup.IMPORT, "vzhlad", "uvodna-stranka.html")
+    ciel = vystup.kam(vystup.IMPORT, jazyk.priecinok("vzhlad"),
+                      "uvodna-stranka.html")
     with open(ciel, "w", encoding="utf-8") as f:
         f.write(h)
     print(f"{len(h):>6} znakov -> {ciel}")
