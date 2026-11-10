@@ -2175,15 +2175,22 @@ label { color: var(--rnc-ink); }
    jeden riadok zmazať. */
 .type-category .products-block .ratings-wrapper { display: none; }
 
-/* Cenu na karte ukazujeme tak, ako ju Shoptet vypíše — „od 1 766 Kč“.
-   Kedysi tu namiesto nej stál pevný text „Cena podľa variantu“, lebo
-   prevedenia majú rôznu cenu a karta vtedy neukazovala žiadnu. Shoptet
-   odvtedy vypisuje cenu najlacnejšieho prevedenia, takže ten text len
-   zakrýval užitočný údaj — a navyše sa nedal preložiť, keďže text
-   z CSS jazykové mutácie nepoznajú a v češtine zostával slovenský. */
-.type-category .products-block .prices > .price-final {
+/* Namiesto ceny „Cena podľa variantu“. Každý náš produkt má
+   prevedenia s rôznou cenou a cenu určuje až výber na detaile.
+
+   Text je v CSS, a ten jazykové mutácie nepozná — v češtine by zostal
+   slovenský. Prepíname ho preto podľa jazyka dokumentu: Shoptet dáva
+   koreňovému prvku lang="sk" alebo lang="cs". Nepotrebuje to skript,
+   takže je to správne hneď pri načítaní a nič neprebliskne. */
+.type-category .products-block .prices > * { display: none; }
+.type-category .products-block .prices::before {
+  content: "Cena podľa variantu";
+  display: block;
   font-family: var(--rnc-display); font-weight: 600; font-size: 18px;
   color: var(--rnc-head);
+}
+html[lang="cs"] .type-category .products-block .prices::before {
+  content: "Cena podle varianty";
 }
 /* Spodok karty pod seba: cena na vlastnom riadku a pod ňou odkaz na
    detail. Šablóna ich kladie vedľa seba — riadok s „flex-basis:
