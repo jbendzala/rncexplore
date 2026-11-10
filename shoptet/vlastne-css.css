@@ -2681,8 +2681,15 @@ body:not(.type-index) .breadcrumbs-wrapper { padding-inline: 20px; }
 .type-detail .add-to-cart .quantity input::-webkit-inner-spin-button {
   -webkit-appearance: none; margin: 0;
 }
+/* Nápis centrujeme, nie vypočítavame. Šablóna dáva tlačidlu
+   „line-height: 36px“ a k tomu 14 px odsadenia zhora aj zdola — to je
+   64 px obsahu v 52 px vysokom rámčeku, takže text vypadol o šesť
+   pixelov nižšie. Rámček aj pole s počtom pritom merali zhodných 52
+   a vyzeralo to ako rozídený riadok, hoci rozídený bol len nápis. */
 .type-detail .add-to-cart-button {
   flex: 1; height: 52px; border-radius: 999px;
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 0 20px; line-height: 1;
   font-family: var(--rnc-display); font-weight: 700; font-size: 16px;
 }
 
