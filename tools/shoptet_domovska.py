@@ -202,6 +202,21 @@ def t():
 
 BLOG_ZAKLAD = "/blog"              # overené proti živému obchodu;
                                    # /nase-spravy vracia 404
+
+# Rubriky článkov. Článok nežije pod /blog/, ale pod svojou rubrikou —
+# /blog/<slug>/ vracia 404. Mapa je tá istá ako v shoptet_zapatie.py.
+RUBRIKY = {
+    "kapota":   "solarny-panel-na-kapotu",
+    "montaz":   "skusenosti-z-montaze",
+    "prenosne": "prenosne-panely",
+    "technika": "technika",
+}
+
+# Blog zostáva slovenský aj v českej mutácii. Články v Shoptete
+# jazykové verzie nemajú — pri článku nie je prepínač jazyka a export
+# prekladov pre ne neexistuje — takže v češtine nie sú založené vôbec
+# a /cs/<rubrika>/<článok>/ vracia 404. Odkazy preto predponu
+# nedostávajú.
 ADRESY = {}                        # id produktu -> adresa v obchode
 
 # Fotografie, ktoré si do návrhu vybral grafik. Nahrávajú sa do Správcu
@@ -444,15 +459,18 @@ def clanky():
     # v článku. Tie mierili jednak na /assets/ zo starého webu, čo je
     # na Shoptete 404 a karta zostala prázdna, jednak na cdn.shopify.com
     # — teda na stránku dodávateľa, ktorý ich môže kedykoľvek prehodiť.
+    def adresa(a):
+        return f'/{RUBRIKY[a["cat"]]}/{a["slug"]}/'
+
     karty = "".join(f'''
     <article class="rnc-post">
-      <a class="rnc-post-img" href="{jazyk.odkaz(BLOG_ZAKLAD + "/" + a["slug"] + "/")}"
+      <a class="rnc-post-img" href="{e(adresa(a))}"
          style="background-image:url('/user/documents/upload/blog-{e(a["slug"])}.jpg')"
          ><span class="rnc-tag">{e(B.CAT[a["cat"]][I])}</span></a>
-      <h3><a href="{jazyk.odkaz(BLOG_ZAKLAD + "/" + a["slug"] + "/")}">{e(a["title"][I])}</a></h3>
+      <h3><a href="{e(adresa(a))}">{e(a["title"][I])}</a></h3>
       <p>{e(a["lead"][I][:130])}…</p>
       <p><a class="rnc-more rnc-more-tmavy"
-            href="{jazyk.odkaz(BLOG_ZAKLAD + "/" + a["slug"] + "/")}">{e(t()["blog_citat"])}</a></p>
+            href="{e(adresa(a))}">{e(t()["blog_citat"])}</a></p>
     </article>''' for a in B.newest(3))
     return f'''
 <section class="rnc-sec rnc-band rnc-band-biely">
@@ -462,7 +480,7 @@ def clanky():
       <h2>{e(t()["blog_h"])}</h2>
       <p class="rnc-sub">{e(t()["blog_p"])}</p>
     </div>
-    <a class="rnc-more" href="{jazyk.odkaz(BLOG_ZAKLAD + "/")}">{e(t()["blog_viac"])}</a>
+    <a class="rnc-more" href="{BLOG_ZAKLAD}/">{e(t()["blog_viac"])}</a>
   </div>
   <div class="rnc-posts">{karty}</div>
   </div>

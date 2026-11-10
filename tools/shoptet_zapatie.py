@@ -301,7 +301,12 @@ def clanky(kod):
         if not rub:
             continue
         r.append([
-            PREDPONY[kod] + f'/{rub}/{p["slug"]}/',
+            # Články nie sú v Shoptete dvojjazyčné — nemajú prepínač
+            # jazyka ani export prekladov, takže v českej mutácii
+            # neexistujú a /cs/<rubrika>/<článok>/ vracia 404. Česká
+            # karta preto vedie na slovenský článok. Slovenčine Čech
+            # rozumie; prázdna chybová stránka je horšia.
+            f'/{rub}/{p["slug"]}/',
             p["title"][I],
             p["lead"][I],
             f'/user/articles/images/{p["slug"]}.jpg',
