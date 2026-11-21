@@ -174,12 +174,18 @@ def main():
     # vyhľadávanie je na nej až pod hero. Stránka sa vkladá cez
     # Vzhľad a obsah → Stránky, preto ide do iného priečinka než
     # vzhľad a bez hlavičkového komentára pre úvodnú stránku.
-    uvod = "<p>" + jazyk.t(SLOVA)["uvod"] + "</p>\n"
+    # Tá istá šablóna ako na úvodnej stránke, len tu pred ňou nie je
+    # hero fotka, ktorej spodok má karta zámerne prekryť — len tento
+    # odstavec. Záporné odsadenie karty (rnc-find-karta, pozri CSS) by
+    # mu inak podliezlo posledné riadky. Obaľovacia trieda to na tomto
+    # mieste vráti na normálny odstup.
+    uvod = ('<div class="rnc-podla-vozidla-stranka"><p>'
+            + jazyk.t(SLOVA)["uvod"] + "</p>\n")
     bez = re.sub(r"^<!--.*?-->\s*", "", h, flags=re.S)
     cesta = vystup.kam(vystup.VLOZIT, jazyk.priecinok("stranky"),
                        "podla-vozidla.html")
     with open(cesta, "w", encoding="utf-8") as f:
-        f.write(uvod + bez)
+        f.write(uvod + bez + "</div>")
     print(f"{len(uvod) + len(bez):>6} znakov -> {cesta}")
 
     znacky = sorted({x["b"] for x in polozky})

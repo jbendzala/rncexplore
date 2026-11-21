@@ -6,12 +6,25 @@
 nehádajú a formát zostane ich.
 
 Karta je jedno prevedenie, nie produkt: sklad eviduje kusy, nie
-karty v e-shope. Preto 533 riadkov a nie 157.
+karty v e-shope.
+
+108 produktov (presná štandardná štvorica, pozri sady_panelov.py)
+dnes v e-shope nemá tie 4 prevedenia ako natívne varianty — boli
+rozložené na sady a komponenty (Sady produktov + Varianty ako
+samostatné produkty). Fyzicky sa skladujú len TRI veci: panel, fólia,
+MPPT regulátor — sady samotné sklad nemajú, ich dostupnosť si Shoptet
+dopočíta z týchto troch sám. Tým produktom preto dávame 3 karty
+(panel + 2 komponenty), nie 4 ako predtým. Zvyšných ~49 produktov s
+inými kombináciami (iný regulátor, predlžovací kábel, viacpanelové
+sady) touto zmenou prejdené nebolo — tie idú po starom, karta na
+natívne prevedenie.
 
 Kód musí ísť v tej podobe, v akej je v e-shope — s tou štvorznakovou
 značkou, ktorú sme pridali kvôli tomu, že Lensun používa ten istý kód
 na rôzne autá. Podľa neho sa sklad páruje s obchodom; bez nej by
-KROS založil produkty znova.
+KROS založil produkty znova. Kódy komponentov fólia/MPPT sú nové
+(RNC-FOLIA-…/RNC-MPPT-…, pozri sady_panelov.py) — v KROSe predtým
+neexistovali, lebo dovtedy neboli samostatne skladovanou položkou.
 
 Čo zámerne nevypĺňame:
   Zostatok            nevieme, dopĺňa sa pri naskladnení
@@ -39,22 +52,13 @@ TU = os.path.dirname(os.path.abspath(__file__))
 KOREN = os.path.dirname(TU)
 sys.path.insert(0, TU)
 import seo                                              # noqa: E402
+import sady_panelov as sp                               # noqa: E402
 from export_shoptet import kod                          # noqa: E402
 
 DPH = 23
 HARO = "Karty"
-
-# Stĺpec v šablóne -> čo doň ide. Hľadáme podľa názvu, nie podľa
-# poradia — keby KROS stĺpce prehodil, nájdu sa samy.
-STLPCE = {
-    "Kód karty": lambda p, v: v_obchode(kod(p, v)),
-    "Názov": lambda p, v: f'{p["n"]["sk"]} – {v["sk"]}',
-    "MJ": lambda p, v: "ks",
-    "Hmotnosť [kg]": lambda p, v: round(float(p.get("kg") or 0), 2) or None,
-    "DPH [%]": lambda p, v: DPH,
-    "Posielať do eshopu": lambda p, v: "Nie",
-    "Predajná cena ZC": lambda p, v: round(seo.price(v["p"], "EUR"), 2),
-}
+STLPCE = ["Kód karty", "Názov", "MJ", "Hmotnosť [kg]", "DPH [%]",
+          "Posielať do eshopu", "Predajná cena ZC"]
 
 
 def v_obchode(k):
@@ -65,6 +69,51 @@ def v_obchode(k):
 def katalog():
     s = open(os.path.join(KOREN, "data", "products.js"), encoding="utf-8").read()
     return json.loads(re.search(r"window\.PRODUCTS=(\[.*\]);", s, re.S).group(1))
+
+
+def riadok(kod_karty, nazov, hmotnost, cena_eur):
+    return {
+        "Kód karty": kod_karty, "Názov": nazov, "MJ": "ks",
+        "Hmotnosť [kg]": round(float(hmotnost or 0), 2) or None,
+        "DPH [%]": DPH, "Posielať do eshopu": "Nie",
+        "Predajná cena ZC": round(cena_eur, 2),
+    }
+
+
+def riadky_sady(p):
+    """Panel + 2 komponenty (fólia, MPPT) — sady samotné kartu nemajú,
+    ich dostupnosť si Shoptet dopočíta z týchto troch sám."""
+    k = sp.kody_produktu(p)
+    panel_v = sp.najdi(p, sp.SAMOTNY)
+    ck = sp.cena_komponentov(p)
+    hmotnost = p.get("kg") or 0
+    return [
+        riadok(k["panel"], f'{p["n"]["sk"]} – {sp.SAMOTNY}',
+               hmotnost, seo.price(panel_v["p"], "EUR")),
+        riadok(k["folia_komponent"], f'{p["n"]["sk"]} – Vinylová fólia (komponent)',
+               0, seo.price(ck["folia"], "EUR")),
+        riadok(k["mppt_komponent"], f'{p["n"]["sk"]} – MPPT regulátor (komponent)',
+               0, seo.price(ck["mppt"], "EUR")),
+    ]
+
+
+def riadky_varianty(p):
+    """Pôvodný vzor — jedna karta na natívne prevedenie. Platí pre tých
+    ~49 produktov, čo cez sady_panelov.py neprešli."""
+    riadky = []
+    for v in p["var"]:
+        if not v.get("sku"):
+            continue
+        riadky.append(riadok(v_obchode(kod(p, v)), f'{p["n"]["sk"]} – {v["sk"]}',
+                             p.get("kg") or 0, seo.price(v["p"], "EUR")))
+    return riadky
+
+
+def vsetky_riadky(P):
+    riadky = []
+    for p in sorted(P, key=lambda x: x["n"]["sk"]):
+        riadky += riadky_sady(p) if sp.kvalifikuje(p) else riadky_varianty(p)
+    return riadky
 
 
 def main():
@@ -90,22 +139,23 @@ def main():
                  + "\nje tam: " + ", ".join(str(x) for x in hlavicka))
 
     P = katalog()
+    riadky = vsetky_riadky(P)
     r = 2
     dlhe = 0
-    for p in sorted(P, key=lambda x: x["n"]["sk"]):
-        for v in p["var"]:
-            if not v.get("sku"):
-                continue
-            for nazov, fn in STLPCE.items():
-                ws.cell(row=r, column=hlavicka[nazov], value=fn(p, v))
-            if len(ws.cell(row=r, column=hlavicka["Názov"]).value) > 80:
-                dlhe += 1
-            r += 1
+    for riadok_dat in riadky:
+        for nazov in STLPCE:
+            ws.cell(row=r, column=hlavicka[nazov], value=riadok_dat[nazov])
+        if len(riadok_dat["Názov"]) > 80:
+            dlhe += 1
+        r += 1
     wb.save(ciel)
 
-    print(f"{r - 2} kariet -> {ciel}")
+    pocet_sady = sum(1 for p in P if sp.kvalifikuje(p))
+    print(f"{len(riadky)} kariet -> {ciel}")
+    print(f"  z toho {pocet_sady * 3} kariet (panel + 2 komponenty) "
+          f"za {pocet_sady} produktov v sadách")
     print("  nevyplnené zámerne: Zostatok, EAN kód, Nákupná cena, Popis")
-    print(f"  „Posielať do eshopu“ = Nie pri všetkých")
+    print("  „Posielať do eshopu“ = Nie pri všetkých")
     if dlhe:
         print(f"  POZOR: {dlhe} názvov je dlhších než 80 znakov — ak ich "
               "KROS odmietne, treba ich skrátiť")

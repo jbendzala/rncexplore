@@ -25,6 +25,7 @@ SUBCATS = [
     ("rv",         "Karavany a prívesy",   "Karavany a přívěsy"),
     ("foldable",   "Skladacie panely",     "Skládací panely"),
     ("blanket",    "Solárne deky",         "Solární deky"),
+    ("led",        "LED svietidlá",        "LED svítidla"),
     ("controller", "Regulátory nabíjania", "Regulátory nabíjení"),
     ("inverter",   "Meniče napätia",       "Měniče napětí"),
     ("accessory",  "Príslušenstvo",        "Příslušenství"),
@@ -229,7 +230,12 @@ def footer(lang, base, page=""):
 
 
 def catalog_scripts(base):
+    # Purelux je samostatný súbor (data/products-purelux.js sa needituje,
+    # mergne sa až v prehliadači — pozri tools/purelux_web.py aj
+    # assets/app.js), musí sa načítať pred app.js, ktorý ho spojí
+    # s hlavným katalógom.
     return (f'<script src="{base}data/products.js"></script>\n'
+            f'<script src="{base}data/products-purelux.js"></script>\n'
             f'<script src="{base}assets/app.js"></script>\n')
 
 

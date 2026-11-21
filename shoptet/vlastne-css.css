@@ -1592,6 +1592,23 @@ label { color: var(--rnc-ink); }
 @media (min-width: 1101px) {
   .rnc-find-karta { flex-wrap: nowrap; }
 }
+/* Na samostatnej stránke "Podľa vozidla" (tools/shoptet_vyhladavanie.py)
+   pred kartou nie je hero fotka, len odstavec textu — záporné odsadenie
+   vyššie mu podlieza posledné riadky. */
+.rnc-podla-vozidla-stranka .rnc-find-karta { margin-top: 24px; }
+
+/* Rovnaká karta, ale tu v užšom obsahovom stĺpci (vedľa je bočný panel
+   s kategóriami) — pravidlo vyššie, čo nad 1101 px vynucuje jeden
+   riadok, tu nemá dosť miesta a polia scvrkne na nečitateľné. Shoptet
+   dáva stránke vlastnú triedu podľa adresy (in-podla-vozidla), takže
+   to ide cieliť presne, bez dosahu na domovskú. */
+.in-podla-vozidla .rnc-find-karta { flex-wrap: wrap; }
+.in-podla-vozidla .rnc-find-nadpis { flex: 1 1 100%; }
+.in-podla-vozidla .rnc-find-karta select {
+  flex: 1 1 170px; min-width: 150px;
+  padding: 16px 14px; font-size: 15px;
+}
+.in-podla-vozidla .rnc-find-karta .rnc-btn { flex: 1 1 220px; }
 /* Nadpis má podľa návrhu zostať na jednom riadku — preto nowrap a nie
    pružná šírka, pri ktorej sa „vozidlo“ zlomilo pod seba. */
 .rnc-find-nadpis strong {
@@ -2056,6 +2073,11 @@ label { color: var(--rnc-ink); }
   display: none;
 }
 
+/* "Prijímame online platby" s logami kariet — v bočnom paneli pôsobí
+   ako výplň, klient o ňu nestojí. Je na kategórii aj na detaile
+   produktu, preto bez obmedzenia na .type-category. */
+.box-onlinePayments { display: none; }
+
 /* Bočný panel: každá skupina je karta, nie riadok oddelený linkou. */
 /* „div.box“ a nie len „div“: šablóna dáva karte filtrov padding
    pravidlom .box.box-sm.box-filters a to sú tri triedy — dve by na
@@ -2175,21 +2197,26 @@ label { color: var(--rnc-ink); }
    jeden riadok zmazať. */
 .type-category .products-block .ratings-wrapper { display: none; }
 
-/* Namiesto ceny „Cena podľa variantu“. Každý náš produkt má
-   prevedenia s rôznou cenou a cenu určuje až výber na detaile.
+/* Namiesto ceny „Cena podľa variantu“ — len na produktoch, čo naživo
+   naozaj majú viac než 1 prevedenie s rôznou cenou (triedu .rnc-viac-cien
+   dopĺňa skript podľa adresy, pozri adresy_s_viac_cenami() v
+   tools/shoptet_zapatie.py). Pôvodne to bolo natvrdo na každej karte v
+   kategórii — väčšina produktov má dnes (po rozdelení panelov na sady
+   a pri Purelux/Adventure Design beztak) len 1 prevedenie, tým sa má
+   ukázať rovno reálna cena, nie tento zástupný text.
 
    Text je v CSS, a ten jazykové mutácie nepozná — v češtine by zostal
    slovenský. Prepíname ho preto podľa jazyka dokumentu: Shoptet dáva
    koreňovému prvku lang="sk" alebo lang="cs". Nepotrebuje to skript,
    takže je to správne hneď pri načítaní a nič neprebliskne. */
-.type-category .products-block .prices > * { display: none; }
-.type-category .products-block .prices::before {
+.type-category .products-block .prices.rnc-viac-cien > * { display: none; }
+.type-category .products-block .prices.rnc-viac-cien::before {
   content: "Cena podľa variantu";
   display: block;
   font-family: var(--rnc-display); font-weight: 600; font-size: 18px;
   color: var(--rnc-head);
 }
-html[lang="cs"] .type-category .products-block .prices::before {
+html[lang="cs"] .type-category .products-block .prices.rnc-viac-cien::before {
   content: "Cena podle varianty";
 }
 /* Spodok karty pod seba: cena na vlastnom riadku a pod ňou odkaz na
@@ -2609,38 +2636,48 @@ body:not(.type-index) .breadcrumbs-wrapper { padding-inline: 20px; }
    prepínače mu len nastavujú hodnotu — ale skryjeme ho, keď sa
    prepínače naozaj postavili. Bez skriptu teda zostane funkčný. */
 .type-detail .rnc-ma-varianty select { display: none; }
-.rnc-varianty { display: grid; gap: 8px; }
+/* Keď po zmazaní starých prevedení ostane jediné, Shoptet aj tak celý
+   riadok "Variant" aj s výberom vypíše — produkt má interne stále
+   zapnuté varianty, len s jednou možnosťou. Výber na výber s jednou
+   položkou nikomu nepomôže, tak celý riadok schováme. */
+tr.variant-list:has(.rnc-varianty > .rnc-variant:only-child) {
+  display: none;
+}
+/* Rozmery/typografia zhodné s .jt-product-variant nižšie — pre
+   zákazníka sú to dva rôzne mechanizmy (tu prepínač v rámci jedného
+   produktu, tam odkaz na iný produkt zo sady), ale majú pôsobiť ako
+   jeden vizuálny jazyk, nie dva rôzne komponenty. */
+.rnc-varianty { display: grid; gap: 12px; }
 .rnc-variant {
   display: flex; align-items: center; gap: 12px;
-  padding: 12px 16px;
-  border: 1.5px solid var(--rnc-line-2); border-radius: 12px;
+  padding: 20px 24px;
+  border: 1.5px solid var(--rnc-line-2); border-radius: 16px;
   background: var(--rnc-surface);
   cursor: pointer;
   transition: border-color .15s;
 }
-.rnc-variant:hover { border-color: var(--rnc-head); }
+.rnc-variant:hover { border-color: var(--rnc-ink); }
 .rnc-variant:has(input:checked) {
   border-color: var(--rnc-amber);
   box-shadow: inset 0 0 0 1px var(--rnc-amber);
 }
-/* Šablóna natívne prepínače skrýva a kreslí si vlastné cez
-   pseudoprvky návestia. Naše návestie je postavené inak, takže si
-   natívny prepínač vraciame — aj s tým, čím ho skryli. */
+/* Rádiové tlačidlo nekreslíme — výber vyjadruje len orámovanie
+   (.rnc-variant:has(input:checked) vyššie), kvôli vzhľadu rovnakému
+   so sadami nižšie (.jt-product-variant), kde žiadny prepínač nie je
+   (sú to odkazy na iný produkt, nie výber v rámci jedného). Vstup
+   zostáva v DOMe funkčný, len vizuálne skrytý. */
 .rnc-variant input[type="radio"] {
-  position: static; clip: auto; overflow: visible;
-  width: 18px; height: 18px; margin: 0; flex: none;
-  appearance: auto; -webkit-appearance: radio;
-  accent-color: var(--rnc-amber);
-  background-color: transparent;
+  position: absolute; width: 1px; height: 1px; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap;
 }
 .rnc-variant b {
-  font-family: var(--rnc-display); font-weight: 600; font-size: 14px;
+  font-family: var(--rnc-display); font-weight: 600; font-size: 15px;
   color: var(--rnc-ink);
 }
 .rnc-variant-cena {
   margin-left: auto; white-space: nowrap;
-  font-family: var(--rnc-display); font-weight: 600; font-size: 14px;
-  color: var(--rnc-head); font-variant-numeric: tabular-nums;
+  font-family: var(--rnc-display); font-weight: 600; font-size: 17px;
+  color: var(--rnc-ink); font-variant-numeric: tabular-nums;
 }
 
 /* Množstvo a tlačidlo do košíka */
@@ -2960,3 +2997,96 @@ body.ordering-process #content { padding-top: 28px; }
   .rnc-hero { min-height: 380px; }
   .rnc-hero-in h2 { font-size: 30px; }
 }
+
+/* Doplnok "Varianty ako samostatné produkty" (Jakub Turský) vykresľuje
+   prepojené produkty ako malé dlaždice a meno/cenu/dostupnosť schová do
+   tooltipu na hover — na mobile sa tam nedá ani poriadne trafiť. JS v
+   rnc-skript.js tie údaje vytiahne z data-original-title a vloží ich
+   viditeľne vedľa obrázka.
+
+   Vzhľad je prevzatý 1:1 z klientovho návrhu (RNC Explore Produkt.html,
+   trieda .vars/.var/.vp) — tam bol riadok variantu rádio-tlačidlo s
+   popisom; tu je to odkaz na inú stránku (iný mechanizmus, rovnaký
+   vzhľad). Farby --text/--line-strong/--surface z návrhu sú presne
+   --rnc-ink/--rnc-line-2/--rnc-surface (zhodné hex hodnoty v oboch
+   režimoch) — mapujeme priamo na ne, nie na všeobecný --rnc-radius
+   (návrh má vlastný 12px, nie 14px). Fotku riadok v návrhu nemá — tu ju
+   radšej skrývame, než aby pôsobila ako niečo, čo v predlohe chýba. */
+.jt-product-variants-wrapper { display: grid; gap: 12px; }
+.jt-product-variant { width: 100% !important; }
+.jt-product-variant a {
+  display: flex; align-items: center; gap: 12px;
+  padding: 20px 24px;
+  background: var(--rnc-surface);
+  border: 1.5px solid var(--rnc-line-2);
+  border-radius: 16px;
+  text-decoration: none;
+  transition: border-color .15s ease;
+}
+.jt-product-variant a:hover { border-color: var(--rnc-ink); }
+/* Dlaždica produktu, na ktorom práve je zákazník — JS v rnc-skript.js
+   ju do zoznamu dopĺňa sám (doplnok do neho dáva len tie OSTATNÉ zo
+   sady, seba nie), rovnaký žltý rámik ako má vybraná klasická
+   varianta (.rnc-variant:has(input:checked) vyššie). */
+.jt-product-variant--current a {
+  border-color: var(--rnc-amber);
+  box-shadow: inset 0 0 0 1px var(--rnc-amber);
+}
+.jt-product-variant--current a:hover { border-color: var(--rnc-amber); }
+.jt-product-variant img.product-variants-links__tooltip { display: none; }
+.jt-variant-info {
+  display: flex; flex: 1; min-width: 0; align-items: center;
+  text-align: left;
+}
+.jt-variant-info .jt-variant-name {
+  font-family: var(--rnc-display); font-weight: 600; font-size: 15px;
+  color: var(--rnc-ink); text-align: left;
+}
+.jt-variant-info .jt-variant-price {
+  margin-left: auto; flex-shrink: 0;
+  font-family: var(--rnc-display); font-weight: 600; font-size: 17px;
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+  color: var(--rnc-ink); text-align: right;
+}
+
+/* Nadpis "Súvisiaci tovar" je text doplnku, nie náš — v jeho nastavení
+   sa mení len cez kód v pätičke Shoptetu, ktorej poradie voči vlastnému
+   skriptu doplnku nepoznáme (skúšali sme to cez JS, mutácia DOM-u sa
+   bila s pozorovateľom doplnku a stránka mrzla). Radšej teda čisto
+   vizuálne: pôvodný text zmenšíme na nulu (zostáva v zdroji, čítačkám
+   obrazovky sa nestratí) a namiesto neho vypíšeme vlastný cez ::before. */
+.product-variants-links__title {
+  font-size: 0 !important;
+  color: transparent !important;
+}
+.product-variants-links__title::before {
+  content: "Varianta";
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--rnc-muted);
+}
+
+/* Shoptet tie isté prepojené produkty (relatedProduct) vykresľuje
+   ešte raz nižšie na stránke ako natívnu sekciu "Súvisiace produkty" —
+   celé karty v mriežke, duplicitne k tomu, čo už ukazujú dlaždice
+   vyššie. Na detaile je to zbytočné, schovávame celú sekciu aj s
+   nadpisom. */
+.products-related-header,
+.products.products-related.products-additional {
+  display: none;
+}
+
+/* Cena na vyžiadanie bez plateného doplnku. Produkty bez pevnej ceny
+   (napr. Adventure Design zákazková výroba) dostanú pri importe cenu
+   0 — JS v rnc-skript.js ju rozpozná a nahradí textom (dôvod, prečo
+   nula a nie vysoké číslo ako pri platenom doplnku, je pri tom
+   skripte: skresľovala horný koniec cenového filtra kategórie). */
+.rnc-na-dopyt { font-size: 20px !important; color: var(--rnc-ink); }
+.rnc-na-dopyt-tlacidlo {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 52px; padding: 0 20px;
+  background: var(--rnc-amber); color: var(--rnc-ink);
+  border-radius: 12px; font-weight: 600; font-size: 15px;
+  text-decoration: none;
+}
+.rnc-na-dopyt-tlacidlo:hover { background: var(--rnc-amber-dark); }

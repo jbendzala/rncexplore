@@ -7,6 +7,7 @@ import seo
 import pages_content as c
 import blog_content as bl
 import product_pages as pp
+import purelux_web as pw
 import json as _json
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -19,15 +20,20 @@ def catalog_counts():
     return meta["count"], len(meta["brands"])
 
 N_PRODUCTS, N_BRANDS = catalog_counts()
+PURELUX = pw.na_web()
 
 def live_cats():
     """Kategórie, v ktorých naozaj niečo je — ostatné do menu nedávame."""
     try:
         src = open(os.path.join(ROOT, "data", "products.js"), encoding="utf-8").read()
         meta = _json.loads(re.search(r"window\.CATALOG_META=(\{.*?\});", src, re.S).group(1))
-        return {c["k"] for c in meta["cats"] if c.get("n")}
+        kats = {c["k"] for c in meta["cats"] if c.get("n")}
     except Exception:
-        return set()
+        kats = set()
+    # Purelux je samostatný súbor, CATALOG_META v products.js o ňom nevie.
+    if PURELUX:
+        kats.add(pw.CAT)
+    return kats
 
 
 sh.LIVE_CATS = live_cats()
@@ -202,7 +208,11 @@ def build():
         p_pbase = "../"
         src_js = open(os.path.join(ROOT, "data", "products.js"), encoding="utf-8").read()
         ALLP = _json.loads(re.search(r"window\.PRODUCTS=(\[.*\]);", src_js, re.S).group(1))
-        for prod in ALLP:
+        # Purelux pridaný rovnako ako do katalógu v prehliadači (assets/app.js) —
+        # už v tvare Lensun produktu (tools/purelux_web.py), takže pp.render()
+        # aj seo.product() nižšie nepotrebujú žiadnu výnimku.
+        VSETKY = ALLP + PURELUX
+        for prod in VSETKY:
             nm = prod["n"]["sk" if lang == "sk" else "cs"]
             dsc = prod["d"]["sk" if lang == "sk" else "cs"][:155]
             fn = prod["id"] + ".html"
@@ -224,7 +234,7 @@ def build():
                     f'<a href="{p_pbase}produkty.html">'
                     f'{"Katalóg" if lang == "sk" else "Katalog"}</a></p>'
                     '</div></section>\n'),
-                   pp.render(prod, ALLP, "sk" if lang == "sk" else "cs",
+                   pp.render(prod, VSETKY, "sk" if lang == "sk" else "cs",
                              bl_reviews, p_pbase),
                    sh.footer(lang, p_abase, p_pbase),
                    sh.catalog_scripts_light(p_abase),
@@ -245,7 +255,7 @@ def build():
     # Keď Lensun produkt stiahne a z katalógu vypadne, jeho stránka by tu
     # zostala ležať a sitemap by na ňu posielala vyhľadávače. Zmažeme ju.
     # Presmerovania sú výnimka — tie tam majú zostať.
-    live = {p["id"] for p in ALLP} | set(REDIRECTS)
+    live = {p["id"] for p in ALLP} | {p["id"] for p in PURELUX} | set(REDIRECTS)
     for d in ("produkt", os.path.join("cz", "produkt")):
         full = os.path.join(ROOT, d)
         if not os.path.isdir(full):

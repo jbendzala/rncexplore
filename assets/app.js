@@ -12,6 +12,37 @@
   var ALL  = window.PRODUCTS || [];
   var PAGE = 48;
 
+  /* Purelux je samostatný súbor (data/products-purelux.js sa needituje,
+     pozri tools/purelux_web.py), do hlavného katalógu ho spájame až tu.
+     Cena je tam hotová s DPH v EUR (pole "p" vo "var") — prevod na
+     pseudo-"usd" musí byť presne opačný k vzorcu convert() nižšie
+     (markup × kurz × DPH), aby cez neho prešla nezmenená späť na tú
+     istú hotovú sumu. Deje sa to len raz, pri načítaní, nie pri každom
+     prekreslení. */
+  (function () {
+    var PX = window.PURELUX_PRODUCTS || [];
+    if (!PX.length) { return; }
+    function pseudoUsd(eur) { return eur / (1 + (CFG.vat || 0)); }
+    PX.forEach(function (p) {
+      var vars = (p.var || []).map(function (v) {
+        return { sk: v.sk, cs: v.cs, p: pseudoUsd(v.p), sku: v.sku, kg: v.kg };
+      });
+      ALL.push({
+        id: p.id, cat: "led", b: null, w: null, a: null, v: null,
+        kg: p.kg || (vars[0] && vars[0].kg) || 0,
+        usd: pseudoUsd(p.eur),
+        img: p.img || [],
+        sku: (p.var && p.var[0] && p.var[0].sku) || null,
+        n: p.n, d: p.d, var: vars, spec: null, pack: p.pack || [],
+        vyrobca: "Purelux"
+      });
+    });
+    if (!META.cats.some(function (c) { return c.k === "led"; })) {
+      META.cats.push({ k: "led", sk: "LED svietidlá", cs: "LED svítidla", n: PX.length });
+    }
+    META.count = (META.count || 0) + PX.length;
+  })();
+
   /* ---------- preklady rozhrania ---------- */
   var T = {
     sk: {

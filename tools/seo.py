@@ -146,7 +146,7 @@ def product(p, lang, url):
         "name": name, "description": desc, "url": url,
         "sku": p.get("sku") or "",
         "image": (p.get("img") or [])[:4],
-        "brand": {"@type": "Brand", "name": "Lensun"},
+        "brand": {"@type": "Brand", "name": p.get("vyrobca", "Lensun")},
         "category": p.get("cat", ""),
         "offers": offers if len(offers) > 1 else offers[0],
     }

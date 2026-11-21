@@ -48,6 +48,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import jazyk
+import sady_panelov                                    # noqa: E402
 import vystup                                          # noqa: E402
 from shoptet_vyhladavanie import adresy, bez_diakritiky  # noqa: E402
 
@@ -332,6 +333,42 @@ def adresy_produktov(P):
             for p in P if bez_diakritiky(p["n"]["sk"]) in mapa}
 
 
+def adresy_s_viac_cenami():
+    """Adresy produktov, ktorým sa má na karte v kategórii ukázať
+    "Cena podľa variantu/varianty" namiesto reálnej ceny — teda tie,
+    čo majú naživo viac než 1 prevedenie s rôznou cenou.
+
+    Lensun produkty zo štandardnej štvorice (sady_panelov.kvalifikuje)
+    majú naživo už len 1 prevedenie ("Samotný panel") — orezanie na
+    sady im zvyšné 3 zmazalo. data/products.js si pôvodné 4 kombinácie
+    stále nesie (kvôli starému statickému webu sa ten súbor nemení),
+    takže ich treba vynechať ručne, inak by im karta klamala, že sa
+    cena ešte len vyberá. Zvyšné Lensun produkty aj Purelux balenia
+    (napr. 1/2/4/8 ks) svoje pôvodné varianty naživo stále majú.
+    Adventure Design varianty nemá vôbec, tam sa táto funkcia nedotkne
+    ničoho.
+    """
+    nazvy = set()
+
+    for p in sady_panelov.katalog():
+        if sady_panelov.kvalifikuje(p):
+            continue
+        if len({v["p"] for v in p["var"]}) > 1:
+            nazvy.add(p["n"]["sk"])
+
+    cesta = os.path.join(KOREN, "data", "products-purelux.js")
+    s = open(cesta, encoding="utf-8").read()
+    for p in json.loads(re.search(r"window\.PURELUX_PRODUCTS=(\[.*\]);", s, re.S).group(1)):
+        if len({v["p"] for v in p.get("var", [])}) > 1:
+            nazvy.add(p["n"]["sk"])
+
+    mapa = adresy()
+    return sorted({
+        "/" + mapa[bez_diakritiky(n)] + "/"
+        for n in nazvy if bez_diakritiky(n) in mapa
+    })
+
+
 def stlpec(nadpis, odkazy, nazvy):
     polozky = "".join(
         f'<li><a href="{e(jazyk.odkaz(u))}">{e(nz)}</a></li>'
@@ -443,6 +480,8 @@ def skript():
                        separators=(",", ":"))
     udaje = json.dumps(udaje_kariet(), ensure_ascii=False,
                        separators=(",", ":"))
+    viac_cien = json.dumps(adresy_s_viac_cenami(), ensure_ascii=False,
+                           separators=(",", ":"))
     posty = json.dumps({k: clanky(k) for k in SLOVA}, ensure_ascii=False,
                        separators=(",", ":"))
     return f'''
@@ -801,13 +840,25 @@ var T = {texty}[JAZ];
    každom behu z data/products.js, needituje sa ručne. */
 (function () {{
   var U = {udaje};
+  /* Adresy produktov, čo naživo majú viac než 1 prevedenie s rôznou
+     cenou — len tým sa na karte ukazuje "Cena podľa variantu/varianty"
+     namiesto reálnej ceny (pozri .rnc-viac-cien v CSS). Počíta
+     tools/shoptet_zapatie.py z dát, nie ručne — pozri
+     adresy_s_viac_cenami(). */
+  var VC = {viac_cien};
 
   function dopln() {{
   var karty = document.querySelectorAll(".products-block .p");
   for (var n = 0; n < karty.length; n++) {{
     var k = karty[n], o = k.querySelector("a.name") || k.querySelector("a.image");
     if (!o) {{ continue; }}
-    var u = U[(o.getAttribute("href") || "").replace(/^\/cs/, "")];
+    var cesta = (o.getAttribute("href") || "").replace(/^\/cs/, "");
+    if (VC.indexOf(cesta) !== -1) {{
+      var ceny = k.querySelector(".prices");
+      if (ceny) {{ ceny.classList.add("rnc-viac-cien"); }}
+    }}
+
+    var u = U[cesta];
     if (!u || k.querySelector(".rnc-karta-kat")) {{ continue; }}
 
     var meno = k.querySelector("a.name");
@@ -902,6 +953,168 @@ var T = {texty}[JAZ];
   if (obal && window.MutationObserver) {{
     new MutationObserver(dopln).observe(obal.parentNode || obal,
                                         {{childList: true, subtree: true}});
+  }}
+}})();
+
+/* Doplnok "Varianty ako samostatné produkty" dáva meno a cenu
+   prepojeného produktu len do atribútu data-original-title (tooltip na
+   hover) — v DOM nie sú nikde ako viditeľný text. Vytiahneme ich teda
+   odtiaľ a vložíme vedľa obrázka; vzhľad k tomu je v rnc-vzhlad.css.
+   Dostupnosť sem zámerne nedávame — klient ju v návrhu pri riadku
+   variantu nemal a na skúšobnom obchode je pri nulovom sklade všade
+   "Momentálne nedostupné", čo by pôsobilo ako chyba, nie ako stav.
+
+   Doplnok dlaždice vykresľuje vlastným skriptom až po načítaní
+   stránky, nie hneď — pri DOMContentLoaded tam ešte nič nie je.
+   Preto nielen jeden beh na začiatku, ale aj MutationObserver, ktorý
+   dobehne, keď dlaždice pribudnú. */
+(function () {{
+  function obohat(blok) {{
+    if (blok.querySelector(".jt-variant-info")) {{ return; }}
+    var img = blok.querySelector("img.product-variants-links__tooltip");
+    if (!img) {{ return; }}
+    var raw = img.getAttribute("data-original-title");
+    if (!raw) {{ return; }}
+    var tmp = document.createElement("div");
+    tmp.innerHTML = raw;
+    var meno = tmp.querySelector(".tooltip-name");
+    var cena = tmp.querySelector(".tooltip-price");
+    var info = document.createElement("div");
+    info.className = "jt-variant-info";
+    info.innerHTML =
+      "<span class=\\"jt-variant-name\\">" + (meno ? meno.textContent.trim() : "") + "</span>" +
+      "<span class=\\"jt-variant-price\\">" + (cena ? cena.textContent.trim() : "") + "</span>";
+    var odkaz = blok.querySelector("a");
+    if (odkaz) {{ odkaz.appendChild(info); }}
+  }}
+
+  /* Doplnok do zoznamu dáva len OSTATNÉ položky sady, seba nie — pri
+     klasických variantoch (.rnc-varianty vyššie) je to inak, tam je
+     vždy vidieť všetky prevedenia vrátane toho aktuálneho. Aby sady
+     pôsobili rovnako, aktuálny produkt do zoznamu dopĺňame sami, na
+     správne miesto podľa ceny, so žltým rámikom namiesto odkazu.
+
+     Čaká sa, kým doplnok naozaj vykreslí aspoň jednu skutočnú
+     dlaždicu — inak by sme svoju vložili do prázdneho obalu pred tým,
+     než doplnok pridá tie ostatné, a poradie by nesedelo. */
+  function cenaNaCislo(text) {{
+    return parseFloat((text || "").replace(/[^0-9,.]/g, "").replace(",", ".")) || 0;
+  }}
+
+  function pridajAktualny(obal) {{
+    if (obal.dataset.rncAktualny) {{ return; }}
+    var nadpis = document.querySelector("h1");
+    var cenaEl = document.querySelector(".price-final .price-final-holder");
+    if (!nadpis || !cenaEl) {{ return; }}
+    obal.dataset.rncAktualny = "1";
+
+    var blok = document.createElement("div");
+    blok.className = "jt-product-variant jt-product-variant--current";
+    var odkaz = document.createElement("a");
+    odkaz.href = location.pathname;
+    var info = document.createElement("div");
+    info.className = "jt-variant-info";
+    var meno = document.createElement("span");
+    meno.className = "jt-variant-name";
+    meno.textContent = nadpis.textContent.trim();
+    var cena = document.createElement("span");
+    cena.className = "jt-variant-price";
+    cena.textContent = cenaEl.textContent.trim();
+    info.appendChild(meno);
+    info.appendChild(cena);
+    odkaz.appendChild(info);
+    blok.appendChild(odkaz);
+
+    var cislo = cenaNaCislo(cenaEl.textContent);
+    var deti = Array.prototype.slice.call(obal.children);
+    for (var i = 0; i < deti.length; i++) {{
+      var inaCenaEl = deti[i].querySelector(".jt-variant-price");
+      if (inaCenaEl && cislo < cenaNaCislo(inaCenaEl.textContent)) {{
+        obal.insertBefore(blok, deti[i]);
+        return;
+      }}
+    }}
+    obal.appendChild(blok);
+  }}
+
+  function beh() {{
+    document.querySelectorAll(".jt-product-variant").forEach(obohat);
+    var obal = document.querySelector(".jt-product-variants-wrapper");
+    if (obal && obal.children.length) {{ pridajAktualny(obal); }}
+  }}
+
+  beh();
+  if (window.MutationObserver) {{
+    new MutationObserver(beh).observe(document.body, {{childList: true, subtree: true}});
+  }}
+}})();
+
+/* "Cena na vyžiadanie" bez plateného doplnku. Produkty bez pevnej ceny
+   (zákazková výroba a pod.) dostávajú pri importe cenu 0. Tu ju len
+   rozpoznáme a prekryjeme vlastným textom a tlačidlom na kontakt
+   namiesto košíka.
+
+   Pôvodne sme na to používali nezmyselne vysokú cenu (99 999 999, tú
+   istú hodnotu, akú na rovnaký účel interne používa aj platený Shoptet
+   doplnok) — v natívnom cenovom filtri kategórie to ale vytiahlo hornú
+   hranicu slidera na absurdné číslo a zbytočne zošrotilo reálne ceny
+   do nepoužiteľného kúska. Nula robí to isté len na spodnej hranici,
+   čo je oveľa menej rušivé — a keďže tu platba aj fakturácia ide
+   ručne cez bankový prevod, nehrozí, že by sa pri zlyhaní skriptu
+   niečo omylom vybavilo zadarmo bez povšimnutia.
+
+   Zhoda musí byť na celý text uzla vrátane meny (nie len "začína
+   nulou") — samotná číslica "0" sa bez tejto podmienky dá nechcene
+   trafiť takmer kdekoľvek na stránke (sklad, hodnotenia, stránkovanie).
+
+   Nechytáme sa triedy ".price-final" — tá sedí na kategórii/detaile,
+   ale napr. widget "Najpredávanejšie" na titulke si cenu vykresľuje
+   vlastnou šablónou až po načítaní stránky (v zdrojovom HTML vôbec
+   nie je) a triedu nemusí mať rovnakú. Namiesto hľadania elementu
+   prechádzame rovno textové uzly. */
+(function () {{
+  var ZHODA_NULY = /^0(?:[,.]0{{1,2}})?\s*(?:Kč|€)$/i;
+
+  function pridajTlacidlo(el) {{
+    var kosik = el.closest(".p-info-wrapper, .p-bottom, .p, li, article, .box");
+    var tlacidla = kosik ? kosik.querySelector(".add-to-cart") : null;
+    if (tlacidla && !tlacidla.classList.contains("rnc-na-dopyt-hotovo")) {{
+      tlacidla.classList.add("rnc-na-dopyt-hotovo");
+      var predpona = location.pathname.indexOf("/cs/") === 0 ? "/cs" : "";
+      var odkaz = document.createElement("a");
+      odkaz.href = predpona + "/kontakt/";
+      odkaz.className = "rnc-na-dopyt-tlacidlo";
+      odkaz.textContent = "Kontaktujte nás";
+      tlacidla.replaceWith(odkaz);
+    }}
+  }}
+
+  function skusUzol(uzol) {{
+    var rodic = uzol.parentElement;
+    if (!rodic || rodic.closest("script, style, .rnc-na-dopyt")) {{ return; }}
+    var text = (uzol.nodeValue || "").replace(/ /g, " ").trim();
+    if (!ZHODA_NULY.test(text)) {{ return; }}
+
+    uzol.nodeValue = "Cena na vyžiadanie";
+    rodic.classList.add("rnc-na-dopyt");
+    pridajTlacidlo(rodic);
+  }}
+
+  function beh() {{
+    var prehliadac = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    var uzol;
+    while ((uzol = prehliadac.nextNode())) {{ skusUzol(uzol); }}
+  }}
+
+  var caka = null;
+  function naplanuj() {{
+    if (caka) {{ return; }}
+    caka = setTimeout(function () {{ caka = null; beh(); }}, 80);
+  }}
+
+  beh();
+  if (window.MutationObserver) {{
+    new MutationObserver(naplanuj).observe(document.body, {{childList: true, subtree: true}});
   }}
 }})();
 '''
