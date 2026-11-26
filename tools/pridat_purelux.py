@@ -202,7 +202,15 @@ def main():
 
         var_zaznamy = []
         for v in varianty:
-            cena = v[v_idx["Akciová cena (€)"]] or v[v_idx["Bežná cena (€)"]]
+            # "Akciová cena" na valostore.com NIE JE príležitostná zľava —
+            # je to ich bežný veľkoobchodný riadok, vyplnený pri úplne
+            # každej položke (overené na celom súbore, 0 prázdnych z 1101
+            # riadkov). Použitím tohto stĺpca namiesto "Bežná cena" sme si
+            # roky počítali maloobchodnú cenu z ich vlastnej zľavnenej
+            # ceny — klientka to odhalila na Worklight PURELUX Black
+            # Square 40 Spot (40,50 € u nás vs. 47,90 € na valostore.com,
+            # naše číslo takmer presne sedelo na ich 40,72 €).
+            cena = v[v_idx["Bežná cena (€)"]]
             je_sada = v[v_idx["Sada (bundle)"]] == "Áno"
             obsah = rozober_obsah(v[v_idx["Obsah variantu (množstvo × položka)"]])
             var_zaznamy.append({

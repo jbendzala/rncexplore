@@ -96,13 +96,21 @@ h1,h2,h3,h4{margin:0;font-family:var(--f-display);line-height:1.08;
 .brand-mark{width:34px;height:34px;flex:0 0 auto;background:var(--signal);
   display:grid;place-items:center}
 .brand-mark svg{width:19px;height:19px}
-/* Logo je biele SVG. Namiesto prefarbovania súboru ho použijeme ako masku,
-   takže sa samo prispôsobí svetlému aj tmavému režimu. */
-.brand-logo{display:block;width:150px;height:46px;flex:0 0 auto;background-color:var(--ink);
-  -webkit-mask:url("rnc_explore_transparent.svg") left center/contain no-repeat;
-  mask:url("rnc_explore_transparent.svg") left center/contain no-repeat}
-/* na tmavých pruhoch (pätička) sa použije svetlá varianta */
-.ftr .brand-logo{background-color:var(--band-ink)}
+/* Logo (Varianta A z logo manuálu) je dvojfarebné — oranžová + atrament —
+   takže ho na rozdiel od pôvodnej jednofarebnej verzie nejde prefarbiť
+   cez CSS masku. Namiesto toho dve PNG (svetlý/tmavý atrament), prepínané
+   podľa režimu rovnako, ako sa prepínajú farebné premenné vyššie. */
+.brand-logo{display:block;width:190px;height:50px;flex:0 0 auto;
+  background:url("rnc-explore-logo-a-light.png") left center/contain no-repeat}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .brand-logo{
+    background-image:url("rnc-explore-logo-a-dark.png")}
+}
+:root[data-theme="dark"] .brand-logo{
+  background-image:url("rnc-explore-logo-a-dark.png")}
+/* Čierne pásy (horný pruh, hero, pätička) sú tmavé v oboch režimoch —
+   logo na nich preto vždy svetlá varianta, bez ohľadu na motív stránky. */
+.ftr .brand-logo{background-image:url("rnc-explore-logo-a-dark.png")}
 .hdr-sp{flex:1}
 
 /* ---------- hľadanie v hlavičke ----------
